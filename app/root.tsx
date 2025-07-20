@@ -9,6 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { AuthProvider } from "./auth_context";
 import Loader from "./components/Loader";
 
 export const links: Route.LinksFunction = () => [
@@ -50,7 +51,11 @@ export function HydrateFallback() {
 }
 
 export default function App() {
-	return <Outlet />;
+	return (
+		<AuthProvider>
+			<Outlet />
+		</AuthProvider>
+	);
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
