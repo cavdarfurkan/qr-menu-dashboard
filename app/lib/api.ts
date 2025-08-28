@@ -1,6 +1,14 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { getCsrfToken } from "./csrf";
 
+
+export type ApiResponse = {
+	success: boolean;
+	message?: string;
+	data?: any;
+	timestamp: string;
+}
+
 const api = axios.create({
 	baseURL: "http://localhost:8080/api",
 	headers: {

@@ -1,6 +1,8 @@
+import type { Route } from "./+types/index";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import api from "~/lib/api";
+import Title from "~/components/Title";
 
 export async function clientLoader() {
 	try {
@@ -12,8 +14,12 @@ export async function clientLoader() {
 	}
 }
 
-export default function Home({ loaderData }: { loaderData: any }) {
-	const message = loaderData?.message || "";
+export default function Home({
+	loaderData,
+}: {
+	loaderData: Route.ComponentProps;
+}) {
+	const message = loaderData.loaderData?.message || "";
 	const usernameMatch = message.match(/username=([^,]+)/);
 	const emailMatch = message.match(/email=([^,]+)/);
 
@@ -22,7 +28,7 @@ export default function Home({ loaderData }: { loaderData: any }) {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<h1 className="text-2xl font-bold">Dashboard Home</h1>
+			<Title title="Dashboard Home" />
 
 			<div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-md">
 				You are successfully logged in! {username} {email}

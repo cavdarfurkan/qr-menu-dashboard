@@ -1,12 +1,11 @@
-import { Home, LogOut, Menu, NotepadText, Settings } from "lucide-react";
-import { Link } from "react-router";
+import { Home, LogOut, NotepadText, Palette, Settings } from "lucide-react";
+import { Link, useLocation } from "react-router";
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
-	SidebarGroupLabel,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
@@ -16,6 +15,9 @@ import {
 } from "~/components/ui/sidebar";
 
 export function AppSidebar() {
+	const location = useLocation();
+	const currentPath = location.pathname;
+
 	const { state, isMobile } = useSidebar();
 
 	interface SidebarItem {
@@ -36,6 +38,11 @@ export function AppSidebar() {
 			url: "/menu",
 		},
 		{
+			label: "Themes",
+			icon: Palette,
+			url: "/theme"
+		},
+		{
 			label: "Settings",
 			icon: Settings,
 			url: "/settings",
@@ -53,11 +60,10 @@ export function AppSidebar() {
 				<div className="flex items-center justify-between">
 					{!isMobile && (
 						<div
-							className={`flex items-center gap-2 transition-all duration-200 ${
-								state === "collapsed"
-									? "w-0 hidden"
-									: "w-auto block"
-							}
+							className={`flex items-center gap-2 transition-all duration-200 ${state === "collapsed"
+								? "w-0 hidden"
+								: "w-auto block"
+								}
 							`}
 						>
 							<Link
@@ -74,13 +80,13 @@ export function AppSidebar() {
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>
-					{/* <SidebarGroupLabel>Menu</SidebarGroupLabel> */}
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{sidebarItems.map((item) => (
 								<SidebarMenuItem key={item.label}>
 									<SidebarMenuButton
 										asChild
+										isActive={item.url === currentPath}
 										tooltip={item.label}
 									>
 										<Link to={item.url} viewTransition>

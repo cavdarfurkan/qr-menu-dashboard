@@ -30,7 +30,7 @@ export async function clientAction({
 					"X-Request-Cookie-Secure": "true",
 				},
 				skipRefreshingToken: true,
-			} as ExtendedAxiosRequestConfig
+			} as ExtendedAxiosRequestConfig,
 		);
 
 		return {

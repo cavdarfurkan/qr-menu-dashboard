@@ -12,10 +12,27 @@ export default [
 		layout("routes/home/layout.tsx", [
 			index("routes/home/index.tsx"),
 
+			// Menu routes
 			...prefix("menu", [
-				index("routes/home/menu.tsx"),
-				route("create", "routes/home/menu.create.tsx"),
-				route(":id", "routes/home/menu.detail.tsx"),
+				index("routes/home/menu/menu.tsx"),
+				route(":id", "routes/home/menu/menu.detail.tsx"),
+				route("create", "routes/home/menu/menu.create.tsx"),
+
+
+				// Content routes
+				...prefix(":menuId/content/:contentName", [
+					index("routes/home/menu/content/menu.content.tsx"),
+					route(
+						"edit/:itemId",
+						"routes/home/menu/content/menu.content.edit.tsx",
+					),
+				]),
+			]),
+
+			// Theme routes
+			...prefix("theme", [
+				index("routes/home/theme/themes.tsx"),
+				route("register", "routes/home/theme/theme.register.tsx"),
 			]),
 
 			route("settings", "routes/home/settings.tsx"),
