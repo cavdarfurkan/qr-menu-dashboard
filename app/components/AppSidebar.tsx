@@ -1,4 +1,5 @@
 import { Home, LogOut, NotepadText, Palette, Settings } from "lucide-react";
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import {
 	Sidebar,
@@ -18,7 +19,17 @@ export function AppSidebar() {
 	const location = useLocation();
 	const currentPath = location.pathname;
 
-	const { state, isMobile } = useSidebar();
+	const { state, isMobile, setOpen } = useSidebar();
+
+	const SIDEBAR_COOKIE_NAME = "sidebar_state";
+
+	useEffect(() => {
+		const cookieVal = getCookie(SIDEBAR_COOKIE_NAME);
+		if (cookieVal) {
+			const cookieState = cookieVal === "true" ? true : false;
+			setOpen(cookieState);
+		}
+	}, [])
 
 	interface SidebarItem {
 		label: string;
@@ -103,4 +114,16 @@ export function AppSidebar() {
 			<SidebarFooter />
 		</Sidebar>
 	);
+}
+
+
+function getCookie(name: string) {
+	let cookies = document.cookie.split(';');
+	for (let i = 0; i < cookies.length; i++) {
+		let cookie = cookies[i].trim();
+		if (cookie.startsWith(name + '=')) {
+			return cookie.substring(name.length + 1);
+		}
+	}
+	return null; // If cookie not found
 }
