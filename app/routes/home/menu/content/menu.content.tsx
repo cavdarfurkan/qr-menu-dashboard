@@ -192,7 +192,19 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 		return <div>{message}</div>;
 	}
 
-	const content: Array<any> = loaderData.data || [];
+	const content: Array<any> = useMemo(() => {
+		return (loaderData.data || []).map((item: any) => {
+			// Spread the data object into the item
+			const { data, resolved, ...rest } = item;
+
+			// Spread data first, then rest, then resolved at the end
+			return {
+				...data,
+				...rest,
+				...(resolved || {}),
+			};
+		});
+	}, [loaderData.data]);
 
 	const revalidator = useRevalidator();
 
@@ -206,14 +218,28 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 		if (!content || content.length === 0) return [];
 
 		const allKeys = new Set<string>();
-		// Get all unique keys from all content items
-		content.forEach((item) => {
-			if (item && typeof item === "object") {
-				Object.keys(item).forEach((key) => allKeys.add(key));
-			}
-		});
 
-		// Create columns for each key without any specific ordering
+		for (const item of content) {
+			if (!item || typeof item !== "object") continue;
+
+			// Handle resolved first
+			const resolved = (item as any).resolved;
+			if (resolved && typeof resolved === "object") {
+				for (const resolvedKey in resolved) {
+					if (Object.prototype.hasOwnProperty.call(resolved, resolvedKey)) {
+						allKeys.add(resolvedKey);
+					}
+				}
+			}
+
+			// Add top-level keys except "resolved"
+			for (const key in item) {
+				if (!Object.prototype.hasOwnProperty.call(item, key)) continue;
+				if (key === "resolved") continue;
+				allKeys.add(key);
+			}
+		}
+
 		const keys = [...allKeys];
 
 		// Create columns for each key
@@ -560,39 +586,24 @@ const renderCellValue = (
 		return <span className="text-muted-foreground">-</span>;
 	}
 
-	// Handle relation fields (objects with id and name properties)
+	// Handle relation fields
 	if (typeof value === "object" && value !== null) {
-		// Check if this is a relation field based on UI schema (highest priority)
-		// UI schema structure: ui_schemas[contentName][fieldName]
-		const fieldUiSchema = contentName
-			? ui_schemas?.[contentName]?.[columnKey]
-			: undefined;
-		if (fieldUiSchema?.["ui:options"]?.relationLabel) {
-			const relationLabel = fieldUiSchema["ui:options"].relationLabel;
-			const relationValue = fieldUiSchema["ui:options"].relationValue || "id";
-
-			return (
-				<div className="flex flex-col">
-					<span className="fontmedium">
-						{value[relationLabel] || value.name}
-					</span>
-					{/* <span className="text-xs text-muted-foreground">
-						ID: {value[relationValue]}
-					</span> */}
+		return (
+			<div>
+				<div>
+					<ul className="ml-2 list-disc">
+						{Object.values(value).map((item: any, idx: number) => (
+							<pre className="max-w-xs overflow-x-auto whitespace-pre text-xs rounded bg-muted px-2 py-1 text-foreground border">
+								{JSON.stringify(item, null, 2)}
+							</pre>
+						))}
+					</ul>
 				</div>
-			);
-		}
+			</div>
+		);
+	}
 
-		// Fallback: Check if this looks like a relation field (has id and name properties)
-		if (value.id && value.name) {
-			return (
-				<div className="flex flex-col">
-					<span className="font-medium">{value.name}</span>
-					<span className="text-xs text-muted-foreground">ID: {value.id}</span>
-				</div>
-			);
-		}
-
+	if (typeof value === "object" && value !== null) {
 		// For other objects, show a summary
 		const keys = Object.keys(value);
 		if (keys.length <= 3) {
