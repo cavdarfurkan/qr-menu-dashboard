@@ -28,8 +28,8 @@ export default function RelationSelect(props: FieldProps) {
 	const [relationOptions, setRelationOptions] = useState<Array<any>>([]);
 
 	const { relationValue, relationLabel } = uiSchema?.["ui:options"] || {
-		relationValue: "id",
 		relationLabel: "name",
+		relationValue: "id",
 	};
 
 	const promiseOptions = (
@@ -45,8 +45,8 @@ export default function RelationSelect(props: FieldProps) {
 				setRelationOptions(data);
 				const options = Array.isArray(data)
 					? data.map((item) => ({
+							label: item.data[relationLabel],
 							value: item[relationValue],
-							label: item[relationLabel],
 					  }))
 					: [];
 
@@ -102,8 +102,8 @@ export default function RelationSelect(props: FieldProps) {
 			value={
 				formData && typeof formData === "object" && formData[relationValue]
 					? {
-							value: formData[relationValue],
-							label: formData[relationLabel],
+							value: formData.data[relationValue],
+							label: formData.data[relationLabel],
 					  }
 					: null
 			}
