@@ -1,0 +1,13 @@
+{
+	"title": "Themes",
+	"new_theme": "+ New Theme",
+	"no_themes": "No themes found.",
+	"all_themes": "All Themes",
+	"register": {
+		"title": "Theme Register",
+		"theme_zip_file": "Theme ZIP File",
+		"preview_image": "Theme Preview Image (optional)",
+		"success": "Theme registered successfully"
+	}
+}
+

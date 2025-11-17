@@ -16,6 +16,7 @@ import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { PlusCircle, Trash, ChevronUp, ChevronDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 // Base Input Template
 export function BaseInputTemplate<
@@ -498,9 +499,10 @@ export function SubmitButtonTemplate<
 	S extends StrictRJSFSchema = RJSFSchema,
 	F extends FormContextType = any,
 >(props: { uiSchema?: any }) {
+	const { t } = useTranslation("common");
 	const { uiSchema } = props;
 	const uiOptions = getUiOptions(uiSchema);
-	const submitText = uiOptions.submitButtonOptions?.submitText || "Submit";
+	const submitText = uiOptions.submitButtonOptions?.submitText || t("common:buttons.submit");
 
 	return (
 		<Button type="submit" className="mt-4">

@@ -1,0 +1,18 @@
+{
+	"title": "Your Menus",
+	"new_menu": "+ New Menu",
+	"no_menus": "No menus found.",
+	"create_first_menu": "Create your first menu",
+	"menu_content": "Menu Content",
+	"edit_content": "Edit Content",
+	"edit_content_title": "Edit {{contentName}} Content",
+	"edit_content_description": "Update the content for {{contentName}} in {{menuName}}",
+	"change_theme": "Change Theme",
+	"build": "Build",
+	"no_schemas": "No schemas found",
+	"no_schemas_description": "This menu doesn't have any content schemas available.",
+	"content_title": "{{contentName}} Content",
+	"delete_selected": "Delete Selected ({{count}})",
+	"menu_deleted_success": "Successfully deleted menu"
+}
+

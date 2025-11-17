@@ -1,0 +1,58 @@
+{
+	"actions": {
+		"actions": "Actions",
+		"select_all": "Select all",
+		"select_row": "Select row",
+		"open_menu": "Open menu",
+		"view_content": "View Content",
+		"refresh_schemas": "Refresh Schemas"
+	},
+	"buttons": {
+		"create": "Create",
+		"cancel": "Cancel",
+		"submit": "Submit",
+		"save": "Save",
+		"delete": "Delete",
+		"edit": "Edit",
+		"back": "Back",
+		"next": "Next",
+		"previous": "Previous",
+		"go_back": "Go Back",
+		"loading": "Loading...",
+		"deleting": "Deleting...",
+		"saving": "Saving...",
+		"logging_in": "Logging in...",
+		"login": "Login",
+		"register": "Register",
+		"save_changes": "Save Changes",
+		"back_to_dashboard": "Back to dashboard"
+	},
+	"empty_states": {
+		"no_results": "No results.",
+		"empty": "Empty",
+		"unknown": "Unknown",
+		"not_found": "Not Found",
+		"no_content_found": "No content found"
+	},
+	"confirmations": {
+		"are_you_sure": "Are you sure?",
+		"cannot_be_undone": "This action cannot be undone.",
+		"delete_item": "This will permanently delete this item.",
+		"delete_items": "This will permanently delete {{count}} selected items.",
+		"delete_menu": "This will permanently delete the menu and all its content."
+	},
+	"labels": {
+		"menu_name": "Menu Name",
+		"select_theme": "Select a theme",
+		"theme_selected": "Theme Selected: {{id}}",
+		"is_free": "Free"
+	},
+	"messages": {
+		"or_continue_with": "Or continue with",
+		"content_schema_description": "Content schema for this menu item",
+		"properties_defined": "{{count}} properties defined",
+		"no_properties_defined": "No properties defined",
+		"items": "{{count}} items",
+		"properties": "{{count}} properties"
+	}
+}

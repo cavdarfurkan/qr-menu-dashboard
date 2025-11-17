@@ -1,0 +1,19 @@
+{
+	"error": "Error",
+	"404": "404",
+	"404_description": "The requested page could not be found.",
+	"unexpected_error": "An unexpected error occurred.",
+	"error_loading_user_data": "Error loading user data",
+	"error_getting_menus": "Error getting menus",
+	"error_getting_menu": "Error getting menu",
+	"error_updating_menu": "Error updating menu",
+	"failed_to_create_menu": "Failed to create menu",
+	"failed_to_load_menu_data": "Failed to load menu data",
+	"failed_to_load_content_data": "Failed to load content data",
+	"failed_to_delete_menu": "Failed to delete menu",
+	"upload_failed": "Upload failed",
+	"login_failed": "Login failed",
+	"requested_content_not_found": "The requested content could not be found.",
+	"error_getting_themes": "Error getting themes"
+}
+

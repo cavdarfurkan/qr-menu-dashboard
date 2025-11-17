@@ -1,0 +1,18 @@
+{
+	"title": "Menüleriniz",
+	"new_menu": "+ Yeni Menü",
+	"no_menus": "Menü bulunamadı.",
+	"create_first_menu": "İlk menünüzü oluşturun",
+	"menu_content": "Menü İçeriği",
+	"edit_content": "İçeriği Düzenle",
+	"edit_content_title": "{{contentName}} İçeriğini Düzenle",
+	"edit_content_description": "{{menuName}} menüsündeki {{contentName}} içeriğini güncelle",
+	"change_theme": "Temayı Değiştir",
+	"build": "Oluştur",
+	"no_schemas": "Şema bulunamadı",
+	"no_schemas_description": "Bu menüde kullanılabilir içerik şeması yok.",
+	"content_title": "{{contentName}} İçeriği",
+	"delete_selected": "Seçilenleri Sil ({{count}})",
+	"menu_deleted_success": "Menü başarıyla silindi"
+}
+

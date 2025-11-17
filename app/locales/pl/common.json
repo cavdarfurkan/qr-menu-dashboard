@@ -1,0 +1,59 @@
+{
+	"actions": {
+		"actions": "Akcje",
+		"select_all": "Zaznacz wszystkie",
+		"select_row": "Zaznacz wiersz",
+		"open_menu": "Otwórz menu",
+		"view_content": "Zobacz zawartość",
+		"refresh_schemas": "Odśwież schematy"
+	},
+	"buttons": {
+		"create": "Utwórz",
+		"cancel": "Anuluj",
+		"submit": "Wyślij",
+		"save": "Zapisz",
+		"delete": "Usuń",
+		"edit": "Edytuj",
+		"back": "Wstecz",
+		"next": "Dalej",
+		"previous": "Poprzedni",
+		"go_back": "Wróć",
+		"loading": "Ładowanie...",
+		"deleting": "Usuwanie...",
+		"saving": "Zapisywanie...",
+		"logging_in": "Logowanie...",
+		"login": "Zaloguj",
+		"register": "Zarejestruj",
+		"save_changes": "Zapisz zmiany",
+		"back_to_dashboard": "Wróć do panelu"
+	},
+	"empty_states": {
+		"no_results": "Brak wyników.",
+		"empty": "Puste",
+		"unknown": "Nieznane",
+		"not_found": "Nie znaleziono",
+		"no_content_found": "Nie znaleziono zawartości"
+	},
+	"confirmations": {
+		"are_you_sure": "Czy na pewno?",
+		"cannot_be_undone": "Tej akcji nie można cofnąć.",
+		"delete_item": "To trwale usunie ten element.",
+		"delete_items": "To trwale usunie {{count}} zaznaczonych elementów.",
+		"delete_menu": "To trwale usunie menu i całą jego zawartość."
+	},
+	"labels": {
+		"menu_name": "Nazwa menu",
+		"select_theme": "Wybierz motyw",
+		"theme_selected": "Wybrany motyw: {{id}}",
+		"is_free": "Darmowy"
+	},
+	"messages": {
+		"or_continue_with": "Lub kontynuuj z",
+		"content_schema_description": "Schemat zawartości dla tego elementu menu",
+		"properties_defined": "{{count}} zdefiniowanych właściwości",
+		"no_properties_defined": "Brak zdefiniowanych właściwości",
+		"items": "{{count}} elementów",
+		"properties": "{{count}} właściwości"
+	}
+}
+

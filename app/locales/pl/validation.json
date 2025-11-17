@@ -1,0 +1,14 @@
+{
+	"username_min": "Nazwa użytkownika musi mieć co najmniej 3 znaki",
+	"username_or_email_min": "Nazwa użytkownika lub email musi mieć co najmniej 3 znaki",
+	"username_or_email_invalid": "Musi być prawidłową nazwą użytkownika lub emailem",
+	"password_min": "Hasło musi mieć co najmniej 8 znaków",
+	"confirm_password_min": "Potwierdzenie hasła musi mieć co najmniej 8 znaków",
+	"passwords_dont_match": "Hasła nie pasują do siebie",
+	"name_required": "Nazwa jest wymagana",
+	"theme_required": "Motyw jest wymagany",
+	"invalid_email": "Nieprawidłowy adres email",
+	"file_upload_zip": "Proszę przesłać plik zip, mniejszy niż 5MB",
+	"file_upload_image": "Proszę przesłać plik obrazu, mniejszy niż 5MB"
+}
+

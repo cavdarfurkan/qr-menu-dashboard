@@ -20,6 +20,7 @@ import templates from "~/components/RJSFTemplates";
 import widgets from "~/components/rjsf/Widgets";
 import fields from "~/components/rjsf/Fields";
 import { useMenuStore } from "~/stores";
+import { useTranslation } from "react-i18next";
 
 type MenuType = {
 	menuId: number;
@@ -35,9 +36,9 @@ type SchemasType = {
 };
 
 export default function MenuContentEdit() {
+	const { t } = useTranslation(["content", "menu", "common", "error"]);
 	const { menuId, contentName, itemId } = useParams();
 	const navigate = useNavigate();
-	const revalidator = useRevalidator();
 
 	const setMenuId = useMenuStore((state) => state.setMenuId);
 	const setContentName = useMenuStore((state) => state.setContentName);
@@ -134,11 +135,11 @@ export default function MenuContentEdit() {
 				`/v1/menu/${menuId}/content/${contentName}/${itemId}`,
 				{ new_content: data.formData },
 			);
-			toast.success("Content updated successfully");
+			toast.success(t("content:content_updated"));
 			navigate(`/menu/${menuId}/content/${contentName}`);
 		} catch (error) {
 			console.error("Error updating content:", error);
-			let errorMessage = "Failed to update content";
+			let errorMessage = t("content:failed_to_update");
 			if (isAxiosError(error) && error.response?.data?.message) {
 				errorMessage = error.response.data.message;
 			}
@@ -155,15 +156,15 @@ export default function MenuContentEdit() {
 	if (isLoading) {
 		return (
 			<div className="flex flex-col gap-6">
-				<Title title="Edit Content">
+				<Title title={t("menu:edit_content")}>
 					<Button variant="outline" size="sm" onClick={handleBack}>
 						<ArrowLeft className="h-4 w-4 mr-2" />
-						Back
+						{t("common:buttons.back")}
 					</Button>
 				</Title>
 				<div className="flex items-center justify-center p-8">
 					<Loader2 className="h-8 w-8 animate-spin" />
-					<span className="ml-2">Loading content...</span>
+					<span className="ml-2">{t("content:loading_content")}</span>
 				</div>
 			</div>
 		);
@@ -172,20 +173,20 @@ export default function MenuContentEdit() {
 	if (error) {
 		return (
 			<div className="flex flex-col gap-6">
-				<Title title="Edit Content">
+				<Title title={t("menu:edit_content")}>
 					<Button variant="outline" size="sm" onClick={handleBack}>
 						<ArrowLeft className="h-4 w-4 mr-2" />
-						Back
+						{t("common:buttons.back")}
 					</Button>
 				</Title>
 				<Card>
 					<CardHeader>
-						<CardTitle className="text-destructive">Error</CardTitle>
+						<CardTitle className="text-destructive">{t("error:error")}</CardTitle>
 						<CardDescription>{error}</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<Button onClick={handleBack} variant="outline">
-							Go Back
+							{t("common:buttons.go_back")}
 						</Button>
 					</CardContent>
 				</Card>
@@ -196,22 +197,22 @@ export default function MenuContentEdit() {
 	if (!menu || !schemas || !contentItem) {
 		return (
 			<div className="flex flex-col gap-6">
-				<Title title="Edit Content">
+				<Title title={t("menu:edit_content")}>
 					<Button variant="outline" size="sm" onClick={handleBack}>
 						<ArrowLeft className="h-4 w-4 mr-2" />
-						Back
+						{t("common:buttons.back")}
 					</Button>
 				</Title>
 				<Card>
 					<CardHeader>
-						<CardTitle>Not Found</CardTitle>
+						<CardTitle>{t("common:empty_states.not_found")}</CardTitle>
 						<CardDescription>
-							The requested content could not be found.
+							{t("error:requested_content_not_found")}
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<Button onClick={handleBack} variant="outline">
-							Go Back
+							{t("common:buttons.go_back")}
 						</Button>
 					</CardContent>
 				</Card>
@@ -221,11 +222,11 @@ export default function MenuContentEdit() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<Title title={`Edit ${contentName} Content`}>
+			<Title title={t("menu:edit_content_title", { contentName })}>
 				<div className="flex items-center gap-2">
 					<Button variant="outline" size="sm" onClick={handleBack}>
 						<ArrowLeft className="h-4 w-4 mr-2" />
-						Back
+						{t("common:buttons.back")}
 					</Button>
 					<Button
 						type="submit"
@@ -235,12 +236,12 @@ export default function MenuContentEdit() {
 						{isSaving ? (
 							<>
 								<Loader2 className="h-4 w-4 mr-2 animate-spin" />
-								Saving...
+								{t("common:buttons.saving")}
 							</>
 						) : (
 							<>
 								<Save className="h-4 w-4 mr-2" />
-								Save Changes
+								{t("common:buttons.save_changes")}
 							</>
 						)}
 					</Button>
@@ -249,9 +250,9 @@ export default function MenuContentEdit() {
 
 			<Card>
 				<CardHeader>
-					<CardTitle>Edit Content</CardTitle>
+					<CardTitle>{t("menu:edit_content")}</CardTitle>
 					<CardDescription>
-						Update the content for {contentName} in {menu.menuName}
+						{t("menu:edit_content_description", { contentName, menuName: menu.menuName })}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>

@@ -1,0 +1,13 @@
+{
+	"title": "Temalar",
+	"new_theme": "+ Yeni Tema",
+	"no_themes": "Tema bulunamadı.",
+	"all_themes": "Tüm Temalar",
+	"register": {
+		"title": "Tema Kaydı",
+		"theme_zip_file": "Tema ZIP Dosyası",
+		"preview_image": "Tema Önizleme Resmi (isteğe bağlı)",
+		"success": "Tema başarıyla kaydedildi"
+	}
+}
+

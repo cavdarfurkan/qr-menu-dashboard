@@ -1,0 +1,19 @@
+{
+	"error": "Błąd",
+	"404": "404",
+	"404_description": "Nie można znaleźć żądanej strony.",
+	"unexpected_error": "Wystąpił nieoczekiwany błąd.",
+	"error_loading_user_data": "Błąd ładowania danych użytkownika",
+	"error_getting_menus": "Błąd pobierania menu",
+	"error_getting_menu": "Błąd pobierania menu",
+	"error_updating_menu": "Błąd aktualizacji menu",
+	"failed_to_create_menu": "Nie udało się utworzyć menu",
+	"failed_to_load_menu_data": "Nie udało się załadować danych menu",
+	"failed_to_load_content_data": "Nie udało się załadować danych zawartości",
+	"failed_to_delete_menu": "Nie udało się usunąć menu",
+	"upload_failed": "Przesyłanie nie powiodło się",
+	"login_failed": "Logowanie nie powiodło się",
+	"requested_content_not_found": "Nie można znaleźć żądanej zawartości.",
+	"error_getting_themes": "Błąd pobierania motywów"
+}
+

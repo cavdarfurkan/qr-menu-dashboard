@@ -1,0 +1,18 @@
+{
+	"new_content_dialog": {
+		"title": "Yeni İçerik",
+		"success": "İçerik başarıyla oluşturuldu",
+		"add_new_content": "Yeni İçerik Ekle"
+	},
+	"add_new_content": "Yeni İçerik Ekle",
+	"create_new_content": "Yeni bir içerik oluşturun",
+	"no_content_description": "Bu menüde kullanılabilir içerik yok.",
+	"loading_content": "İçerik yükleniyor...",
+	"content_updated": "İçerik başarıyla güncellendi",
+	"item_deleted": "Öğe başarıyla silindi",
+	"items_deleted": "{{count}} öğe başarıyla silindi",
+	"failed_to_delete": "Öğe(ler) silinemedi",
+	"failed_to_update": "İçerik güncellenemedi",
+	"failed_to_load": "İçerik öğesi yüklenemedi"
+}
+

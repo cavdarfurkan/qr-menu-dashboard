@@ -1,0 +1,18 @@
+{
+	"new_content_dialog": {
+		"title": "New Content",
+		"success": "Content created successfully",
+		"add_new_content": "Add New Content"
+	},
+	"add_new_content": "Add New Content",
+	"create_new_content": "Create a new content",
+	"no_content_description": "This menu doesn't have any content available.",
+	"loading_content": "Loading content...",
+	"content_updated": "Content updated successfully",
+	"item_deleted": "Item deleted successfully",
+	"items_deleted": "Successfully deleted {{count}} items",
+	"failed_to_delete": "Failed to delete item(s)",
+	"failed_to_update": "Failed to update content",
+	"failed_to_load": "Failed to load content item"
+}
+

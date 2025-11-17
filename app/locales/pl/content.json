@@ -1,0 +1,18 @@
+{
+	"new_content_dialog": {
+		"title": "Nowa zawartość",
+		"success": "Zawartość została pomyślnie utworzona",
+		"add_new_content": "Dodaj nową zawartość"
+	},
+	"add_new_content": "Dodaj nową zawartość",
+	"create_new_content": "Utwórz nową zawartość",
+	"no_content_description": "To menu nie ma dostępnej zawartości.",
+	"loading_content": "Ładowanie zawartości...",
+	"content_updated": "Zawartość została pomyślnie zaktualizowana",
+	"item_deleted": "Element został pomyślnie usunięty",
+	"items_deleted": "Pomyślnie usunięto {{count}} elementów",
+	"failed_to_delete": "Nie udało się usunąć elementu(ów)",
+	"failed_to_update": "Nie udało się zaktualizować zawartości",
+	"failed_to_load": "Nie udało się załadować elementu zawartości"
+}
+

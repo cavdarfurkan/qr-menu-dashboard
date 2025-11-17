@@ -25,32 +25,34 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginActionResult } from "./index";
 import { fetchCsrfToken } from "~/lib/csrf";
+import { useTranslation } from "react-i18next";
 
-export const formSchema = z.object({
+export const formSchema = (t: (key: string) => string) => z.object({
 	username: z
 		.string()
-		.min(3, { message: "Username or email must be at least 3 characters" })
+		.min(3, { message: t("validation:username_or_email_min") })
 		.refine(
 			(val) =>
 				/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || /^[a-zA-Z0-9_.-]+$/.test(val),
 			{
-				message: "Must be a valid username or email",
+				message: t("validation:username_or_email_invalid"),
 			},
 		),
 	password: z
 		.string()
-		.min(8, { message: "Password must be at least 8 characters" }),
+		.min(8, { message: t("validation:password_min") }),
 });
 
 export default function LoginForm() {
+	const { t } = useTranslation(["auth", "validation", "common"]);
 	const [error, setError] = useState<string | null>(null);
 	const { setAccessToken } = useAuth();
 	const navigate = useNavigate();
 	const fetcher = useFetcher();
 	const isLoading = fetcher.state !== "idle";
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<z.infer<ReturnType<typeof formSchema>>>({
+		resolver: zodResolver(formSchema(t)),
 		defaultValues: {
 			username: "",
 			password: "",
@@ -69,7 +71,7 @@ export default function LoginForm() {
 		}
 	}, [fetcher.data, navigate, setAccessToken]);
 
-	const handleLogin = async (data: LoginActionResult) => {
+		const handleLogin = async (data: LoginActionResult) => {
 		setError(null);
 		setAccessToken(data.accessToken || "");
 
@@ -77,11 +79,11 @@ export default function LoginForm() {
 			await fetchCsrfToken();
 			navigate("/");
 		} catch (error) {
-			setError(data.message || "Login failed");
+			setError(data.message || t("error:login_failed"));
 		}
 	};
 
-	const onSubmit = (data: z.infer<typeof formSchema>) => {
+	const onSubmit = (data: z.infer<ReturnType<typeof formSchema>>) => {
 		setError(null);
 		fetcher.submit(data, { method: "post" });
 	};
@@ -97,9 +99,9 @@ export default function LoginForm() {
 			>
 				<div className="flex flex-col gap-6">
 					<div className="flex flex-col items-center gap-2 text-center">
-						<h1 className="text-2xl font-bold">Login to your account</h1>
+						<h1 className="text-2xl font-bold">{t("auth:login.title")}</h1>
 						<FormDescription className="text-muted-foreground text-sm text-balance">
-							Enter your email below to login to your account
+							{t("auth:login.description")}
 						</FormDescription>
 					</div>
 					{error && (
@@ -119,12 +121,12 @@ export default function LoginForm() {
 							render={({ field }) => (
 								<FormItem>
 									<div className="grid gap-3">
-										<FormLabel htmlFor="username">Username or Email</FormLabel>
+										<FormLabel htmlFor="username">{t("auth:login.username_or_email")}</FormLabel>
 										<FormControl>
 											<Input
 												id="username"
 												type="text"
-												placeholder="Enter your username or email"
+												placeholder={t("auth:login.username_or_email_placeholder")}
 												required
 												disabled={isLoading}
 												{...field}
@@ -143,20 +145,20 @@ export default function LoginForm() {
 								<FormItem>
 									<div className="grid gap-3">
 										<div className="flex items-center">
-											<FormLabel htmlFor="password">Password</FormLabel>
+											<FormLabel htmlFor="password">{t("auth:login.password")}</FormLabel>
 											<Link
 												to="/forgot-password"
 												className="ml-auto text-sm underline-offset-4 hover:underline"
 												viewTransition
 											>
-												Forgot your password?
+												{t("auth:login.forgot_password")}
 											</Link>
 										</div>
 										<FormControl>
 											<Input
 												id="password"
 												type="password"
-												placeholder="Enter your password"
+												placeholder={t("auth:login.password_placeholder")}
 												required
 												disabled={isLoading}
 												{...field}
@@ -168,11 +170,11 @@ export default function LoginForm() {
 							)}
 						/>
 						<Button type="submit" className="w-full" disabled={isLoading}>
-							{isLoading ? "Logging in..." : "Login"}
+							{isLoading ? t("common:buttons.logging_in") : t("common:buttons.login")}
 						</Button>
 						<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
 							<span className="bg-background text-muted-foreground relative z-10 px-2">
-								Or continue with
+								{t("common:messages.or_continue_with")}
 							</span>
 						</div>
 						<Button variant="outline" className="w-full" disabled={isLoading}>
@@ -182,17 +184,17 @@ export default function LoginForm() {
 									fill="currentColor"
 								/>
 							</svg>
-							Login with GitHub
+							{t("auth:login.login_with_github")}
 						</Button>
 					</div>
 					<div className="text-center text-sm">
-						Don&apos;t have an account?{" "}
+						{t("auth:login.no_account")}{" "}
 						<Link
 							to="/register"
 							className="underline underline-offset-4"
 							viewTransition
 						>
-							Sign up
+							{t("auth:login.sign_up")}
 						</Link>
 					</div>
 				</div>

@@ -14,8 +14,10 @@ import {
 	SidebarTrigger,
 	useSidebar,
 } from "~/components/ui/sidebar";
+import { useTranslation } from "react-i18next";
 
 export function AppSidebar() {
+	const { t } = useTranslation("sidebar");
 	const location = useLocation();
 	const currentPath = location.pathname;
 
@@ -39,27 +41,27 @@ export function AppSidebar() {
 
 	const sidebarItems: SidebarItem[] = [
 		{
-			label: "Home",
+			label: t("home"),
 			icon: Home,
 			url: "/",
 		},
 		{
-			label: "Menu",
+			label: t("menu"),
 			icon: NotepadText,
 			url: "/menu",
 		},
 		{
-			label: "Themes",
+			label: t("themes"),
 			icon: Palette,
 			url: "/theme"
 		},
 		{
-			label: "Settings",
+			label: t("settings"),
 			icon: Settings,
 			url: "/settings",
 		},
 		{
-			label: "Logout",
+			label: t("logout"),
 			icon: LogOut,
 			url: "/logout",
 		},
@@ -82,7 +84,7 @@ export function AppSidebar() {
 								className="flex items-center gap-2"
 								viewTransition
 							>
-								<h1 className="text-2xl font-bold">QR Menu</h1>
+								<h1 className="text-2xl font-bold">{t("app_name")}</h1>
 							</Link>
 						</div>
 					)}

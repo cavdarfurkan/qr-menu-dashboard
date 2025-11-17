@@ -1,0 +1,14 @@
+{
+	"username_min": "Kullanıcı adı en az 3 karakter olmalıdır",
+	"username_or_email_min": "Kullanıcı adı veya e-posta en az 3 karakter olmalıdır",
+	"username_or_email_invalid": "Geçerli bir kullanıcı adı veya e-posta olmalıdır",
+	"password_min": "Şifre en az 8 karakter olmalıdır",
+	"confirm_password_min": "Şifre Onayı en az 8 karakter olmalıdır",
+	"passwords_dont_match": "Şifreler eşleşmiyor",
+	"name_required": "Ad gereklidir",
+	"theme_required": "Tema gereklidir",
+	"invalid_email": "Geçersiz e-posta adresi",
+	"file_upload_zip": "Lütfen bir zip dosyası yükleyin ve 5MB'dan küçük olsun",
+	"file_upload_image": "Lütfen bir resim dosyası yükleyin ve 5MB'dan küçük olsun"
+}
+

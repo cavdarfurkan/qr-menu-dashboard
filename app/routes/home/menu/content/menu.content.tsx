@@ -46,6 +46,7 @@ import NewContentDialog from "~/components/NewContentDialog";
 
 import type { RJSFSchema, UiSchema } from "@rjsf/utils";
 import { useMenuStore } from "~/stores";
+import { useTranslation } from "react-i18next";
 
 type MenuType = {
 	menuId: number;
@@ -176,6 +177,7 @@ export async function clientLoader({
 }
 
 export default function MenuContent({ loaderData }: Route.ComponentProps) {
+	const { t } = useTranslation(["content", "menu", "common", "error"]);
 	const { contentName, menuId } = useParams();
 	const { success, message, data, theme_schemas, schemas_count, ui_schemas } =
 		loaderData;
@@ -248,7 +250,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 			header: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " "),
 			cell: ({ getValue }: { getValue: () => any }) => {
 				const value = getValue();
-				return renderCellValue(value, key, ui_schemas, contentName);
+				return renderCellValue(value, key, ui_schemas, contentName, t);
 			},
 		}));
 
@@ -267,7 +269,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 								onCheckedChange={(value) =>
 									table.toggleAllPageRowsSelected(!!value)
 								}
-								aria-label="Select all"
+								aria-label={t("common:actions.select_all")}
 							/>
 						</div>
 					);
@@ -277,7 +279,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 						<Checkbox
 							checked={row.getIsSelected()}
 							onCheckedChange={(value) => row.toggleSelected(!!value)}
-							aria-label="Select row"
+							aria-label={t("common:actions.select_row")}
 						/>
 					</div>
 				),
@@ -287,13 +289,13 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 			...dataColumns,
 			{
 				id: "actions",
-				header: "Actions",
+				header: t("common:actions.actions"),
 				cell: ({ row }) => {
 					return <DropdownMenuAction row={row} onDelete={handleSingleDelete} />;
 				},
 			},
 		] as ColumnDef<any>[];
-	}, [content]);
+	}, [content, t]);
 
 	const table = useReactTable({
 		data: content || [],
@@ -335,20 +337,20 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 					data: { ids: selectedIds },
 				});
 
-				toast.success(`Successfully deleted ${selectedIds.length} items`);
+				toast.success(t("content:items_deleted", { count: selectedIds.length }));
 				setRowSelection({});
 			} else if (itemToDelete) {
 				// Call API to delete single item
 				await api.delete(
 					`/v1/menu/${menuId}/content/${contentName}/${itemToDelete.id}`,
 				);
-				toast.success("Item deleted successfully");
+				toast.success(t("content:item_deleted"));
 			}
 
 			// Refresh data (you might want to implement a better refresh strategy)
 			revalidator.revalidate();
 		} catch (error) {
-			let errorMessage = "Failed to delete item(s)";
+			let errorMessage = t("content:failed_to_delete");
 			if (isAxiosError(error) && error.response?.data?.message) {
 				errorMessage = error.response.data.message;
 			}
@@ -363,14 +365,14 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 	if (!content || content.length === 0) {
 		return (
 			<div className="flex flex-col gap-6">
-				<Title title={`${contentName} Content`}>
+				<Title title={t("menu:content_title", { contentName: contentName || "" })}>
 					<NewContentDialog
 						schema={theme_schemas}
 						uiSchema={ui_schemas}
 						contentName={contentName || ""}>
 						<Button>
 							<PlusCircle className="h-4 w-4 mr-2" />
-							Add New Content
+							{t("content:add_new_content")}
 						</Button>
 					</NewContentDialog>
 				</Title>
@@ -378,8 +380,8 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 				<div className="flex flex-col gap-4 items-center justify-center p-8 text-center">
 					<div className="text-muted-foreground">
 						<FileX className="h-16 w-16 mx-auto mb-2" />
-						<h3 className="text-lg font-medium">No content found</h3>
-						<p>This menu doesn&apos;t have any content available.</p>
+						<h3 className="text-lg font-medium">{t("common:empty_states.no_content_found")}</h3>
+						<p>{t("content:no_content_description")}</p>
 
 						<NewContentDialog
 							schema={theme_schemas}
@@ -388,7 +390,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 							<Button
 								variant="link"
 								className="text-primary underline text-md font-normal">
-								Create a new content
+								{t("content:create_new_content")}
 							</Button>
 						</NewContentDialog>
 					</div>
@@ -403,7 +405,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 	// TODO: Add a sort to the table
 	return (
 		<div className="flex flex-col gap-6">
-			<Title title={`${contentName} Content`}>
+			<Title title={t("menu:content_title", { contentName: contentName || "" })}>
 				<div className="flex items-center gap-2">
 					{Object.keys(rowSelection).length > 0 && (
 						<Button
@@ -412,7 +414,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 							onClick={handleBulkDelete}
 							disabled={isDeleting}>
 							<Trash className="h-4 w-4 mr-2" />
-							Delete Selected ({Object.keys(rowSelection).length})
+							{t("menu:delete_selected", { count: Object.keys(rowSelection).length })}
 						</Button>
 					)}
 
@@ -422,7 +424,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 						contentName={contentName || ""}>
 						<Button>
 							<PlusCircle className="h-4 w-4 mr-2" />
-							Add New Content
+							{t("content:add_new_content")}
 						</Button>
 					</NewContentDialog>
 				</div>
@@ -469,7 +471,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 									<TableCell
 										colSpan={columns.length}
 										className="h-24 text-center">
-										No results.
+										{t("common:empty_states.no_results")}
 									</TableCell>
 								</TableRow>
 							)}
@@ -491,14 +493,14 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 						size="sm"
 						onClick={() => table.previousPage()}
 						disabled={!table.getCanPreviousPage()}>
-						Previous
+						{t("common:buttons.previous")}
 					</Button>
 					<Button
 						variant="outline"
 						size="sm"
 						onClick={() => table.nextPage()}
 						disabled={!table.getCanNextPage()}>
-						Next
+						{t("common:buttons.next")}
 					</Button>
 					{/* </div> */}
 				</div>
@@ -508,23 +510,21 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 			<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+						<AlertDialogTitle>{t("common:confirmations.are_you_sure")}</AlertDialogTitle>
 						<AlertDialogDescription>
 							{isBulkDelete
-								? `This will permanently delete ${
-										Object.keys(rowSelection).length
-								  } selected items.`
-								: "This will permanently delete this item."}
-							This action cannot be undone.
+								? t("common:confirmations.delete_items", { count: Object.keys(rowSelection).length })
+								: t("common:confirmations.delete_item")}
+							{" "}{t("common:confirmations.cannot_be_undone")}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+						<AlertDialogCancel disabled={isDeleting}>{t("common:buttons.cancel")}</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={confirmDelete}
 							disabled={isDeleting}
 							className="bg-destructive hover:bg-destructive/90">
-							{isDeleting ? "Deleting..." : "Delete"}
+							{isDeleting ? t("common:buttons.deleting") : t("common:buttons.delete")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -540,6 +540,7 @@ function DropdownMenuAction({
 	row: Row<any>;
 	onDelete: (item: any) => void;
 }) {
+	const { t } = useTranslation(["common"]);
 	const content = row.original;
 	const { contentName, menuId } = useParams();
 
@@ -547,7 +548,7 @@ function DropdownMenuAction({
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-					<span className="sr-only">Open menu</span>
+					<span className="sr-only">{t("common:actions.open_menu")}</span>
 					<MoreHorizontal className="h-4 w-4" />
 				</Button>
 			</DropdownMenuTrigger>
@@ -557,7 +558,7 @@ function DropdownMenuAction({
 					<Link
 						to={`/menu/${menuId}/content/${contentName}/edit/${content.id}`}>
 						<Pencil className="h-4 w-4 mr-2" />
-						Edit
+						{t("common:buttons.edit")}
 					</Link>
 				</DropdownMenuItem>
 
@@ -567,7 +568,7 @@ function DropdownMenuAction({
 					variant="destructive"
 					onClick={() => onDelete(content)}>
 					<Trash className="h-4 w-4" />
-					Delete
+					{t("common:buttons.delete")}
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
@@ -580,6 +581,7 @@ const renderCellValue = (
 	columnKey: string,
 	ui_schemas?: UiSchema,
 	contentName?: string,
+	t?: (key: string, options?: any) => string,
 ) => {
 	// Handle null/undefined values
 	if (value === null || value === undefined) {
@@ -621,7 +623,7 @@ const renderCellValue = (
 		} else {
 			// For larger objects, show a summary
 			return (
-				<span className="text-muted-foreground">{keys.length} properties</span>
+				<span className="text-muted-foreground">{t ? t("common:messages.properties", { count: keys.length }) : `${keys.length} properties`}</span>
 			);
 		}
 	}
@@ -629,7 +631,7 @@ const renderCellValue = (
 	// Handle arrays
 	if (Array.isArray(value)) {
 		if (value.length === 0) {
-			return <span className="text-muted-foreground">Empty</span>;
+			return <span className="text-muted-foreground">{t ? t("common:empty_states.empty") : "Empty"}</span>;
 		}
 		if (value.length <= 3) {
 			return (
@@ -645,7 +647,7 @@ const renderCellValue = (
 			);
 		} else {
 			return (
-				<span className="text-muted-foreground">{value.length} items</span>
+				<span className="text-muted-foreground">{t ? t("common:messages.items", { count: value.length }) : `${value.length} items`}</span>
 			);
 		}
 	}

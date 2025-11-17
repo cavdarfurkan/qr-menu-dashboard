@@ -1,0 +1,14 @@
+{
+	"username_min": "Username must be at least 3 characters",
+	"username_or_email_min": "Username or email must be at least 3 characters",
+	"username_or_email_invalid": "Must be a valid username or email",
+	"password_min": "Password must be at least 8 characters",
+	"confirm_password_min": "Confirm Password must be at least 8 characters",
+	"passwords_dont_match": "Passwords don't match",
+	"name_required": "Name is required",
+	"theme_required": "Theme is required",
+	"invalid_email": "Invalid email address",
+	"file_upload_zip": "Please upload a zip file, and less than 5MB",
+	"file_upload_image": "Please upload an image file, and less than 5MB"
+}
+

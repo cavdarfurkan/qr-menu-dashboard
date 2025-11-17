@@ -19,6 +19,8 @@ import { useMenuStore } from "~/stores";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 
+import { useTranslation } from "react-i18next";
+
 interface NewContentDialogProps {
 	children: React.ReactNode;
 	schema: RJSFSchema;
@@ -36,6 +38,8 @@ export default function NewContentDialog({
 	const navigate = useNavigate();
 	const menuId = useMenuStore((state) => state.menuId);
 
+	const { t } = useTranslation("content");
+
 	useEffect(() => {
 		console.log(formData);
 	}, [formData]);
@@ -49,21 +53,22 @@ export default function NewContentDialog({
 		setFormData(data.formData);
 	};
 
+	// TODO: Add relations to body
 	const onSubmit = (data: any, e: React.FormEvent<HTMLFormElement>) => {
 		const formData = data.formData;
 		console.log(contentName);
 		console.log(formData);
 
-		const body: { collection: string; content: Array<any> } = {
+		const body: { collection: string; content: any } = {
 			collection: contentName,
-			content: [formData],
+			content: formData,
 		};
 
 		api
 			.post<ApiResponse>(`/v1/menu/${menuId}/content`, body)
 			.then((response) => {
 				console.log(response);
-				toast.success("Content created successfully");
+				toast.success(t("content:new_content_dialog.success"));
 				navigate(`/menu/${menuId}/content/${contentName}`);
 			})
 			.catch((error) => {
@@ -76,7 +81,7 @@ export default function NewContentDialog({
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
-					<DialogTitle>New Content</DialogTitle>
+					<DialogTitle>{t("content:new_content_dialog.title")}</DialogTitle>
 				</DialogHeader>
 
 				<RJSFForm

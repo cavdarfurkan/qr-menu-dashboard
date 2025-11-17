@@ -1,0 +1,18 @@
+{
+	"title": "Twoje menu",
+	"new_menu": "+ Nowe menu",
+	"no_menus": "Nie znaleziono menu.",
+	"create_first_menu": "Utwórz swoje pierwsze menu",
+	"menu_content": "Zawartość menu",
+	"edit_content": "Edytuj zawartość",
+	"edit_content_title": "Edytuj zawartość {{contentName}}",
+	"edit_content_description": "Zaktualizuj zawartość dla {{contentName}} w {{menuName}}",
+	"change_theme": "Zmień motyw",
+	"build": "Buduj",
+	"no_schemas": "Nie znaleziono schematów",
+	"no_schemas_description": "To menu nie ma dostępnych schematów zawartości.",
+	"content_title": "Zawartość {{contentName}}",
+	"delete_selected": "Usuń zaznaczone ({{count}})",
+	"menu_deleted_success": "Menu zostało pomyślnie usunięte"
+}
+

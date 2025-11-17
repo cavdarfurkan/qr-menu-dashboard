@@ -19,6 +19,7 @@ import {
 import api from "~/lib/api";
 import InfiniteScroll from "react-infinite-scroll-component";
 import type { ThemeType } from "~/routes/home/theme/themes";
+import { useTranslation } from "react-i18next";
 
 interface SelectThemeDialogProps {
 	content: SelectThemeDialogContentProps;
@@ -57,6 +58,7 @@ const SelectThemeDialogContent: React.FC<SelectThemeDialogContentProps> = ({
 	fetchUrl,
 	onClick,
 }) => {
+	const { t } = useTranslation(["theme", "common"]);
 	const [themes, setThemes] = useState<ThemeType[]>([]);
 	const [page, setPage] = useState(0);
 	const [hasMore, setHasMore] = useState(true);
@@ -111,7 +113,7 @@ const SelectThemeDialogContent: React.FC<SelectThemeDialogContentProps> = ({
 		<DialogContent className="w[400px] w[80vw]  min-w-[50vw] max-h-[80vh] p0 overflow-hidden flex flex-col overflow-y-auto">
 			<DialogHeader>
 				{/* TODO: Change title with prop */}
-				<DialogTitle>All Themes</DialogTitle>
+				<DialogTitle>{t("theme:all_themes")}</DialogTitle>
 			</DialogHeader>
 			<div
 				id="scrollable-dialog-content"
@@ -122,7 +124,7 @@ const SelectThemeDialogContent: React.FC<SelectThemeDialogContentProps> = ({
 					className="grid grid-cols-3 gap-4"
 					next={fetchItems}
 					hasMore={hasMore}
-					loader={<h4>Loading...</h4>}
+					loader={<h4>{t("common:buttons.loading")}</h4>}
 					dataLength={themes.length}
 					scrollableTarget="scrollable-dialog-content"
 				>
@@ -160,6 +162,7 @@ export function ThemeCard({
 	isFree,
 	onClick,
 }: ThemeCardProps) {
+	const { t } = useTranslation("common");
 	return (
 		<Card
 			key={id}
@@ -177,7 +180,7 @@ export function ThemeCard({
 				<p className="text-xs text-gray-400">By {themeAuthor}</p>
 				{isFree && (
 					<span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-						Free
+						{t("common:labels.is_free")}
 					</span>
 				)}
 			</CardHeader>

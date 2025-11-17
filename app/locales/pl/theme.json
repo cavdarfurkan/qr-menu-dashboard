@@ -1,0 +1,13 @@
+{
+	"title": "Motywy",
+	"new_theme": "+ Nowy motyw",
+	"no_themes": "Nie znaleziono motywów.",
+	"all_themes": "Wszystkie motywy",
+	"register": {
+		"title": "Rejestracja motywu",
+		"theme_zip_file": "Plik ZIP motywu",
+		"preview_image": "Obraz podglądu motywu (opcjonalnie)",
+		"success": "Motyw został pomyślnie zarejestrowany"
+	}
+}
+

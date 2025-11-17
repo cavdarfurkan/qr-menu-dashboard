@@ -1,0 +1,19 @@
+{
+	"error": "Hata",
+	"404": "404",
+	"404_description": "İstenen sayfa bulunamadı.",
+	"unexpected_error": "Beklenmeyen bir hata oluştu.",
+	"error_loading_user_data": "Kullanıcı verileri yüklenirken hata oluştu",
+	"error_getting_menus": "Menüler alınırken hata oluştu",
+	"error_getting_menu": "Menü alınırken hata oluştu",
+	"error_updating_menu": "Menü güncellenirken hata oluştu",
+	"failed_to_create_menu": "Menü oluşturulamadı",
+	"failed_to_load_menu_data": "Menü verileri yüklenemedi",
+	"failed_to_load_content_data": "İçerik verileri yüklenemedi",
+	"failed_to_delete_menu": "Menü silinemedi",
+	"upload_failed": "Yükleme başarısız",
+	"login_failed": "Giriş başarısız",
+	"requested_content_not_found": "İstenen içerik bulunamadı.",
+	"error_getting_themes": "Temalar alınırken hata oluştu"
+}
+

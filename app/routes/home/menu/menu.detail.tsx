@@ -56,6 +56,8 @@ import {
 	CardTitle,
 } from "~/components/ui/card";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import i18n from "~/i18n";
 
 type MenuType = {
 	menuId: number;
@@ -96,7 +98,7 @@ export async function clientLoader({
 
 			return {
 				success: errorResponse?.data?.success ?? false,
-				message: errorResponse?.data?.message ?? "Error getting menu",
+				message: errorResponse?.data?.message ?? i18n.t("error:error_getting_menu"),
 				data: null,
 				timestamp: errorResponse?.data.timestamp,
 				schemas_count: 0,
@@ -106,7 +108,7 @@ export async function clientLoader({
 
 		return {
 			success: false,
-			message: "An unexpected error occured",
+			message: i18n.t("error:unexpected_error"),
 			data: null,
 			timestamp: Date.now().toString(),
 			schemas_count: 0,
@@ -134,7 +136,7 @@ export async function clientAction({
 
 			return {
 				success: errorResponse?.data?.success ?? false,
-				message: errorResponse?.data?.message ?? "Error updating menu",
+				message: errorResponse?.data?.message ?? i18n.t("error:error_updating_menu"),
 				data: null,
 				timestamp: errorResponse?.data.timestamp,
 			};
@@ -142,7 +144,7 @@ export async function clientAction({
 
 		return {
 			success: false,
-			message: "An unexpected error occured",
+			message: i18n.t("error:unexpected_error"),
 			data: null,
 			timestamp: Date.now().toString(),
 		};
@@ -153,6 +155,7 @@ export async function clientAction({
 // TODO: Add content
 // TODO: Build theme
 export default function MenuDetail({ loaderData }: Route.ComponentProps) {
+	const { t } = useTranslation(["menu", "common", "error"]);
 	const response = loaderData as MenuDetailResponse;
 	if (!response.success) {
 		return <p> {response.message} </p>;
@@ -181,10 +184,10 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 		setIsDeleting(true);
 		try {
 			await api.delete(`/v1/menu/delete/${menu.menuId}`);
-			toast.success(`Successfully deleted menu`);
+			toast.success(t("menu:menu_deleted_success"));
 			navigate("/menu", { replace: true, viewTransition: true });
 		} catch (error) {
-			let errorMessage = "Failed to delete menu";
+			let errorMessage = t("error:failed_to_delete_menu");
 			if (isAxiosError(error) && error.response?.data?.message) {
 				errorMessage = error.response.data.message;
 			}
@@ -202,7 +205,7 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 				<DropdownMenu>
 					<DropdownMenuTrigger className="ml-auto" asChild>
 						<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-							<span className="sr-only">Open menu</span>
+							<span className="sr-only">{t("common:actions.open_menu")}</span>
 							<MoreHorizontal className="h-4 w-4" />
 						</Button>
 					</DropdownMenuTrigger>
@@ -211,12 +214,12 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 
 						<DropdownMenuItem asChild>
 							{/* TODO: Change link */}
-							<Link to={`/menu/change-theme/${menu.menuId}`}>Change Theme</Link>
+							<Link to={`/menu/change-theme/${menu.menuId}`}>{t("menu:change_theme")}</Link>
 						</DropdownMenuItem>
 
 						<DropdownMenuItem asChild>
 							{/* TODO: Change link */}
-							<Link to={`/menu/build/${menu.menuId}`}>Build</Link>
+							<Link to={`/menu/build/${menu.menuId}`}>{t("menu:build")}</Link>
 						</DropdownMenuItem>
 
 						<DropdownMenuSeparator />
@@ -225,7 +228,7 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 							variant="destructive"
 							onClick={() => handleDeleteMenu()}>
 							<Trash className="h-4 w-4" />
-							Delete
+							{t("common:buttons.delete")}
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -237,19 +240,18 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 			<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+						<AlertDialogTitle>{t("common:confirmations.are_you_sure")}</AlertDialogTitle>
 						<AlertDialogDescription>
-							This will permanently delete the menu and all its content. This
-							action cannot be undone.
+							{t("common:confirmations.delete_menu")} {t("common:confirmations.cannot_be_undone")}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+						<AlertDialogCancel disabled={isDeleting}>{t("common:buttons.cancel")}</AlertDialogCancel>
 						<AlertDialogAction
 							className="bg-destructive hover:bg-destructive/90"
 							disabled={isDeleting}
 							onClick={confirmDeleteMenu}>
-							{isDeleting ? "Deleting..." : "Delete"}
+							{isDeleting ? t("common:buttons.deleting") : t("common:buttons.delete")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -258,15 +260,16 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 	);
 }
 
-const menuDetailsFormSchema = z.object({
-	menuName: z.string().min(3, { error: "Name is required" }),
-	selectedThemeId: z.number({ error: "Theme is required" }),
+const menuDetailsFormSchema = (t: (key: string) => string) => z.object({
+	menuName: z.string().min(3, { error: t("validation:name_required") }),
+	selectedThemeId: z.number({ error: t("validation:theme_required") }),
 });
 
-type MenuDetailsFormData = z.infer<typeof menuDetailsFormSchema>;
+type MenuDetailsFormData = z.infer<ReturnType<typeof menuDetailsFormSchema>>;
 
 // TODO: Rename: MenuDetails to MenuDetailsForm
 function MenuDetails({ menu }: { menu: MenuType }) {
+	const { t } = useTranslation(["common", "validation"]);
 	const fetcher = useFetcher();
 
 	const [error, setError] = useState<string | null>(null);
@@ -274,7 +277,7 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 	const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
 
 	const form = useForm<MenuDetailsFormData>({
-		resolver: zodResolver(menuDetailsFormSchema),
+		resolver: zodResolver(menuDetailsFormSchema(t)),
 		defaultValues: {
 			menuName: menu.menuName,
 			selectedThemeId: menu.selectedThemeId,
@@ -317,12 +320,12 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 					name="menuName"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Menu Name</FormLabel>
+							<FormLabel>{t("common:labels.menu_name")}</FormLabel>
 							<FormControl>
 								<Input
 									id="menuName"
 									type="text"
-									placeholder="Menu Name"
+									placeholder={t("common:labels.menu_name")}
 									disabled={isLoading}
 									{...field}
 								/>
@@ -337,7 +340,7 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 					name="selectedThemeId"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Select a theme</FormLabel>
+							<FormLabel>{t("common:labels.select_theme")}</FormLabel>
 							<FormControl>
 								<div>
 									<Input
@@ -352,8 +355,8 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 										}}>
 										<Button type="button" variant="outline" className="w-full">
 											{selectedThemeId
-												? `Theme Selected: ${selectedThemeId}`
-												: "Select a theme"}
+												? t("common:labels.theme_selected", { id: selectedThemeId })
+												: t("common:labels.select_theme")}
 										</Button>
 									</SelectThemeDialog>
 								</div>
@@ -365,7 +368,7 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 
 				<div className="flex justify-end gap-2">
 					<Button type="submit" className="wfull" disabled={isLoading}>
-						Save
+						{t("common:buttons.save")}
 					</Button>
 				</div>
 			</Form>
@@ -381,6 +384,7 @@ function MenuContent({
 	schemas: SchemasType;
 	menuId: string;
 }) {
+	const { t } = useTranslation(["menu", "common"]);
 	const navigate = useNavigate();
 
 	if (schemas.schemas_count === 0) {
@@ -388,8 +392,8 @@ function MenuContent({
 			<div className="flex flex-col gap-4 items-center justify-center p-8 text-center">
 				<div className="text-muted-foreground">
 					<FileX className="h-16 w-16 mx-auto mb-2" />
-					<h3 className="text-lg font-medium">No schemas found</h3>
-					<p>This menu doesn&apos;t have any content schemas available.</p>
+					<h3 className="text-lg font-medium">{t("menu:no_schemas")}</h3>
+					<p>{t("menu:no_schemas_description")}</p>
 				</div>
 			</div>
 		);
@@ -397,11 +401,11 @@ function MenuContent({
 
 	return (
 		<div className="flex flex-col gap-4">
-			<Title title="Menu Content" titleSize="lg">
+			<Title title={t("menu:menu_content")} titleSize="lg">
 				{/* TODO: Remove refresh schemas button (maybe) */}
 				<Button variant="outline" size="sm">
 					<RefreshCw className="h-4 w-4 mr-2" />
-					Refresh Schemas
+					{t("common:actions.refresh_schemas")}
 				</Button>
 			</Title>
 
@@ -419,16 +423,14 @@ function MenuContent({
 										{key}
 									</CardTitle>
 									<CardDescription>
-										{schema.description || "Content schema for this menu item"}
+										{schema.description || t("common:messages.content_schema_description")}
 									</CardDescription>
 								</CardHeader>
 								<CardContent>
 									<div className="text-sm text-muted-foreground">
 										{schema.properties
-											? `${
-													Object.keys(schema.properties).length
-											  } properties defined`
-											: "No properties defined"}
+											? t("common:messages.properties_defined", { count: Object.keys(schema.properties).length })
+											: t("common:messages.no_properties_defined")}
 									</div>
 								</CardContent>
 								<CardFooter>
@@ -439,7 +441,7 @@ function MenuContent({
 									> */}
 									<Button variant="ghost" className="ml-auto">
 										<ArrowRight className="h-4 w-4 mr-2" />
-										View Content
+										{t("common:actions.view_content")}
 									</Button>
 									{/* </Link> */}
 								</CardFooter>

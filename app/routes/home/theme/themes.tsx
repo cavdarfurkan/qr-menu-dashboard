@@ -15,6 +15,8 @@ import { useCallback } from "react";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import Title from "~/components/Title";
 import { Button } from "~/components/ui/button";
+import { useTranslation } from "react-i18next";
+import i18n from "~/i18n";
 
 export type ThemeType = {
 	id: number;
@@ -70,7 +72,7 @@ export async function clientLoader({
 
 			return {
 				success: errorResponse?.data?.success ?? false,
-				message: errorResponse?.data?.message ?? "Error getting themes",
+				message: errorResponse?.data?.message ?? i18n.t("error:error_getting_themes"),
 				data: null,
 				timestamp: errorResponse?.data.timestamp,
 			};
@@ -78,7 +80,7 @@ export async function clientLoader({
 
 		return {
 			success: false,
-			message: "An unexpected error occured",
+			message: i18n.t("error:unexpected_error"),
 			data: null,
 			timestamp: Date.now().toString(),
 		};
@@ -86,6 +88,7 @@ export async function clientLoader({
 }
 
 export default function Themes({ loaderData }: Route.ComponentProps) {
+	const { t } = useTranslation(["theme", "common", "error"]);
 	const navigate = useNavigate();
 
 	if (!loaderData.success) {
@@ -167,16 +170,16 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<Title title="Themes">
+			<Title title={t("theme:title")}>
 				<Button asChild>
 					<Link to="/theme/register" viewTransition>
-						+ New Theme
+						{t("theme:new_theme")}
 					</Link>
 				</Button>
 			</Title>
 			{themes.length === 0 ? (
 				<div className="text-gray-500 text-center py-8">
-					No themes found. <br />
+					{t("theme:no_themes")} <br />
 				</div>
 			) : (
 				<ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mxauto">
@@ -250,6 +253,7 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 }
 
 function ThemeCard({ theme }: { theme: ThemeType }) {
+	const { t } = useTranslation("common");
 	return (
 		<Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
 			{/* <Link */}
@@ -265,7 +269,7 @@ function ThemeCard({ theme }: { theme: ThemeType }) {
 				<p className="text-xs text-gray-400">By {theme.themeManifest.author}</p>
 				{theme.isFree && (
 					<span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-						Free
+						{t("common:labels.is_free")}
 					</span>
 				)}
 			</CardHeader>

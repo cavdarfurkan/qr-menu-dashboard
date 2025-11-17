@@ -1,0 +1,58 @@
+{
+	"actions": {
+		"actions": "İşlemler",
+		"select_all": "Tümünü seç",
+		"select_row": "Satırı seç",
+		"open_menu": "Menüyü aç",
+		"view_content": "İçeriği Görüntüle",
+		"refresh_schemas": "Şemaları Yenile"
+	},
+	"buttons": {
+		"create": "Oluştur",
+		"cancel": "İptal",
+		"submit": "Gönder",
+		"save": "Kaydet",
+		"delete": "Sil",
+		"edit": "Düzenle",
+		"back": "Geri",
+		"next": "İleri",
+		"previous": "Önceki",
+		"go_back": "Geri Dön",
+		"loading": "Yükleniyor...",
+		"deleting": "Siliniyor...",
+		"saving": "Kaydediliyor...",
+		"logging_in": "Giriş yapılıyor...",
+		"login": "Giriş Yap",
+		"register": "Kayıt Ol",
+		"save_changes": "Değişiklikleri Kaydet",
+		"back_to_dashboard": "Kontrol paneline dön"
+	},
+	"empty_states": {
+		"no_results": "Sonuç bulunamadı.",
+		"empty": "Boş",
+		"unknown": "Bilinmiyor",
+		"not_found": "Bulunamadı",
+		"no_content_found": "İçerik bulunamadı"
+	},
+	"confirmations": {
+		"are_you_sure": "Emin misiniz?",
+		"cannot_be_undone": "Bu işlem geri alınamaz.",
+		"delete_item": "Bu öğeyi kalıcı olarak silecektir.",
+		"delete_items": "Seçili {{count}} öğeyi kalıcı olarak silecektir.",
+		"delete_menu": "Menüyü ve tüm içeriğini kalıcı olarak silecektir."
+	},
+	"labels": {
+		"menu_name": "Menü Adı",
+		"select_theme": "Bir tema seçin",
+		"theme_selected": "Seçilen Tema: {{id}}",
+		"is_free": "Ücretsiz"
+	},
+	"messages": {
+		"or_continue_with": "Veya devam et",
+		"content_schema_description": "Bu menü öğesi için içerik şeması",
+		"properties_defined": "{{count}} özellik tanımlı",
+		"no_properties_defined": "Özellik tanımlı değil",
+		"items": "{{count}} öğe",
+		"properties": "{{count}} özellik"
+	}
+}

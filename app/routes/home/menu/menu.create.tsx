@@ -24,13 +24,15 @@ import type { Route } from "./+types/menu.create";
 import type { ApiResponse } from "~/lib/api";
 import api from "~/lib/api";
 import { isAxiosError } from "axios";
+import { useTranslation } from "react-i18next";
+import i18n from "~/i18n";
 
-const formSchema = z.object({
-	name: z.string().min(3, { error: "Name is required" }),
-	selectedThemeId: z.number({ error: "Theme is required" }),
+const formSchema = (t: (key: string) => string) => z.object({
+	name: z.string().min(3, { error: t("validation:name_required") }),
+	selectedThemeId: z.number({ error: t("validation:theme_required") }),
 });
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<ReturnType<typeof formSchema>>;
 
 export async function clientAction({
 	request,
@@ -56,7 +58,7 @@ export async function clientAction({
 
 			return {
 				success: errorResponse?.data?.success ?? false,
-				message: errorResponse?.data?.message ?? "Failed to create menu",
+				message: errorResponse?.data?.message ?? i18n.t("error:failed_to_create_menu"),
 				data: null,
 				timestamp: errorResponse?.data.timestamp,
 			};
@@ -64,7 +66,7 @@ export async function clientAction({
 
 		return {
 			success: false,
-			message: "An unexpected error occured",
+			message: i18n.t("error:unexpected_error"),
 			data: null,
 			timestamp: Date.now().toString(),
 		};
@@ -72,6 +74,7 @@ export async function clientAction({
 }
 
 export default function MenuCreate() {
+	const { t } = useTranslation(["menu", "common", "validation", "error"]);
 	const fetcher = useFetcher();
 	const navigate = useNavigate();
 
@@ -79,8 +82,8 @@ export default function MenuCreate() {
 	const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
 	const isLoading = fetcher.state !== "idle";
 
-	const form = useForm<FormData>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<z.infer<ReturnType<typeof formSchema>>>({
+		resolver: zodResolver(formSchema(t)),
 		defaultValues: {
 			name: "",
 		},
@@ -99,7 +102,7 @@ export default function MenuCreate() {
 		navigate("/menu", { replace: true });
 	}, [fetcher.data, navigate]);
 
-	const onSubmit = (data: FormData) => {
+	const onSubmit = (data: z.infer<ReturnType<typeof formSchema>>) => {
 		setError(null);
 		fetcher.submit(data, { method: "post" });
 	};
@@ -141,12 +144,12 @@ export default function MenuCreate() {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Menu Name</FormLabel>
+										<FormLabel>{t("common:labels.menu_name")}</FormLabel>
 										<FormControl>
 											<Input
 												id="name"
 												type="text"
-												placeholder="Menu name"
+												placeholder={t("common:labels.menu_name")}
 												required
 												disabled={isLoading}
 												{...field}
@@ -162,7 +165,7 @@ export default function MenuCreate() {
 								name="selectedThemeId"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Select a theme</FormLabel>
+										<FormLabel>{t("common:labels.select_theme")}</FormLabel>
 										<FormControl>
 											<div>
 												<Input
@@ -182,8 +185,8 @@ export default function MenuCreate() {
 														className="w-full"
 													>
 														{selectedThemeId
-															? `Theme Selected: ${selectedThemeId}`
-															: "Select a theme"}
+															? t("common:labels.theme_selected", { id: selectedThemeId })
+															: t("common:labels.select_theme")}
 													</Button>
 												</SelectThemeDialog>
 											</div>
@@ -221,10 +224,10 @@ export default function MenuCreate() {
 									className="wfull"
 									disabled={isLoading}
 								>
-									Cancel
+									{t("common:buttons.cancel")}
 								</Button>
 								<Button type="submit" className="wfull" disabled={isLoading}>
-									Submit
+									{t("common:buttons.submit")}
 								</Button>
 							</div>
 						</Form>

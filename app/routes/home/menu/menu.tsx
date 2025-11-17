@@ -5,6 +5,7 @@ import api, { type ApiResponse } from "~/lib/api";
 import { isAxiosError } from "axios";
 import Title from "~/components/Title";
 import { Button } from "~/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 type MenuType = {
 	menuId: number;
@@ -37,6 +38,7 @@ export async function clientLoader(): Promise<ApiResponse> {
 }
 
 export default function Menu({ loaderData }: Route.ComponentProps) {
+	const { t } = useTranslation(["menu", "common"]);
 	const response = loaderData;
 	if (!response.success) {
 		return <p> {response.message} </p>;
@@ -46,22 +48,22 @@ export default function Menu({ loaderData }: Route.ComponentProps) {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<Title title="Your Menus">
+			<Title title={t("menu:title")}>
 				<Button asChild>
 					<Link to="/menu/create" viewTransition>
-						+ New Menu
+						{t("menu:new_menu")}
 					</Link>
 				</Button>
 			</Title>
 
 			{menus.length === 0 ? (
 				<div className="text-muted-foreground text-center py-8">
-					No menus found. <br />
+					{t("menu:no_menus")} <br />
 					<Link
 						to="/menu/create"
 						className="text-primary underline"
 						viewTransition>
-						Create your first menu
+						{t("menu:create_first_menu")}
 					</Link>
 				</div>
 			) : (
