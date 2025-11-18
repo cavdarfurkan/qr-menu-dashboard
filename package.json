@@ -7,7 +7,10 @@
 		"dev": "react-router dev",
 		"dev-host": "react-router dev --host",
 		"start": "react-router-serve ./build/server/index.js",
-		"typecheck": "react-router typegen && tsc"
+		"typecheck": "react-router typegen && tsc",
+		"i18n:lint": "i18next-cli lint",
+		"i18n:sync": "i18next-cli sync",
+		"i18n:types": "i18next-cli types"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.1.1",
@@ -55,6 +58,7 @@
 		"@types/node": "^20",
 		"@types/react": "^19.1.2",
 		"@types/react-dom": "^19.1.2",
+		"i18next-cli": "^1.24.13",
 		"tailwindcss": "^4.1.4",
 		"tw-animate-css": "^1.3.5",
 		"typescript": "^5.8.3",

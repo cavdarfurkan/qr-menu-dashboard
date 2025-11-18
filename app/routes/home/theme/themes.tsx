@@ -253,7 +253,7 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 }
 
 function ThemeCard({ theme }: { theme: ThemeType }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["common"]);
 	return (
 		<Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
 			{/* <Link */}

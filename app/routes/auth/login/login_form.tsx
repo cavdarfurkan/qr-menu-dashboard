@@ -27,24 +27,24 @@ import type { LoginActionResult } from "./index";
 import { fetchCsrfToken } from "~/lib/csrf";
 import { useTranslation } from "react-i18next";
 
-export const formSchema = (t: (key: string) => string) => z.object({
-	username: z
-		.string()
-		.min(3, { message: t("validation:username_or_email_min") })
-		.refine(
-			(val) =>
-				/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || /^[a-zA-Z0-9_.-]+$/.test(val),
-			{
-				message: t("validation:username_or_email_invalid"),
-			},
-		),
-	password: z
-		.string()
-		.min(8, { message: t("validation:password_min") }),
-});
+export const formSchema = (t: (key: string) => string) =>
+	z.object({
+		username: z
+			.string()
+			.min(3, { message: t("validation:username_or_email_min") })
+			.refine(
+				(val) =>
+					/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ||
+					/^[a-zA-Z0-9_.-]+$/.test(val),
+				{
+					message: t("validation:username_or_email_invalid"),
+				},
+			),
+		password: z.string().min(8, { message: t("validation:password_min") }),
+	});
 
 export default function LoginForm() {
-	const { t } = useTranslation(["auth", "validation", "common"]);
+	const { t } = useTranslation(["auth", "validation", "common", "error"]);
 	const [error, setError] = useState<string | null>(null);
 	const { setAccessToken } = useAuth();
 	const navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function LoginForm() {
 	const isLoading = fetcher.state !== "idle";
 
 	const form = useForm<z.infer<ReturnType<typeof formSchema>>>({
-		resolver: zodResolver(formSchema(t)),
+		resolver: zodResolver(formSchema(t as (key: string) => string)),
 		defaultValues: {
 			username: "",
 			password: "",
@@ -71,7 +71,7 @@ export default function LoginForm() {
 		}
 	}, [fetcher.data, navigate, setAccessToken]);
 
-		const handleLogin = async (data: LoginActionResult) => {
+	const handleLogin = async (data: LoginActionResult) => {
 		setError(null);
 		setAccessToken(data.accessToken || "");
 
@@ -95,8 +95,7 @@ export default function LoginForm() {
 				method="post"
 				replace
 				viewTransition
-				onSubmit={form.handleSubmit(onSubmit)}
-			>
+				onSubmit={form.handleSubmit(onSubmit)}>
 				<div className="flex flex-col gap-6">
 					<div className="flex flex-col items-center gap-2 text-center">
 						<h1 className="text-2xl font-bold">{t("auth:login.title")}</h1>
@@ -121,12 +120,16 @@ export default function LoginForm() {
 							render={({ field }) => (
 								<FormItem>
 									<div className="grid gap-3">
-										<FormLabel htmlFor="username">{t("auth:login.username_or_email")}</FormLabel>
+										<FormLabel htmlFor="username">
+											{t("auth:login.username_or_email")}
+										</FormLabel>
 										<FormControl>
 											<Input
 												id="username"
 												type="text"
-												placeholder={t("auth:login.username_or_email_placeholder")}
+												placeholder={t(
+													"auth:login.username_or_email_placeholder",
+												)}
 												required
 												disabled={isLoading}
 												{...field}
@@ -145,12 +148,13 @@ export default function LoginForm() {
 								<FormItem>
 									<div className="grid gap-3">
 										<div className="flex items-center">
-											<FormLabel htmlFor="password">{t("auth:login.password")}</FormLabel>
+											<FormLabel htmlFor="password">
+												{t("auth:login.password")}
+											</FormLabel>
 											<Link
 												to="/forgot-password"
 												className="ml-auto text-sm underline-offset-4 hover:underline"
-												viewTransition
-											>
+												viewTransition>
 												{t("auth:login.forgot_password")}
 											</Link>
 										</div>
@@ -170,7 +174,9 @@ export default function LoginForm() {
 							)}
 						/>
 						<Button type="submit" className="w-full" disabled={isLoading}>
-							{isLoading ? t("common:buttons.logging_in") : t("common:buttons.login")}
+							{isLoading
+								? t("common:buttons.logging_in")
+								: t("common:buttons.login")}
 						</Button>
 						<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
 							<span className="bg-background text-muted-foreground relative z-10 px-2">
@@ -192,8 +198,7 @@ export default function LoginForm() {
 						<Link
 							to="/register"
 							className="underline underline-offset-4"
-							viewTransition
-						>
+							viewTransition>
 							{t("auth:login.sign_up")}
 						</Link>
 					</div>

@@ -14,7 +14,9 @@ export async function clientAction({
 	request,
 }: Route.ClientActionArgs): Promise<LoginActionResult> {
 	let formData = await request.formData();
-	const data = Object.fromEntries(formData) as z.infer<typeof formSchema>;
+	const data = Object.fromEntries(formData) as z.infer<
+		ReturnType<typeof formSchema>
+	>;
 
 	try {
 		const response = await api.post(

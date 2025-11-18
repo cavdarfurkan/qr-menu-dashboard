@@ -38,7 +38,7 @@ export default function NewContentDialog({
 	const navigate = useNavigate();
 	const menuId = useMenuStore((state) => state.menuId);
 
-	const { t } = useTranslation("content");
+	const { t } = useTranslation(["content"]);
 
 	useEffect(() => {
 		console.log(formData);
@@ -82,6 +82,7 @@ export default function NewContentDialog({
 			<DialogContent className="max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle>{t("content:new_content_dialog.title")}</DialogTitle>
+					<h1>{t("create_new_content", { ns: "content" })}</h1>
 				</DialogHeader>
 
 				<RJSFForm

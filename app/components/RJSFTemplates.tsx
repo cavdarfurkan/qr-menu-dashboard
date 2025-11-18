@@ -14,7 +14,13 @@ import { Label } from "./ui/label";
 import { cn } from "~/lib/utils";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "./ui/select";
 import { PlusCircle, Trash, ChevronUp, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -169,8 +175,7 @@ export function CheckboxWidget<
 				htmlFor={id}
 				className={cn(
 					"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-				)}
-			>
+				)}>
 				{label}
 			</label>
 		</div>
@@ -208,8 +213,7 @@ export function SelectWidget<
 			disabled={disabled || readonly}
 			required={required}
 			value={value || value === 0 ? String(value) : ""}
-			onValueChange={_onChange}
-		>
+			onValueChange={_onChange}>
 			<SelectTrigger className="w-full">
 				<SelectValue placeholder={placeholder} />
 			</SelectTrigger>
@@ -220,11 +224,7 @@ export function SelectWidget<
 						const isDisabled =
 							Array.isArray(enumDisabled) && enumDisabled.indexOf(value) !== -1;
 						return (
-							<SelectItem
-								key={i}
-								value={String(value)}
-								disabled={isDisabled}
-							>
+							<SelectItem key={i} value={String(value)} disabled={isDisabled}>
 								{label}
 							</SelectItem>
 						);
@@ -263,8 +263,9 @@ export function FieldTemplate<
 			{displayLabel && label && (
 				<label
 					htmlFor={id}
-					className={`capitalize block text-sm font-medium text-foreground ${required ? "required" : ""}`}
-				>
+					className={`capitalize block text-sm font-medium text-foreground ${
+						required ? "required" : ""
+					}`}>
 					{label}
 					{required ? "*" : null}
 				</label>
@@ -499,10 +500,11 @@ export function SubmitButtonTemplate<
 	S extends StrictRJSFSchema = RJSFSchema,
 	F extends FormContextType = any,
 >(props: { uiSchema?: any }) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["common"]);
 	const { uiSchema } = props;
 	const uiOptions = getUiOptions(uiSchema);
-	const submitText = uiOptions.submitButtonOptions?.submitText || t("common:buttons.submit");
+	const submitText =
+		uiOptions.submitButtonOptions?.submitText || t("common:buttons.submit");
 
 	return (
 		<Button type="submit" className="mt-4">
@@ -621,6 +623,6 @@ export const widgets = {
 	// TextareaWidget,
 	CheckboxWidget,
 	// SelectWidget,
-}
+};
 
 export default templates;

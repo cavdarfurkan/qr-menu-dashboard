@@ -98,7 +98,8 @@ export async function clientLoader({
 
 			return {
 				success: errorResponse?.data?.success ?? false,
-				message: errorResponse?.data?.message ?? i18n.t("error:error_getting_menu"),
+				message:
+					errorResponse?.data?.message ?? i18n.t("error:error_getting_menu"),
 				data: null,
 				timestamp: errorResponse?.data.timestamp,
 				schemas_count: 0,
@@ -136,7 +137,8 @@ export async function clientAction({
 
 			return {
 				success: errorResponse?.data?.success ?? false,
-				message: errorResponse?.data?.message ?? i18n.t("error:error_updating_menu"),
+				message:
+					errorResponse?.data?.message ?? i18n.t("error:error_updating_menu"),
 				data: null,
 				timestamp: errorResponse?.data.timestamp,
 			};
@@ -214,7 +216,9 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 
 						<DropdownMenuItem asChild>
 							{/* TODO: Change link */}
-							<Link to={`/menu/change-theme/${menu.menuId}`}>{t("menu:change_theme")}</Link>
+							<Link to={`/menu/change-theme/${menu.menuId}`}>
+								{t("menu:change_theme")}
+							</Link>
 						</DropdownMenuItem>
 
 						<DropdownMenuItem asChild>
@@ -240,18 +244,25 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 			<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>{t("common:confirmations.are_you_sure")}</AlertDialogTitle>
+						<AlertDialogTitle>
+							{t("common:confirmations.are_you_sure")}
+						</AlertDialogTitle>
 						<AlertDialogDescription>
-							{t("common:confirmations.delete_menu")} {t("common:confirmations.cannot_be_undone")}
+							{t("common:confirmations.delete_menu")}{" "}
+							{t("common:confirmations.cannot_be_undone")}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel disabled={isDeleting}>{t("common:buttons.cancel")}</AlertDialogCancel>
+						<AlertDialogCancel disabled={isDeleting}>
+							{t("common:buttons.cancel")}
+						</AlertDialogCancel>
 						<AlertDialogAction
 							className="bg-destructive hover:bg-destructive/90"
 							disabled={isDeleting}
 							onClick={confirmDeleteMenu}>
-							{isDeleting ? t("common:buttons.deleting") : t("common:buttons.delete")}
+							{isDeleting
+								? t("common:buttons.deleting")
+								: t("common:buttons.delete")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -260,10 +271,11 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 	);
 }
 
-const menuDetailsFormSchema = (t: (key: string) => string) => z.object({
-	menuName: z.string().min(3, { error: t("validation:name_required") }),
-	selectedThemeId: z.number({ error: t("validation:theme_required") }),
-});
+const menuDetailsFormSchema = (t: (key: string) => string) =>
+	z.object({
+		menuName: z.string().min(3, { error: t("validation:name_required") }),
+		selectedThemeId: z.number({ error: t("validation:theme_required") }),
+	});
 
 type MenuDetailsFormData = z.infer<ReturnType<typeof menuDetailsFormSchema>>;
 
@@ -277,7 +289,7 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 	const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
 
 	const form = useForm<MenuDetailsFormData>({
-		resolver: zodResolver(menuDetailsFormSchema(t)),
+		resolver: zodResolver(menuDetailsFormSchema(t as (key: string) => string)),
 		defaultValues: {
 			menuName: menu.menuName,
 			selectedThemeId: menu.selectedThemeId,
@@ -355,7 +367,9 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 										}}>
 										<Button type="button" variant="outline" className="w-full">
 											{selectedThemeId
-												? t("common:labels.theme_selected", { id: selectedThemeId })
+												? t("common:labels.theme_selected", {
+														id: selectedThemeId,
+												  })
 												: t("common:labels.select_theme")}
 										</Button>
 									</SelectThemeDialog>
@@ -423,13 +437,16 @@ function MenuContent({
 										{key}
 									</CardTitle>
 									<CardDescription>
-										{schema.description || t("common:messages.content_schema_description")}
+										{schema.description ||
+											t("common:messages.content_schema_description")}
 									</CardDescription>
 								</CardHeader>
 								<CardContent>
 									<div className="text-sm text-muted-foreground">
 										{schema.properties
-											? t("common:messages.properties_defined", { count: Object.keys(schema.properties).length })
+											? t("common:messages.properties_defined", {
+													count: Object.keys(schema.properties).length,
+											  })
 											: t("common:messages.no_properties_defined")}
 									</div>
 								</CardContent>

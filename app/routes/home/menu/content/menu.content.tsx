@@ -250,7 +250,13 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 			header: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " "),
 			cell: ({ getValue }: { getValue: () => any }) => {
 				const value = getValue();
-				return renderCellValue(value, key, ui_schemas, contentName, t);
+				return renderCellValue(
+					value,
+					key,
+					ui_schemas,
+					contentName,
+					t as (key: string) => string,
+				);
 			},
 		}));
 
@@ -337,7 +343,9 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 					data: { ids: selectedIds },
 				});
 
-				toast.success(t("content:items_deleted", { count: selectedIds.length }));
+				toast.success(
+					t("content:items_deleted", { count: selectedIds.length }),
+				);
 				setRowSelection({});
 			} else if (itemToDelete) {
 				// Call API to delete single item
@@ -365,7 +373,8 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 	if (!content || content.length === 0) {
 		return (
 			<div className="flex flex-col gap-6">
-				<Title title={t("menu:content_title", { contentName: contentName || "" })}>
+				<Title
+					title={t("menu:content_title", { contentName: contentName || "" })}>
 					<NewContentDialog
 						schema={theme_schemas}
 						uiSchema={ui_schemas}
@@ -380,7 +389,9 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 				<div className="flex flex-col gap-4 items-center justify-center p-8 text-center">
 					<div className="text-muted-foreground">
 						<FileX className="h-16 w-16 mx-auto mb-2" />
-						<h3 className="text-lg font-medium">{t("common:empty_states.no_content_found")}</h3>
+						<h3 className="text-lg font-medium">
+							{t("common:empty_states.no_content_found")}
+						</h3>
 						<p>{t("content:no_content_description")}</p>
 
 						<NewContentDialog
@@ -405,7 +416,8 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 	// TODO: Add a sort to the table
 	return (
 		<div className="flex flex-col gap-6">
-			<Title title={t("menu:content_title", { contentName: contentName || "" })}>
+			<Title
+				title={t("menu:content_title", { contentName: contentName || "" })}>
 				<div className="flex items-center gap-2">
 					{Object.keys(rowSelection).length > 0 && (
 						<Button
@@ -414,7 +426,9 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 							onClick={handleBulkDelete}
 							disabled={isDeleting}>
 							<Trash className="h-4 w-4 mr-2" />
-							{t("menu:delete_selected", { count: Object.keys(rowSelection).length })}
+							{t("menu:delete_selected", {
+								count: Object.keys(rowSelection).length,
+							})}
 						</Button>
 					)}
 
@@ -510,21 +524,29 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 			<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>{t("common:confirmations.are_you_sure")}</AlertDialogTitle>
+						<AlertDialogTitle>
+							{t("common:confirmations.are_you_sure")}
+						</AlertDialogTitle>
 						<AlertDialogDescription>
 							{isBulkDelete
-								? t("common:confirmations.delete_items", { count: Object.keys(rowSelection).length })
-								: t("common:confirmations.delete_item")}
-							{" "}{t("common:confirmations.cannot_be_undone")}
+								? t("common:confirmations.delete_items", {
+										count: Object.keys(rowSelection).length,
+								  })
+								: t("common:confirmations.delete_item")}{" "}
+							{t("common:confirmations.cannot_be_undone")}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel disabled={isDeleting}>{t("common:buttons.cancel")}</AlertDialogCancel>
+						<AlertDialogCancel disabled={isDeleting}>
+							{t("common:buttons.cancel")}
+						</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={confirmDelete}
 							disabled={isDeleting}
 							className="bg-destructive hover:bg-destructive/90">
-							{isDeleting ? t("common:buttons.deleting") : t("common:buttons.delete")}
+							{isDeleting
+								? t("common:buttons.deleting")
+								: t("common:buttons.delete")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -623,7 +645,11 @@ const renderCellValue = (
 		} else {
 			// For larger objects, show a summary
 			return (
-				<span className="text-muted-foreground">{t ? t("common:messages.properties", { count: keys.length }) : `${keys.length} properties`}</span>
+				<span className="text-muted-foreground">
+					{t
+						? t("common:messages.properties", { count: keys.length })
+						: `${keys.length} properties`}
+				</span>
 			);
 		}
 	}
@@ -631,7 +657,11 @@ const renderCellValue = (
 	// Handle arrays
 	if (Array.isArray(value)) {
 		if (value.length === 0) {
-			return <span className="text-muted-foreground">{t ? t("common:empty_states.empty") : "Empty"}</span>;
+			return (
+				<span className="text-muted-foreground">
+					{t ? t("common:empty_states.empty") : "Empty"}
+				</span>
+			);
 		}
 		if (value.length <= 3) {
 			return (
@@ -647,7 +677,11 @@ const renderCellValue = (
 			);
 		} else {
 			return (
-				<span className="text-muted-foreground">{t ? t("common:messages.items", { count: value.length }) : `${value.length} items`}</span>
+				<span className="text-muted-foreground">
+					{t
+						? t("common:messages.items", { count: value.length })
+						: `${value.length} items`}
+				</span>
 			);
 		}
 	}

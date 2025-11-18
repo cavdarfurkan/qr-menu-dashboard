@@ -64,11 +64,12 @@ export default function App() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 	let message = "Oops!";
-	let details = i18n.t("error:unexpected_error");
+	let details = i18n.t("error:unexpected_error") as string;
 	let stack: string | undefined;
 
 	if (isRouteErrorResponse(error)) {
-		message = error.status === 404 ? i18n.t("error:404") : i18n.t("error:error");
+		message =
+			error.status === 404 ? i18n.t("error:404") : i18n.t("error:error");
 		details =
 			error.status === 404
 				? i18n.t("error:404_description")

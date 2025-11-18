@@ -65,7 +65,7 @@ export default function ThemeRegister() {
 	const isLoading = fetcher.state !== "idle";
 
 	const form = useForm<MyFormData>({
-		resolver: zodResolver(formSchema(t)),
+		resolver: zodResolver(formSchema(t as (key: string) => string)),
 		defaultValues: {
 			data: {
 				is_free: false,

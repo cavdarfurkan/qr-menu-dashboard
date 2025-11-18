@@ -162,7 +162,7 @@ export function ThemeCard({
 	isFree,
 	onClick,
 }: ThemeCardProps) {
-	const { t } = useTranslation("common");
+	const { t } = useTranslation(["common"]);
 	return (
 		<Card
 			key={id}
