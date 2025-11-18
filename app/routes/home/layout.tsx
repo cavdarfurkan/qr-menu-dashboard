@@ -3,7 +3,7 @@ import type { Route } from "./+types/index";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/AppSidebar";
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
 	return [
 		{ title: "QR Menu Dashboard" },
 		{ name: "description", content: "QR Menu Dashboard" },

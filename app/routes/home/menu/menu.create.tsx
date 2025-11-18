@@ -128,7 +128,8 @@ export default function MenuCreate() {
 							method="post"
 							replace
 							viewTransition
-							onSubmit={form.handleSubmit(onSubmit)}>
+							onSubmit={form.handleSubmit(onSubmit)}
+						>
 							{error && (
 								<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-md text-sm">
 									{error}
@@ -178,15 +179,17 @@ export default function MenuCreate() {
 													content={{
 														fetchUrl: "/v1/theme",
 														onClick: handleThemeSelect,
-													}}>
+													}}
+												>
 													<Button
 														type="button"
 														variant="outline"
-														className="w-full">
+														className="w-full"
+													>
 														{selectedThemeId
 															? t("common:labels.theme_selected", {
 																	id: selectedThemeId,
-															  })
+																})
 															: t("common:labels.select_theme")}
 													</Button>
 												</SelectThemeDialog>
@@ -223,7 +226,8 @@ export default function MenuCreate() {
 									variant="outline"
 									type="reset"
 									className="wfull"
-									disabled={isLoading}>
+									disabled={isLoading}
+								>
 									{t("common:buttons.cancel")}
 								</Button>
 								<Button type="submit" className="wfull" disabled={isLoading}>

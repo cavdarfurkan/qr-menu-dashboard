@@ -79,7 +79,8 @@ export default function RegisterForm() {
 				method="post"
 				replace
 				viewTransition
-				onSubmit={form.handleSubmit(onSubmit)}>
+				onSubmit={form.handleSubmit(onSubmit)}
+			>
 				<div className="flex flex-col items-center gap-2 text-center">
 					<h1 className="text-2xl font-bold">{t("auth:register.title")}</h1>
 					<FormDescription className="text-muted-foreground text-sm text-balance">
@@ -229,7 +230,8 @@ export default function RegisterForm() {
 					<Link
 						to="/login"
 						className="underline underline-offset-4"
-						viewTransition>
+						viewTransition
+					>
 						{t("auth:register.log_in")}
 					</Link>
 				</div>

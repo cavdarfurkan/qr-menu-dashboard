@@ -31,7 +31,7 @@ export function AppSidebar() {
 			const cookieState = cookieVal === "true" ? true : false;
 			setOpen(cookieState);
 		}
-	}, [])
+	}, []);
 
 	interface SidebarItem {
 		label: string;
@@ -53,7 +53,7 @@ export function AppSidebar() {
 		{
 			label: t("themes"),
 			icon: Palette,
-			url: "/theme"
+			url: "/theme",
 		},
 		{
 			label: t("settings"),
@@ -73,17 +73,12 @@ export function AppSidebar() {
 				<div className="flex items-center justify-between">
 					{!isMobile && (
 						<div
-							className={`flex items-center gap-2 transition-all duration-200 ${state === "collapsed"
-								? "w-0 hidden"
-								: "w-auto block"
-								}
+							className={`flex items-center gap-2 transition-all duration-200 ${
+								state === "collapsed" ? "w-0 hidden" : "w-auto block"
+							}
 							`}
 						>
-							<Link
-								to="/"
-								className="flex items-center gap-2"
-								viewTransition
-							>
+							<Link to="/" className="flex items-center gap-2" viewTransition>
 								<h1 className="text-2xl font-bold">{t("app_name")}</h1>
 							</Link>
 						</div>
@@ -118,12 +113,11 @@ export function AppSidebar() {
 	);
 }
 
-
 function getCookie(name: string) {
-	let cookies = document.cookie.split(';');
+	let cookies = document.cookie.split(";");
 	for (let i = 0; i < cookies.length; i++) {
 		let cookie = cookies[i].trim();
-		if (cookie.startsWith(name + '=')) {
+		if (cookie.startsWith(name + "=")) {
 			return cookie.substring(name.length + 1);
 		}
 	}

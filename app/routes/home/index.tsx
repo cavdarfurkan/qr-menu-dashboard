@@ -25,7 +25,9 @@ export default function Home({
 	const usernameMatch = message.match(/username=([^,]+)/);
 	const emailMatch = message.match(/email=([^,]+)/);
 
-	const username = usernameMatch ? usernameMatch[1] : t("common:empty_states.unknown");
+	const username = usernameMatch
+		? usernameMatch[1]
+		: t("common:empty_states.unknown");
 	const email = emailMatch ? emailMatch[1] : t("common:empty_states.unknown");
 
 	return (

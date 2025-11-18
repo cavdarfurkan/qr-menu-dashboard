@@ -181,7 +181,9 @@ export default function MenuContentEdit() {
 				</Title>
 				<Card>
 					<CardHeader>
-						<CardTitle className="text-destructive">{t("error:error")}</CardTitle>
+						<CardTitle className="text-destructive">
+							{t("error:error")}
+						</CardTitle>
 						<CardDescription>{error}</CardDescription>
 					</CardHeader>
 					<CardContent>
@@ -232,7 +234,8 @@ export default function MenuContentEdit() {
 						type="submit"
 						form="edit-content-form"
 						disabled={isSaving}
-						className="ml-auto">
+						className="ml-auto"
+					>
 						{isSaving ? (
 							<>
 								<Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -252,7 +255,10 @@ export default function MenuContentEdit() {
 				<CardHeader>
 					<CardTitle>{t("menu:edit_content")}</CardTitle>
 					<CardDescription>
-						{t("menu:edit_content_description", { contentName, menuName: menu.menuName })}
+						{t("menu:edit_content_description", {
+							contentName,
+							menuName: menu.menuName,
+						})}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>

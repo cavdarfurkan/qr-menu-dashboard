@@ -47,7 +47,7 @@ export default function RelationSelect(props: FieldProps) {
 					? data.map((item) => ({
 							label: item.data[relationLabel],
 							value: item[relationValue],
-					  }))
+						}))
 					: [];
 
 				if (inputValue) {
@@ -104,7 +104,7 @@ export default function RelationSelect(props: FieldProps) {
 					? {
 							value: formData.data[relationValue],
 							label: formData.data[relationLabel],
-					  }
+						}
 					: null
 			}
 		/>

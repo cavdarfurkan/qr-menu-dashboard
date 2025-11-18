@@ -125,7 +125,8 @@ export default function ThemeRegister() {
 							replace
 							viewTransition
 							onSubmit={form.handleSubmit(onSubmit)}
-							encType="multipart/form-data">
+							encType="multipart/form-data"
+						>
 							{error && (
 								<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-md text-sm">
 									{error}
@@ -202,7 +203,8 @@ export default function ThemeRegister() {
 									variant="outline"
 									type="reset"
 									className="wfull"
-									disabled={isLoading}>
+									disabled={isLoading}
+								>
 									{t("common:buttons.cancel")}
 								</Button>
 								<Button type="submit" className="wfull" disabled={isLoading}>

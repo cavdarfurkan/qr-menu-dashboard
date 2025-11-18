@@ -22,19 +22,11 @@ export default function ThemeCard({
 			className="hover:shadow-lg transition-all duration-200 cursor-pointer"
 		>
 			{/* TODO: Change the to (href) */}
-			<Link
-				to={`#`}
-				viewTransition
-				className="w-fullh-full"
-			>
+			<Link to={`#`} viewTransition className="w-fullh-full">
 				<CardHeader>
 					<CardTitle>{themeName}</CardTitle>
-					<p className="text-sm text-gray-500">
-						{themeDescription}
-					</p>
-					<p className="text-xs text-gray-400">
-						By {themeAuthor}
-					</p>
+					<p className="text-sm text-gray-500">{themeDescription}</p>
+					<p className="text-xs text-gray-400">By {themeAuthor}</p>
 					{isFree && (
 						<span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
 							Free

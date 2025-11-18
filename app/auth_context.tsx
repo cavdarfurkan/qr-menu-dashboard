@@ -58,9 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [token]);
 
 	return (
-		<AuthContext.Provider value={contextValue}>
-			{children}
-		</AuthContext.Provider>
+		<AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 	);
 };
 

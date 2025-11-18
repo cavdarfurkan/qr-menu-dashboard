@@ -175,7 +175,8 @@ export function CheckboxWidget<
 				htmlFor={id}
 				className={cn(
 					"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-				)}>
+				)}
+			>
 				{label}
 			</label>
 		</div>
@@ -213,7 +214,8 @@ export function SelectWidget<
 			disabled={disabled || readonly}
 			required={required}
 			value={value || value === 0 ? String(value) : ""}
-			onValueChange={_onChange}>
+			onValueChange={_onChange}
+		>
 			<SelectTrigger className="w-full">
 				<SelectValue placeholder={placeholder} />
 			</SelectTrigger>
@@ -265,7 +267,8 @@ export function FieldTemplate<
 					htmlFor={id}
 					className={`capitalize block text-sm font-medium text-foreground ${
 						required ? "required" : ""
-					}`}>
+					}`}
+				>
 					{label}
 					{required ? "*" : null}
 				</label>

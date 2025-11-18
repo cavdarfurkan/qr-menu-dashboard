@@ -18,7 +18,6 @@ export default [
 				route(":id", "routes/home/menu/menu.detail.tsx"),
 				route("create", "routes/home/menu/menu.create.tsx"),
 
-
 				// Content routes
 				...prefix(":menuId/content/:contentName", [
 					index("routes/home/menu/content/menu.content.tsx"),

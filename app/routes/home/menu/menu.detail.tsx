@@ -230,7 +230,8 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 
 						<DropdownMenuItem
 							variant="destructive"
-							onClick={() => handleDeleteMenu()}>
+							onClick={() => handleDeleteMenu()}
+						>
 							<Trash className="h-4 w-4" />
 							{t("common:buttons.delete")}
 						</DropdownMenuItem>
@@ -259,7 +260,8 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 						<AlertDialogAction
 							className="bg-destructive hover:bg-destructive/90"
 							disabled={isDeleting}
-							onClick={confirmDeleteMenu}>
+							onClick={confirmDeleteMenu}
+						>
 							{isDeleting
 								? t("common:buttons.deleting")
 								: t("common:buttons.delete")}
@@ -315,7 +317,8 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 				method="post"
 				replace
 				viewTransition
-				onSubmit={form.handleSubmit(onSubmit)}>
+				onSubmit={form.handleSubmit(onSubmit)}
+			>
 				{error && (
 					<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-md text-sm">
 						{error}
@@ -364,12 +367,13 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 										content={{
 											fetchUrl: "/v1/theme",
 											onClick: handleThemeSelect,
-										}}>
+										}}
+									>
 										<Button type="button" variant="outline" className="w-full">
 											{selectedThemeId
 												? t("common:labels.theme_selected", {
 														id: selectedThemeId,
-												  })
+													})
 												: t("common:labels.select_theme")}
 										</Button>
 									</SelectThemeDialog>
@@ -429,7 +433,8 @@ function MenuContent({
 						<Link
 							to={`/menu/${menuId}/content/${key}`}
 							key={key}
-							className="block">
+							className="block"
+						>
 							<Card className="hover:border-primary/50 transition-colors cursor-pointer">
 								<CardHeader className="pb-2">
 									<CardTitle className="flex items-center">
@@ -446,7 +451,7 @@ function MenuContent({
 										{schema.properties
 											? t("common:messages.properties_defined", {
 													count: Object.keys(schema.properties).length,
-											  })
+												})
 											: t("common:messages.no_properties_defined")}
 									</div>
 								</CardContent>

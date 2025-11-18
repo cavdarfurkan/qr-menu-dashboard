@@ -72,7 +72,8 @@ export async function clientLoader({
 
 			return {
 				success: errorResponse?.data?.success ?? false,
-				message: errorResponse?.data?.message ?? i18n.t("error:error_getting_themes"),
+				message:
+					errorResponse?.data?.message ?? i18n.t("error:error_getting_themes"),
 				data: null,
 				timestamp: errorResponse?.data.timestamp,
 			};
@@ -222,7 +223,8 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 											e.preventDefault();
 											handlePageChange(pageNumber);
 										}}
-										className="cursor-pointer">
+										className="cursor-pointer"
+									>
 										{pageNumber + 1}
 									</PaginationLink>
 								</PaginationItem>

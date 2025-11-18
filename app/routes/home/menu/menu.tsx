@@ -62,7 +62,8 @@ export default function Menu({ loaderData }: Route.ComponentProps) {
 					<Link
 						to="/menu/create"
 						className="text-primary underline"
-						viewTransition>
+						viewTransition
+					>
 						{t("menu:create_first_menu")}
 					</Link>
 				</div>
@@ -73,10 +74,12 @@ export default function Menu({ loaderData }: Route.ComponentProps) {
 							key={menu.menuId}
 							to={`/menu/${menu.menuId}`}
 							viewTransition
-							className="w-full h-full">
+							className="w-full h-full"
+						>
 							<Card
 								key={menu.menuId}
-								className="hover:shadow-lg transition-all duration-200 cursor-pointer">
+								className="hover:shadow-lg transition-all duration-200 cursor-pointer"
+							>
 								<CardHeader>
 									<CardTitle>{menu.menuName}</CardTitle>
 								</CardHeader>

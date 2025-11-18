@@ -1,13 +1,12 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { getCsrfToken } from "./csrf";
 
-
 export type ApiResponse = {
 	success: boolean;
 	message?: string;
 	data?: any;
 	timestamp: string;
-}
+};
 
 const api = axios.create({
 	baseURL: "http://localhost:8080/api",
@@ -61,8 +60,7 @@ api.interceptors.response.use(
 
 			(requestConfig as any)._retry = true;
 
-			const isRefreshRequest =
-				requestConfig.url?.includes("/auth/refresh");
+			const isRefreshRequest = requestConfig.url?.includes("/auth/refresh");
 			if (isRefreshRequest) {
 				logoutUser();
 				return Promise.reject(error);
@@ -82,7 +80,7 @@ api.interceptors.response.use(
 							"X-Request-Cookie-SameSite": "None",
 							"X-Request-Cookie-Secure": "true",
 						},
-					}
+					},
 				);
 
 				const newToken = refreshResponse.data.data.accessToken;
@@ -97,7 +95,7 @@ api.interceptors.response.use(
 			} catch (refreshError: any) {
 				console.log(
 					"Error refreshing token",
-					refreshError?.response?.status || refreshError
+					refreshError?.response?.status || refreshError,
 				);
 				logoutUser();
 				return Promise.reject(refreshError);
@@ -105,7 +103,7 @@ api.interceptors.response.use(
 		}
 
 		return Promise.reject(error);
-	}
+	},
 );
 
 const logoutUser = () => {

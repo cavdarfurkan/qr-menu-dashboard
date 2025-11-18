@@ -53,14 +53,14 @@ export default function Loader({
 				justifyContent: "center",
 				backgroundColor: "rgba(255, 255, 255, 0.8)",
 				zIndex: 9999,
-		  }
+			}
 		: {
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "center",
 				justifyContent: "center",
 				padding: "1rem",
-		  };
+			};
 
 	return (
 		<div style={containerStyle as React.CSSProperties}>

@@ -374,11 +374,13 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 		return (
 			<div className="flex flex-col gap-6">
 				<Title
-					title={t("menu:content_title", { contentName: contentName || "" })}>
+					title={t("menu:content_title", { contentName: contentName || "" })}
+				>
 					<NewContentDialog
 						schema={theme_schemas}
 						uiSchema={ui_schemas}
-						contentName={contentName || ""}>
+						contentName={contentName || ""}
+					>
 						<Button>
 							<PlusCircle className="h-4 w-4 mr-2" />
 							{t("content:add_new_content")}
@@ -397,10 +399,12 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 						<NewContentDialog
 							schema={theme_schemas}
 							uiSchema={ui_schemas}
-							contentName={contentName || ""}>
+							contentName={contentName || ""}
+						>
 							<Button
 								variant="link"
-								className="text-primary underline text-md font-normal">
+								className="text-primary underline text-md font-normal"
+							>
 								{t("content:create_new_content")}
 							</Button>
 						</NewContentDialog>
@@ -417,14 +421,16 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 	return (
 		<div className="flex flex-col gap-6">
 			<Title
-				title={t("menu:content_title", { contentName: contentName || "" })}>
+				title={t("menu:content_title", { contentName: contentName || "" })}
+			>
 				<div className="flex items-center gap-2">
 					{Object.keys(rowSelection).length > 0 && (
 						<Button
 							variant="destructive"
 							size="sm"
 							onClick={handleBulkDelete}
-							disabled={isDeleting}>
+							disabled={isDeleting}
+						>
 							<Trash className="h-4 w-4 mr-2" />
 							{t("menu:delete_selected", {
 								count: Object.keys(rowSelection).length,
@@ -435,7 +441,8 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 					<NewContentDialog
 						schema={theme_schemas}
 						uiSchema={ui_schemas}
-						contentName={contentName || ""}>
+						contentName={contentName || ""}
+					>
 						<Button>
 							<PlusCircle className="h-4 w-4 mr-2" />
 							{t("content:add_new_content")}
@@ -458,7 +465,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 												: flexRender(
 														header.column.columnDef.header,
 														header.getContext(),
-												  )}
+													)}
 										</TableHead>
 									))}
 								</TableRow>
@@ -469,7 +476,8 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 								table.getRowModel().rows.map((row) => (
 									<TableRow
 										key={row.id}
-										data-state={row.getIsSelected() && "selected"}>
+										data-state={row.getIsSelected() && "selected"}
+									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id}>
 												{flexRender(
@@ -484,7 +492,8 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 								<TableRow>
 									<TableCell
 										colSpan={columns.length}
-										className="h-24 text-center">
+										className="h-24 text-center"
+									>
 										{t("common:empty_states.no_results")}
 									</TableCell>
 								</TableRow>
@@ -506,14 +515,16 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 						variant="outline"
 						size="sm"
 						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}>
+						disabled={!table.getCanPreviousPage()}
+					>
 						{t("common:buttons.previous")}
 					</Button>
 					<Button
 						variant="outline"
 						size="sm"
 						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}>
+						disabled={!table.getCanNextPage()}
+					>
 						{t("common:buttons.next")}
 					</Button>
 					{/* </div> */}
@@ -531,7 +542,7 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 							{isBulkDelete
 								? t("common:confirmations.delete_items", {
 										count: Object.keys(rowSelection).length,
-								  })
+									})
 								: t("common:confirmations.delete_item")}{" "}
 							{t("common:confirmations.cannot_be_undone")}
 						</AlertDialogDescription>
@@ -543,7 +554,8 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 						<AlertDialogAction
 							onClick={confirmDelete}
 							disabled={isDeleting}
-							className="bg-destructive hover:bg-destructive/90">
+							className="bg-destructive hover:bg-destructive/90"
+						>
 							{isDeleting
 								? t("common:buttons.deleting")
 								: t("common:buttons.delete")}
@@ -578,7 +590,8 @@ function DropdownMenuAction({
 				{/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
 				<DropdownMenuItem asChild>
 					<Link
-						to={`/menu/${menuId}/content/${contentName}/edit/${content.id}`}>
+						to={`/menu/${menuId}/content/${contentName}/edit/${content.id}`}
+					>
 						<Pencil className="h-4 w-4 mr-2" />
 						{t("common:buttons.edit")}
 					</Link>
@@ -588,7 +601,8 @@ function DropdownMenuAction({
 
 				<DropdownMenuItem
 					variant="destructive"
-					onClick={() => onDelete(content)}>
+					onClick={() => onDelete(content)}
+				>
 					<Trash className="h-4 w-4" />
 					{t("common:buttons.delete")}
 				</DropdownMenuItem>
