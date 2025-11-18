@@ -177,7 +177,7 @@ export function ThemeCard({
 			<CardHeader>
 				<CardTitle>{themeName}</CardTitle>
 				<p className="text-sm text-gray-500">{themeDescription}</p>
-				<p className="text-xs text-gray-400">By {themeAuthor}</p>
+				<p className="text-xs text-gray-400">{themeAuthor}</p>
 				{isFree && (
 					<span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
 						{t("common:labels.is_free")}

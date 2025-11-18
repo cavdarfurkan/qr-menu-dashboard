@@ -1,0 +1,21 @@
+{
+	"sidebar": {
+		"sidebar": "Panel boczny",
+		"sidebar_description_mobile": "Wyświetla mobilny panel boczny.",
+		"toggle_sidebar": "Otwórz/zamknij panel boczny"
+	},
+	"sheet": {
+		"close": "Zamknij"
+	},
+	"pagination": {
+		"previous": "Poprzedni",
+		"next": "Następny",
+		"more_pages": "Więcej stron",
+		"previous_aria_label": "Przejdź do poprzedniej strony",
+		"next_aria_label": "Przejdź do następnej strony",
+		"more_pages_aria_label": "Więcej stron"
+	},
+	"dialog": {
+		"close": "Zamknij"
+	}
+}

@@ -15,7 +15,10 @@
 		"title": "Rozliczenia i subskrypcje"
 	},
 	"appearance": {
-		"title": "Wygląd"
+		"title": "Wygląd",
+		"light": "Jasny",
+		"dark": "Ciemny",
+		"system": "System"
 	},
 	"language": {
 		"title": "Język",

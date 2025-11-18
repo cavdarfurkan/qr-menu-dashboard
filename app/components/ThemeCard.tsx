@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Card, CardHeader, CardTitle } from "./ui/card";
+import { useTranslation } from "react-i18next";
 
 interface ThemeCardProps {
 	index: number;
@@ -16,6 +17,8 @@ export default function ThemeCard({
 	themeAuthor,
 	isFree,
 }: ThemeCardProps) {
+	const { t } = useTranslation(["common"]);
+
 	return (
 		<Card
 			key={index}
@@ -26,10 +29,10 @@ export default function ThemeCard({
 				<CardHeader>
 					<CardTitle>{themeName}</CardTitle>
 					<p className="text-sm text-gray-500">{themeDescription}</p>
-					<p className="text-xs text-gray-400">By {themeAuthor}</p>
+					<p className="text-xs text-gray-400">{themeAuthor}</p>
 					{isFree && (
 						<span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-							Free
+							{t("common:labels.is_free")}
 						</span>
 					)}
 				</CardHeader>

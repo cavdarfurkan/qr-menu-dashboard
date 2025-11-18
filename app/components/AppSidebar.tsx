@@ -17,7 +17,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 export function AppSidebar() {
-	const { t } = useTranslation("sidebar");
+	const { t } = useTranslation(["sidebar", "common"]);
 	const location = useLocation();
 	const currentPath = location.pathname;
 
@@ -79,7 +79,7 @@ export function AppSidebar() {
 							`}
 						>
 							<Link to="/" className="flex items-center gap-2" viewTransition>
-								<h1 className="text-2xl font-bold">{t("app_name")}</h1>
+								<h1 className="text-2xl font-bold">{t("common:app_name")}</h1>
 							</Link>
 						</div>
 					)}

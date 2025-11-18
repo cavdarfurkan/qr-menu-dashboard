@@ -1,4 +1,6 @@
 {
+	"app_name": "QR Menu",
+
 	"actions": {
 		"actions": "Actions",
 		"select_all": "Select all",
@@ -54,5 +56,11 @@
 		"no_properties_defined": "No properties defined",
 		"items": "{{count}} items",
 		"properties": "{{count}} properties"
+	},
+
+	"images": {
+		"alt": {
+			"auth_layout": "Authentication layout image"
+		}
 	}
 }

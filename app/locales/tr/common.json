@@ -1,4 +1,5 @@
 {
+	"app_name": "QR Menu",
 	"actions": {
 		"actions": "İşlemler",
 		"select_all": "Tümünü seç",
@@ -54,5 +55,10 @@
 		"no_properties_defined": "Özellik tanımlı değil",
 		"items": "{{count}} öğe",
 		"properties": "{{count}} özellik"
+	},
+	"images": {
+		"alt": {
+			"auth_layout": "Kimlik Doğrulama Layout Görseli"
+		}
 	}
 }

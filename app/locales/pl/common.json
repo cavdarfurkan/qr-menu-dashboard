@@ -1,4 +1,5 @@
 {
+	"app_name": "QR Menu",
 	"actions": {
 		"actions": "Akcje",
 		"select_all": "Zaznacz wszystkie",
@@ -54,5 +55,10 @@
 		"no_properties_defined": "Brak zdefiniowanych właściwości",
 		"items": "{{count}} elementów",
 		"properties": "{{count}} właściwości"
+	},
+	"images": {
+		"alt": {
+			"auth_layout": "Obraz autoryzacji"
+		}
 	}
 }

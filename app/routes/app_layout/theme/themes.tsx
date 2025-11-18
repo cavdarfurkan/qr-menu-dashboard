@@ -268,7 +268,7 @@ function ThemeCard({ theme }: { theme: ThemeType }) {
 				<p className="text-sm text-gray-500">
 					{theme.themeManifest.description}
 				</p>
-				<p className="text-xs text-gray-400">By {theme.themeManifest.author}</p>
+				<p className="text-xs text-gray-400">{theme.themeManifest.author}</p>
 				{theme.isFree && (
 					<span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
 						{t("common:labels.is_free")}

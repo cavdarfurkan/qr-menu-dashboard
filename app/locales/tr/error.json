@@ -1,5 +1,6 @@
 {
 	"error": "Hata",
+	"errors": "Hatalar",
 	"404": "404",
 	"404_description": "İstenen sayfa bulunamadı.",
 	"unexpected_error": "Beklenmeyen bir hata oluştu.",

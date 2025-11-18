@@ -38,6 +38,7 @@ interface Resources {
 			select_row: "Select row";
 			view_content: "View Content";
 		};
+		app_name: "QR Menu";
 		buttons: {
 			back: "Back";
 			back_to_dashboard: "Back to dashboard";
@@ -71,6 +72,11 @@ interface Resources {
 			no_results: "No results.";
 			not_found: "Not Found";
 			unknown: "Unknown";
+		};
+		images: {
+			alt: {
+				auth_layout: "Authentication layout image";
+			};
 		};
 		labels: {
 			is_free: "Free";
@@ -113,6 +119,7 @@ interface Resources {
 		error_getting_themes: "Error getting themes";
 		error_loading_user_data: "Error loading user data";
 		error_updating_menu: "Error updating menu";
+		errors: "Errors";
 		failed_to_create_menu: "Failed to create menu";
 		failed_to_delete_menu: "Failed to delete menu";
 		failed_to_load_content_data: "Failed to load content data";
@@ -150,6 +157,9 @@ interface Resources {
 			title: "Account Details";
 		};
 		appearance: {
+			dark: "Dark";
+			light: "Light";
+			system: "System";
 			title: "Appearance";
 		};
 		billing_and_subscription: {
@@ -174,7 +184,6 @@ interface Resources {
 		};
 	};
 	sidebar: {
-		app_name: "QR Menu";
 		dashboard: "Dashboard";
 		logout: "Logout";
 		menu: "Menu";
@@ -192,6 +201,27 @@ interface Resources {
 			title: "Theme Register";
 		};
 		title: "Themes";
+	};
+	ui_components: {
+		dialog: {
+			close: "Close";
+		};
+		pagination: {
+			more_pages: "More pages";
+			more_pages_aria_label: "More pages";
+			next: "Next";
+			next_aria_label: "Go to next page";
+			previous: "Previous";
+			previous_aria_label: "Go to previous page";
+		};
+		sheet: {
+			close: "Close";
+		};
+		sidebar: {
+			sidebar: "Sidebar";
+			sidebar_description_mobile: "Displays the mobile sidebar.";
+			toggle_sidebar: "Toggle Sidebar";
+		};
 	};
 	validation: {
 		confirm_password_min: "Confirm Password must be at least 8 characters";

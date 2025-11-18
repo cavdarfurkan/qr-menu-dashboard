@@ -20,7 +20,10 @@
 	},
 
 	"appearance": {
-		"title": "Appearance"
+		"title": "Appearance",
+		"light": "Light",
+		"dark": "Dark",
+		"system": "System"
 	},
 
 	"language": {

@@ -1,5 +1,6 @@
 {
 	"error": "Error",
+	"errors": "Errors",
 	"404": "404",
 	"404_description": "The requested page could not be found.",
 	"unexpected_error": "An unexpected error occurred.",

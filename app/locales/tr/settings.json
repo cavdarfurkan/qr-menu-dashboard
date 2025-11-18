@@ -15,7 +15,10 @@
 		"title": "Fatura ve Abonelik"
 	},
 	"appearance": {
-		"title": "Görünüm"
+		"title": "Görünüm",
+		"light": "Açık",
+		"dark": "Koyu",
+		"system": "Sistem"
 	},
 	"language": {
 		"title": "Dil",

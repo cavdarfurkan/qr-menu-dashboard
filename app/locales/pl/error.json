@@ -1,5 +1,6 @@
 {
 	"error": "Błąd",
+	"errors": "Błędy",
 	"404": "404",
 	"404_description": "Nie można znaleźć żądanej strony.",
 	"unexpected_error": "Wystąpił nieoczekiwany błąd.",

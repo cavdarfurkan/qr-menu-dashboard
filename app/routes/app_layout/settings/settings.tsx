@@ -230,11 +230,11 @@ function AppearanceSection({ t }: { t: any }) {
 	return (
 		<div>
 			<div className="flex flex-col gap-2">
-				<Label>{t("settings:theme")}</Label>
+				<Label>{t("settings:appearance.title")}</Label>
 				<select className="p-2 border rounded-md">
-					<option value="light">{t("settings:light")}</option>
-					<option value="dark">{t("settings:dark")}</option>
-					<option value="system">{t("settings:system")}</option>
+					<option value="light">{t("settings:appearance.light")}</option>
+					<option value="dark">{t("settings:appearance.dark")}</option>
+					<option value="system">{t("settings:appearance.system")}</option>
 				</select>
 			</div>
 			<div className="flex flex-col gap-2">

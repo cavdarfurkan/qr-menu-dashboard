@@ -523,9 +523,11 @@ export function ErrorListTemplate<
 	F extends FormContextType = any,
 >(props: { errors: { stack: string }[] }) {
 	const { errors } = props;
+	const { t } = useTranslation(["error"]);
+
 	return (
 		<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4">
-			<h5 className="text-sm font-medium mb-1">Errors</h5>
+			<h5 className="text-sm font-medium mb-1">{t("error:errors")}</h5>
 			<ul className="list-disc pl-5 text-sm">
 				{errors.map((error, i) => (
 					<li key={i}>{error.stack}</li>

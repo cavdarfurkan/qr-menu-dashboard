@@ -1,0 +1,21 @@
+{
+	"sidebar": {
+		"sidebar": "Sidebar",
+		"sidebar_description_mobile": "Mobil sidebar'ı görüntüler.",
+		"toggle_sidebar": "Sidebar'ı aç/kapat"
+	},
+	"sheet": {
+		"close": "Kapat"
+	},
+	"pagination": {
+		"previous": "Önceki",
+		"next": "Sonraki",
+		"more_pages": "Daha fazla sayfa",
+		"previous_aria_label": "Önceki sayfaya git",
+		"next_aria_label": "Sonraki sayfaya git",
+		"more_pages_aria_label": "Daha fazla sayfa"
+	},
+	"dialog": {
+		"close": "Kapat"
+	}
+}

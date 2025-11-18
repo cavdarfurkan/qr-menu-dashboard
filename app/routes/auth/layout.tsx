@@ -1,7 +1,10 @@
 import { GalleryVerticalEnd } from "lucide-react";
 import { Link, Outlet } from "react-router";
+import { useTranslation } from "react-i18next";
 
 export default function AuthLayout() {
+	const { t } = useTranslation(["common"]);
+
 	return (
 		<div className="grid min-h-svh lg:grid-cols-2">
 			<div className="flex flex-col gap-4 p-6 md:p-10">
@@ -11,7 +14,7 @@ export default function AuthLayout() {
 							<div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
 								<GalleryVerticalEnd className="size-4" />
 							</div>
-							QR Menu Dashboard
+							{t("common:app_name")}
 						</div>
 					</Link>
 				</div>
@@ -24,7 +27,7 @@ export default function AuthLayout() {
 			<div className="bg-muted relative hidden lg:block">
 				<img
 					src="/placeholder.jpg"
-					alt="Image"
+					alt={t("common:images.alt.auth_layout")}
 					className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
 				/>
 			</div>

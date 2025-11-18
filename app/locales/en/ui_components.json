@@ -1,0 +1,21 @@
+{
+	"sidebar": {
+		"sidebar": "Sidebar",
+		"sidebar_description_mobile": "Displays the mobile sidebar.",
+		"toggle_sidebar": "Toggle Sidebar"
+	},
+	"sheet": {
+		"close": "Close"
+	},
+	"pagination": {
+		"previous": "Previous",
+		"next": "Next",
+		"more_pages": "More pages",
+		"previous_aria_label": "Go to previous page",
+		"next_aria_label": "Go to next page",
+		"more_pages_aria_label": "More pages"
+	},
+	"dialog": {
+		"close": "Close"
+	}
+}
