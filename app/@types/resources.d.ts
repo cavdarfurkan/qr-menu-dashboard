@@ -146,11 +146,36 @@ interface Resources {
 		title: "Your Menus";
 	};
 	settings: {
-		active_sessions: "Active Sessions";
+		account_details: {
+			title: "Account Details";
+		};
+		appearance: {
+			title: "Appearance";
+		};
+		billing_and_subscription: {
+			title: "Billing & Subscription";
+		};
+		language: {
+			description: "Select the language for your account";
+			select_language: "Select a language";
+			title: "Language";
+		};
+		notifications: {
+			title: "Notifications";
+		};
+		organization: {
+			title: "Organization";
+		};
+		privacy: {
+			title: "Privacy";
+		};
+		security: {
+			title: "Security";
+		};
 	};
 	sidebar: {
 		app_name: "QR Menu";
-		home: "Home";
+		dashboard: "Dashboard";
 		logout: "Logout";
 		menu: "Menu";
 		settings: "Settings";

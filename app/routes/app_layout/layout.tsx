@@ -1,19 +1,16 @@
 import { Outlet } from "react-router";
-import type { Route } from "./+types/index";
+import type { Route } from "./+types/layout";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/AppSidebar";
 
 export function meta({}: Route.MetaArgs) {
-	return [
-		{ title: "QR Menu Dashboard" },
-		{ name: "description", content: "QR Menu Dashboard" },
-	];
+	return [{ title: "QR Menu" }, { name: "description", content: "QR Menu" }];
 }
 
-export default function HomeLayout() {
+export default function AppLayout() {
 	return (
 		<SidebarProvider>
-			<div className="p-4 flex min-h-svh w-full">
+			<div className="flex min-h-svh w-full p-4">
 				<AppSidebar />
 				<div className="flex-1 p-4">
 					<div className="flex items-center md:hidden mb-4">

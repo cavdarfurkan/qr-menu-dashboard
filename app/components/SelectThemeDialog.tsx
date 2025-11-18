@@ -18,7 +18,7 @@ import {
 } from "react";
 import api from "~/lib/api";
 import InfiniteScroll from "react-infinite-scroll-component";
-import type { ThemeType } from "~/routes/home/theme/themes";
+import type { ThemeType } from "~/routes/app_layout/theme/themes";
 import { useTranslation } from "react-i18next";
 
 interface SelectThemeDialogProps {

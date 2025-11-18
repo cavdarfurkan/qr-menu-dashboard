@@ -1,3 +1,28 @@
 {
-	"active_sessions": "Aktif Oturumlar"
+	"account_details": {
+		"title": "Hesap Detayları"
+	},
+	"organization": {
+		"title": "Organizasyon"
+	},
+	"security": {
+		"title": "Güvenlik"
+	},
+	"privacy": {
+		"title": "Gizlilik"
+	},
+	"billing_and_subscription": {
+		"title": "Fatura ve Abonelik"
+	},
+	"appearance": {
+		"title": "Görünüm"
+	},
+	"language": {
+		"title": "Dil",
+		"description": "Hesabınız için bir dil seçin",
+		"select_language": "Dil seç"
+	},
+	"notifications": {
+		"title": "Bildirimler"
+	}
 }

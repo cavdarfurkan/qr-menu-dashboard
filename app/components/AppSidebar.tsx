@@ -41,7 +41,7 @@ export function AppSidebar() {
 
 	const sidebarItems: SidebarItem[] = [
 		{
-			label: t("home"),
+			label: t("dashboard"),
 			icon: Home,
 			url: "/",
 		},

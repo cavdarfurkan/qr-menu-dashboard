@@ -1,3 +1,35 @@
 {
-	"active_sessions": "Active Sessions"
+	"account_details": {
+		"title": "Account Details"
+	},
+
+	"organization": {
+		"title": "Organization"
+	},
+
+	"security": {
+		"title": "Security"
+	},
+
+	"privacy": {
+		"title": "Privacy"
+	},
+
+	"billing_and_subscription": {
+		"title": "Billing & Subscription"
+	},
+
+	"appearance": {
+		"title": "Appearance"
+	},
+
+	"language": {
+		"title": "Language",
+		"description": "Select the language for your account",
+		"select_language": "Select a language"
+	},
+
+	"notifications": {
+		"title": "Notifications"
+	}
 }

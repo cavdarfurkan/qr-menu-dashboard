@@ -2,6 +2,8 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
+import { languages } from "./constants/languages";
+
 import enCommon from "./locales/en/common.json";
 import enAuth from "./locales/en/auth.json";
 import enMenu from "./locales/en/menu.json";
@@ -39,11 +41,15 @@ i18n
 	.use(LanguageDetector)
 	.use(initReactI18next)
 	.init({
-		// lng: "tr",
 		fallbackLng: "en",
-		// debug: true,
+		supportedLngs: Object.keys(languages),
 		interpolation: {
 			escapeValue: false,
+		},
+		detection: {
+			order: ["localStorage", "navigator"],
+			caches: ["localStorage"],
+			lookupLocalStorage: "i18nextLng",
 		},
 		resources: {
 			en: {

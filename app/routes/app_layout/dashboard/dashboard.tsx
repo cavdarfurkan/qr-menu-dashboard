@@ -1,4 +1,4 @@
-import type { Route } from "./+types/index";
+import type { Route } from "./+types/dashboard";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import api from "~/lib/api";
@@ -50,6 +50,10 @@ export default function Home({
 					</Link>
 				</Button>
 			</div>
+
+			<div className="h-96 bg-gray-100"></div>
+			<div className="h-96 bg-gray-100"></div>
+			<div className="h-96 bg-gray-100"></div>
 		</div>
 	);
 }
