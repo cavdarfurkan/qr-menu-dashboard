@@ -7,7 +7,7 @@ on:
     branches: [main, dev]
 
 jobs:
-  i18n-lint:
+  i18n-checks:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,22 +26,6 @@ jobs:
       - name: Run i18next-cli lint
         run: npm run i18n:lint
 
-  i18n-sync:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Check locale synchronization
         run: npm run i18n:sync
         continue-on-error: true
@@ -59,22 +43,6 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "✅ All locale files are in sync"
           fi
-
-  i18n-types:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Run i18next-cli types
         run: npm run i18n:types
