@@ -250,7 +250,6 @@ function LanguageSection({ t }: { t: any }) {
 		useSettingsStore();
 
 	const handleLanguageChange = (value: keyof typeof languages) => {
-		console.log(value);
 		setSelectedLanguage(value);
 		setLanguage(value);
 	};

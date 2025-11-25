@@ -30,6 +30,7 @@ interface LanguageSectionStore {
 	selectedLanguage: Language;
 	setLanguage: (language: Language) => void;
 	setSelectedLanguage: (selectedLanguage: Language) => void;
+	cancelLanguageChange: () => void;
 }
 
 export const useSettingsStore = create<SettingsStore & LanguageSectionStore>(
@@ -52,7 +53,8 @@ export const useSettingsStore = create<SettingsStore & LanguageSectionStore>(
 		},
 
 		cancelChanges: () => {
-			set({ pendingChanges: {} });
+			set((state) => ({ pendingChanges: {} }));
+			get().cancelLanguageChange();
 		},
 
 		saveChanges: async () => {
@@ -106,6 +108,10 @@ export const useSettingsStore = create<SettingsStore & LanguageSectionStore>(
 
 		setSelectedLanguage: (selectedLanguage: Language) => {
 			set({ selectedLanguage });
+		},
+
+		cancelLanguageChange: () => {
+			get().setSelectedLanguage(get().savedSettings.language);
 		},
 	}),
 );
