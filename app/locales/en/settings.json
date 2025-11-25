@@ -21,6 +21,7 @@
 
 	"appearance": {
 		"title": "Appearance",
+		"description": "Select the appearance for your account",
 		"light": "Light",
 		"dark": "Dark",
 		"system": "System"

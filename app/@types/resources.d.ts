@@ -158,6 +158,7 @@ interface Resources {
 		};
 		appearance: {
 			dark: "Dark";
+			description: "Select the appearance for your account";
 			light: "Light";
 			system: "System";
 			title: "Appearance";

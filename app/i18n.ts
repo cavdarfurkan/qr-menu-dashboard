@@ -14,6 +14,7 @@ import enSidebar from "./locales/en/sidebar.json";
 import enValidation from "./locales/en/validation.json";
 import enTheme from "./locales/en/theme.json";
 import enSettings from "./locales/en/settings.json";
+import enUiComponents from "./locales/en/ui_components.json";
 
 import trCommon from "./locales/tr/common.json";
 import trAuth from "./locales/tr/auth.json";
@@ -25,6 +26,7 @@ import trSidebar from "./locales/tr/sidebar.json";
 import trValidation from "./locales/tr/validation.json";
 import trTheme from "./locales/tr/theme.json";
 import trSettings from "./locales/tr/settings.json";
+import trUiComponents from "./locales/tr/ui_components.json";
 
 import plCommon from "./locales/pl/common.json";
 import plAuth from "./locales/pl/auth.json";
@@ -36,6 +38,7 @@ import plSidebar from "./locales/pl/sidebar.json";
 import plValidation from "./locales/pl/validation.json";
 import plTheme from "./locales/pl/theme.json";
 import plSettings from "./locales/pl/settings.json";
+import plUiComponents from "./locales/pl/ui_components.json";
 
 i18n
 	.use(LanguageDetector)
@@ -63,6 +66,7 @@ i18n
 				validation: enValidation,
 				theme: enTheme,
 				settings: enSettings,
+				ui_components: enUiComponents,
 			},
 			tr: {
 				common: trCommon,
@@ -75,6 +79,7 @@ i18n
 				validation: trValidation,
 				theme: trTheme,
 				settings: trSettings,
+				ui_components: trUiComponents,
 			},
 			pl: {
 				common: plCommon,
@@ -87,6 +92,7 @@ i18n
 				validation: plValidation,
 				theme: plTheme,
 				settings: plSettings,
+				ui_components: plUiComponents,
 			},
 		},
 	});

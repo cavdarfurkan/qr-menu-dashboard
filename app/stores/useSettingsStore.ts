@@ -3,15 +3,14 @@ import i18n from "~/i18n";
 import { languages } from "~/constants/languages";
 
 type Language = keyof typeof languages;
+export type Theme = "light" | "dark" | "system";
 
 interface SavedSettings {
 	language: Language;
-	// theme?: "light" | "dark" | "system";
 }
 
 interface PendingChanges {
 	language?: Language;
-	// theme?: "light" | "dark" | "system";
 }
 
 interface SettingsStore {
@@ -63,7 +62,6 @@ export const useSettingsStore = create<SettingsStore & LanguageSectionStore>(
 
 			// Apply language change if pending
 			if (pendingChanges.language) {
-				console.log(pendingChanges.language);
 				await i18n.changeLanguage(pendingChanges.language as string);
 			}
 
@@ -79,7 +77,7 @@ export const useSettingsStore = create<SettingsStore & LanguageSectionStore>(
 				pendingChanges: {},
 			});
 
-			// TODO: Save to backend/localStorage if needed
+			// TODO: Save to backend if needed
 			console.log("Settings saved:", newSavedSettings);
 		},
 
@@ -93,6 +91,10 @@ export const useSettingsStore = create<SettingsStore & LanguageSectionStore>(
 		},
 
 		setLanguage: (language: Language) => {
+			if (language === get().savedSettings.language) {
+				get().cancelLanguageChange();
+				return;
+			}
 			set((state) => ({
 				pendingChanges: {
 					...state.pendingChanges,
@@ -111,7 +113,8 @@ export const useSettingsStore = create<SettingsStore & LanguageSectionStore>(
 		},
 
 		cancelLanguageChange: () => {
-			get().setSelectedLanguage(get().savedSettings.language);
+			set({ selectedLanguage: get().savedSettings.language });
+			delete get().pendingChanges.language;
 		},
 	}),
 );

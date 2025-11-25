@@ -16,6 +16,7 @@
 	},
 	"appearance": {
 		"title": "Wygląd",
+		"description": "Wybierz wygląd dla swojego konta",
 		"light": "Jasny",
 		"dark": "Ciemny",
 		"system": "System"

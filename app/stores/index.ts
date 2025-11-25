@@ -1,3 +1,3 @@
 export { useMenuStore } from "./useMenuStore";
 export { useUiStore } from "./useUiStore";
-export { useSettingsStore } from "./useSettingsStore";
+export { useSettingsStore, type Theme } from "./useSettingsStore";

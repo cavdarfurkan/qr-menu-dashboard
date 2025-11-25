@@ -15,6 +15,7 @@ import "./app.css";
 import { AuthProvider } from "./auth_context";
 import Loader from "./components/Loader";
 import { Toaster } from "./components/ui/sonner";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 export const links: Route.LinksFunction = () => [
 	{ rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -31,7 +32,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang={i18n.language || "en"}>
+		<html lang={i18n.language || "en"} suppressHydrationWarning>
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -54,11 +55,13 @@ export function HydrateFallback() {
 
 export default function App() {
 	return (
-		<AuthProvider>
-			<I18nextProvider i18n={i18n}>
-				<Outlet />
-			</I18nextProvider>
-		</AuthProvider>
+		<ThemeProvider>
+			<AuthProvider>
+				<I18nextProvider i18n={i18n}>
+					<Outlet />
+				</I18nextProvider>
+			</AuthProvider>
+		</ThemeProvider>
 	);
 }
 

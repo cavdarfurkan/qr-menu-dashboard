@@ -51,9 +51,9 @@ export default function Home({
 				</Button>
 			</div>
 
-			<div className="h-96 bg-gray-100"></div>
-			<div className="h-96 bg-gray-100"></div>
-			<div className="h-96 bg-gray-100"></div>
+			<div className="h-96 bg-gray-100 dark:bg-gray-900"></div>
+			<div className="h-96 bg-gray-100 dark:bg-gray-900"></div>
+			<div className="h-96 bg-gray-100 dark:bg-gray-900"></div>
 		</div>
 	);
 }
