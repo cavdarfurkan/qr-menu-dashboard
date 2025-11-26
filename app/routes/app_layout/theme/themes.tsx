@@ -17,6 +17,7 @@ import Title from "~/components/Title";
 import { Button } from "~/components/ui/button";
 import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
+import ThemeCard from "~/components/ThemeCard";
 
 export type ThemeType = {
 	id: number;
@@ -185,7 +186,14 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 			) : (
 				<ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mxauto">
 					{themes.map((theme: ThemeType) => (
-						<ThemeCard key={theme.id} theme={theme} />
+						<ThemeCard
+							key={theme.id}
+							index={theme.id}
+							themeName={theme.themeManifest.name}
+							themeDescription={theme.themeManifest.description}
+							themeAuthor={theme.themeManifest.author}
+							isFree={theme.isFree}
+						/>
 					))}
 				</ul>
 			)}
@@ -251,31 +259,5 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 				</Pagination>
 			)}
 		</div>
-	);
-}
-
-function ThemeCard({ theme }: { theme: ThemeType }) {
-	const { t } = useTranslation(["common"]);
-	return (
-		<Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
-			{/* <Link */}
-			{/* 	to={href || "#"} */}
-			{/* 	viewTransition */}
-			{/* 	className="w-fullh-full" */}
-			{/* > */}
-			<CardHeader>
-				<CardTitle>{theme.themeManifest.name}</CardTitle>
-				<p className="text-sm text-gray-500">
-					{theme.themeManifest.description}
-				</p>
-				<p className="text-xs text-gray-400">{theme.themeManifest.author}</p>
-				{theme.isFree && (
-					<span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-						{t("common:labels.is_free")}
-					</span>
-				)}
-			</CardHeader>
-			{/* </Link> */}
-		</Card>
 	);
 }

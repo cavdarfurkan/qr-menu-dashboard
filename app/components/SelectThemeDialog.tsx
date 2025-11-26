@@ -1,7 +1,4 @@
-// TODO: Change this component for theme selection dialog only
-
 import type React from "react";
-import { Card, CardHeader, CardTitle } from "./ui/card";
 import {
 	Dialog,
 	DialogContent,
@@ -20,6 +17,7 @@ import api from "~/lib/api";
 import InfiniteScroll from "react-infinite-scroll-component";
 import type { ThemeType } from "~/routes/app_layout/theme/themes";
 import { useTranslation } from "react-i18next";
+import ThemeCard from "./ThemeCard";
 
 interface SelectThemeDialogProps {
 	content: SelectThemeDialogContentProps;
@@ -131,12 +129,12 @@ const SelectThemeDialogContent: React.FC<SelectThemeDialogContentProps> = ({
 					{themes.map((theme, index) => (
 						<ThemeCard
 							key={index}
-							id={theme.id}
+							index={index}
 							themeName={theme.themeManifest.name}
 							themeDescription={theme.themeManifest.description}
 							themeAuthor={theme.themeManifest.author}
 							isFree={theme.isFree}
-							onClick={onClick}
+							onClick={(index) => onClick(themes[index].id)}
 						/>
 					))}
 				</InfiniteScroll>
@@ -144,47 +142,3 @@ const SelectThemeDialogContent: React.FC<SelectThemeDialogContentProps> = ({
 		</DialogContent>
 	);
 };
-
-interface ThemeCardProps {
-	id: number;
-	themeName: string;
-	themeDescription: string;
-	themeAuthor: string;
-	isFree: boolean;
-	onClick: (id: number) => void;
-}
-
-export function ThemeCard({
-	id,
-	themeName,
-	themeDescription,
-	themeAuthor,
-	isFree,
-	onClick,
-}: ThemeCardProps) {
-	const { t } = useTranslation(["common"]);
-	return (
-		<Card
-			key={id}
-			className="hover:shadow-lg transition-all duration-200 cursor-pointer"
-			onClick={() => onClick(id)}
-		>
-			{/* <Link */}
-			{/* 	to={href || "#"} */}
-			{/* 	viewTransition */}
-			{/* 	className="w-fullh-full" */}
-			{/* > */}
-			<CardHeader>
-				<CardTitle>{themeName}</CardTitle>
-				<p className="text-sm text-gray-500">{themeDescription}</p>
-				<p className="text-xs text-gray-400">{themeAuthor}</p>
-				{isFree && (
-					<span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-						{t("common:labels.is_free")}
-					</span>
-				)}
-			</CardHeader>
-			{/* </Link> */}
-		</Card>
-	);
-}
