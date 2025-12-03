@@ -6,6 +6,7 @@ import { isAxiosError } from "axios";
 import Title from "~/components/Title";
 import { Button } from "~/components/ui/button";
 import { useTranslation } from "react-i18next";
+import i18n from "~/i18n";
 
 type MenuType = {
 	menuId: number;
@@ -22,7 +23,8 @@ export async function clientLoader(): Promise<ApiResponse> {
 
 			return {
 				success: errorResponse?.data?.success ?? false,
-				message: errorResponse?.data?.message ?? "Error getting menus",
+				message:
+					errorResponse?.data?.message ?? i18n.t("error:error_getting_menus"),
 				data: null,
 				timestamp: errorResponse?.data.timestamp,
 			};
