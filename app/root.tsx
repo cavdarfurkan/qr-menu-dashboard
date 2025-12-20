@@ -50,7 +50,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export function HydrateFallback() {
-	return <Loader fullScreen />;
+	return (
+		<ThemeProvider>
+			<Loader fullScreen />
+		</ThemeProvider>
+	);
 }
 
 export default function App() {
