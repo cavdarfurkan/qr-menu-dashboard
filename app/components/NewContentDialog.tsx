@@ -41,7 +41,7 @@ export default function NewContentDialog({
 	const { t } = useTranslation(["content"]);
 
 	useEffect(() => {
-		console.log(formData);
+		// console.log(formData);
 	}, [formData]);
 
 	uiSchema = uiSchema || {};
@@ -53,15 +53,42 @@ export default function NewContentDialog({
 		setFormData(data.formData);
 	};
 
-	// TODO: Add relations to body
 	const onSubmit = (data: any, e: React.FormEvent<HTMLFormElement>) => {
 		const formData = data.formData;
-		console.log(contentName);
-		console.log(formData);
+		const currentUiSchema = uiSchema?.[contentName] || {};
 
-		const body: { collection: string; content: any } = {
+		// Separate content and relations
+		const content: any = {};
+		const relations: Record<string, string[]> = {};
+
+		for (const [key, value] of Object.entries(formData)) {
+			const fieldUiSchema = currentUiSchema[key] as any;
+
+			if (fieldUiSchema?.["ui:field"] === "relationSelect") {
+				// Extract relation IDs
+				const isMultiple = fieldUiSchema?.["ui:options"]?.isMultiple;
+				if (isMultiple && Array.isArray(value)) {
+					relations[key] = (value as any[]).map((item: any) => item.id);
+					// Add empty array placeholder for content (backend will resolve)
+					content[key] = [];
+				} else if (value && typeof value === "object") {
+					relations[key] = [(value as any).id];
+					// Add placeholder for content (backend will resolve)
+					content[key] = { id: "", slug: "", name: "" };
+				}
+			} else {
+				content[key] = value;
+			}
+		}
+
+		const body: {
+			collection: string;
+			content: any;
+			relations: Record<string, string[]>;
+		} = {
 			collection: contentName,
-			content: formData,
+			content,
+			relations,
 		};
 
 		api

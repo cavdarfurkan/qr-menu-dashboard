@@ -50,6 +50,9 @@ export default function MenuContentEdit() {
 	const [schemas, setSchemas] = useState<SchemasType | null>(null);
 	const [contentItem, setContentItem] = useState<any>(null);
 	const [formData, setFormData] = useState<any>(null);
+	const [relationContentLists, setRelationContentLists] = useState<
+		Record<string, any[]>
+	>({});
 
 	useEffect(() => {
 		setMenuId(menuId);
@@ -83,8 +86,13 @@ export default function MenuContentEdit() {
 					},
 				);
 
+				let schemasData: SchemasType = {
+					schemas_count: 0,
+					theme_schemas: {},
+					ui_schemas: {},
+				};
 				if (schemasResponse.data.success) {
-					const schemasData = schemasResponse.data.data as SchemasType;
+					schemasData = schemasResponse.data.data as SchemasType;
 					schemasData.ui_schemas = schemasData.ui_schemas || {};
 					setSchemas(schemasData);
 				}
@@ -97,7 +105,81 @@ export default function MenuContentEdit() {
 				if (contentResponse.data.success) {
 					const itemData = contentResponse.data.data;
 					setContentItem(itemData);
-					setFormData(itemData);
+
+					// Get uiSchema to determine relation fields
+					const currentUiSchema = schemasData.ui_schemas?.[contentName!] || {};
+
+					// Find all relation fields from uiSchema
+					const relationFields: { key: string; isMultiple: boolean }[] = [];
+					Object.keys(currentUiSchema).forEach((key) => {
+						const fieldUiSchema = currentUiSchema[key] as any;
+						if (fieldUiSchema?.["ui:field"] === "relationSelect") {
+							relationFields.push({
+								key,
+								isMultiple: !!fieldUiSchema?.["ui:options"]?.isMultiple,
+							});
+						}
+					});
+
+					// Fetch content lists for all relation fields to get UUIDs
+					const fetchedContentLists: Record<string, any[]> = {};
+					await Promise.all(
+						relationFields.map(async ({ key }) => {
+							try {
+								const response = await api.get<ApiResponse>(
+									`/v1/menu/${menuId}/content/${key}`,
+								);
+								if (
+									response.data.success &&
+									Array.isArray(response.data.data)
+								) {
+									fetchedContentLists[key] = response.data.data;
+								}
+							} catch (err) {
+								console.error(`Failed to load content list for ${key}:`, err);
+							}
+						}),
+					);
+
+					// Save content lists to state for RelationSelect to use
+					setRelationContentLists(fetchedContentLists);
+
+					// Start with non-relation fields from itemData.data
+					const transformedData: any = { ...itemData.data };
+
+					// For each relation field, match resolved data with content list to get UUID
+					relationFields.forEach(({ key, isMultiple }) => {
+						const resolvedValue = itemData.resolved?.[key];
+						const contentList = fetchedContentLists[key] || [];
+
+						if (isMultiple) {
+							// Multi-select: match each item by content ID to get UUID wrapper
+							const items = Array.isArray(resolvedValue) ? resolvedValue : [];
+							transformedData[key] = items
+								.map((item: any) => {
+									// Find matching item from content list by data.id
+									const contentId = item.id || item.data?.id;
+									return contentList.find(
+										(listItem) => listItem.data?.id === contentId,
+									);
+								})
+								.filter(Boolean);
+						} else {
+							// Single-select: match by content ID to get UUID wrapper
+							const item = Array.isArray(resolvedValue)
+								? resolvedValue[0]
+								: resolvedValue;
+							if (item) {
+								const contentId = item.id || item.data?.id;
+								const matched = contentList.find(
+									(listItem) => listItem.data?.id === contentId,
+								);
+								transformedData[key] = matched || null;
+							}
+						}
+					});
+
+					setFormData(transformedData);
 				} else {
 					throw new Error(
 						contentResponse.data.message || "Failed to load content item",
@@ -125,16 +207,64 @@ export default function MenuContentEdit() {
 	}, [menuId, contentName, itemId]);
 
 	const handleChange = (data: any) => {
+		// delete data.formData.category;
+		// data.formData = {
+		// 	...data.formData,
+		// 	category: {
+		// 		id: "123",
+		// 		name: "name",
+		// 		slug: "slug",
+		// 	},
+		// };
+		// console.log(data.formData);
 		setFormData(data.formData);
 	};
 
 	const handleSubmit = async (data: any) => {
 		setIsSaving(true);
 		try {
-			const body = await api.put(
-				`/v1/menu/${menuId}/content/${contentName}/${itemId}`,
-				{ new_content: data.formData },
-			);
+			const formData = data.formData;
+			const currentUiSchema = schemas?.ui_schemas?.[contentName!] || {};
+
+			const new_content: any = {};
+			const relations: Record<string, string[]> = {};
+
+			Object.keys(formData).forEach((key) => {
+				const value = formData[key];
+				const fieldUiSchema = currentUiSchema[key] as any;
+
+				// Check for relationSelect field (lowercase 'r')
+				if (fieldUiSchema?.["ui:field"] === "relationSelect") {
+					const isMultiple = fieldUiSchema?.["ui:options"]?.isMultiple;
+
+					if (isMultiple) {
+						// Multi-select: extract UUIDs from array (or empty array if cleared)
+						if (Array.isArray(value)) {
+							relations[key] = value
+								.filter((item: any) => item?.id) // Filter items that have id
+								.map((item: any) => item.id);
+						} else {
+							relations[key] = []; // Cleared or invalid - send empty array
+						}
+						new_content[key] = []; // placeholder for backend
+					} else {
+						// Single select: extract UUID
+						if (value && typeof value === "object" && value.id) {
+							relations[key] = [value.id];
+						} else {
+							relations[key] = []; // Cleared - send empty array
+						}
+						new_content[key] = { id: "", slug: "", name: "" }; // placeholder for backend
+					}
+				} else {
+					new_content[key] = value;
+				}
+			});
+
+			await api.put(`/v1/menu/${menuId}/content/${contentName}/${itemId}`, {
+				new_content,
+				relations,
+			});
 			toast.success(t("content:content_updated"));
 			navigate(`/menu/${menuId}/content/${contentName}`);
 		} catch (error) {
@@ -224,6 +354,8 @@ export default function MenuContentEdit() {
 
 	return (
 		<div className="flex flex-col gap-6">
+			{/* <pre>contentItem: {JSON.stringify(contentItem, null, 2)}</pre> */}
+			{/* <pre>formData: {JSON.stringify(formData, null, 2)}</pre> */}
 			<Title title={t("menu:edit_content_title", { contentName })}>
 				<div className="flex items-center gap-2">
 					<Button variant="outline" size="sm" onClick={handleBack}>
@@ -268,6 +400,7 @@ export default function MenuContentEdit() {
 						uiSchema={schemas.ui_schemas[contentName!]}
 						validator={validator}
 						formData={formData}
+						formContext={{ relationContentLists }}
 						onChange={handleChange}
 						onSubmit={handleSubmit}
 						templates={templates}
