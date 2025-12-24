@@ -13,9 +13,13 @@
 		"more_pages": "Więcej stron",
 		"previous_aria_label": "Przejdź do poprzedniej strony",
 		"next_aria_label": "Przejdź do następnej strony",
-		"more_pages_aria_label": "Więcej stron"
+		"more_pages_aria_label": "Więcej stron",
+		"pagination": "paginacja"
 	},
 	"dialog": {
 		"close": "Zamknij"
+	},
+	"form": {
+		"modified": "(zmodyfikowano)"
 	}
 }

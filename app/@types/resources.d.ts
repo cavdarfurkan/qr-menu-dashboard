@@ -48,15 +48,18 @@ interface Resources {
 			deleting: "Deleting...";
 			edit: "Edit";
 			go_back: "Go Back";
+			leave: "Leave";
 			loading: "Loading...";
 			logging_in: "Logging in...";
 			login: "Login";
 			next: "Next";
 			previous: "Previous";
 			register: "Register";
+			reset: "Reset";
 			save: "Save";
 			save_changes: "Save Changes";
 			saving: "Saving...";
+			stay: "Stay";
 			submit: "Submit";
 		};
 		confirmations: {
@@ -65,6 +68,8 @@ interface Resources {
 			delete_item: "This will permanently delete this item.";
 			delete_items: "This will permanently delete {{count}} selected items.";
 			delete_menu: "This will permanently delete the menu and all its content.";
+			unsaved_changes: "Unsaved Changes";
+			unsaved_changes_description: "You have unsaved changes. Are you sure you want to leave? Your changes will be lost.";
 		};
 		empty_states: {
 			empty: "Empty";
@@ -207,11 +212,15 @@ interface Resources {
 		dialog: {
 			close: "Close";
 		};
+		form: {
+			modified: "(modified)";
+		};
 		pagination: {
 			more_pages: "More pages";
 			more_pages_aria_label: "More pages";
 			next: "Next";
 			next_aria_label: "Go to next page";
+			pagination: "pagination";
 			previous: "Previous";
 			previous_aria_label: "Go to previous page";
 		};

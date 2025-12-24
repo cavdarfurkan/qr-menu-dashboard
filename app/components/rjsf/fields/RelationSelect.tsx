@@ -19,8 +19,8 @@ export default function RelationSelect(props: FieldProps) {
 		uiSchema,
 		registry,
 		name,
-		formContext,
 	} = props;
+	const formContext = registry.formContext;
 
 	const { resolvedTheme } = useTheme();
 	const isDark = resolvedTheme === "dark";
@@ -108,7 +108,7 @@ export default function RelationSelect(props: FieldProps) {
 
 	const handleChange = (selectedOption: any) => {
 		if (!selectedOption) {
-			onChange(isMultiple ? [] : null);
+			onChange(isMultiple ? [] : null, idSchema.$id);
 			return;
 		}
 
@@ -123,14 +123,14 @@ export default function RelationSelect(props: FieldProps) {
 				})
 				.filter(Boolean); // Remove any undefined values
 
-			onChange(selectedRelations);
+			onChange(selectedRelations, idSchema.$id);
 		} else {
 			// Handle single selection - match by data.id
 			const selectedRelation = relationOptions.find(
 				(option) => option.data[relationValue] === selectedOption.value,
 			);
 
-			onChange(selectedRelation || null);
+			onChange(selectedRelation || null, idSchema.$id);
 		}
 	};
 

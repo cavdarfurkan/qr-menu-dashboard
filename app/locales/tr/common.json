@@ -26,7 +26,10 @@
 		"login": "Giriş Yap",
 		"register": "Kayıt Ol",
 		"save_changes": "Değişiklikleri Kaydet",
-		"back_to_dashboard": "Kontrol paneline dön"
+		"back_to_dashboard": "Kontrol paneline dön",
+		"reset": "Sıfırla",
+		"stay": "Kal",
+		"leave": "Ayrıl"
 	},
 	"empty_states": {
 		"no_results": "Sonuç bulunamadı.",
@@ -40,7 +43,9 @@
 		"cannot_be_undone": "Bu işlem geri alınamaz.",
 		"delete_item": "Bu öğeyi kalıcı olarak silecektir.",
 		"delete_items": "Seçili {{count}} öğeyi kalıcı olarak silecektir.",
-		"delete_menu": "Menüyü ve tüm içeriğini kalıcı olarak silecektir."
+		"delete_menu": "Menüyü ve tüm içeriğini kalıcı olarak silecektir.",
+		"unsaved_changes": "Kaydedilmemiş Değişiklikler",
+		"unsaved_changes_description": "Kaydedilmemiş değişiklikleriniz var. Ayrılmak istediğinizden emin misiniz? Değişiklikleriniz kaybolacak."
 	},
 	"labels": {
 		"menu_name": "Menü Adı",

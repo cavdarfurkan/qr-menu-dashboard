@@ -26,7 +26,10 @@
 		"login": "Zaloguj",
 		"register": "Zarejestruj",
 		"save_changes": "Zapisz zmiany",
-		"back_to_dashboard": "Wróć do panelu"
+		"back_to_dashboard": "Wróć do panelu",
+		"reset": "Resetuj",
+		"stay": "Zostań",
+		"leave": "Opuść"
 	},
 	"empty_states": {
 		"no_results": "Brak wyników.",
@@ -40,7 +43,9 @@
 		"cannot_be_undone": "Tej akcji nie można cofnąć.",
 		"delete_item": "To trwale usunie ten element.",
 		"delete_items": "To trwale usunie {{count}} zaznaczonych elementów.",
-		"delete_menu": "To trwale usunie menu i całą jego zawartość."
+		"delete_menu": "To trwale usunie menu i całą jego zawartość.",
+		"unsaved_changes": "Niezapisane zmiany",
+		"unsaved_changes_description": "Masz niezapisane zmiany. Czy na pewno chcesz wyjść? Twoje zmiany zostaną utracone."
 	},
 	"labels": {
 		"menu_name": "Nazwa menu",

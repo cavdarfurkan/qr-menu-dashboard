@@ -13,9 +13,13 @@
 		"more_pages": "Daha fazla sayfa",
 		"previous_aria_label": "Önceki sayfaya git",
 		"next_aria_label": "Sonraki sayfaya git",
-		"more_pages_aria_label": "Daha fazla sayfa"
+		"more_pages_aria_label": "Daha fazla sayfa",
+		"pagination": "sayfalandırma"
 	},
 	"dialog": {
 		"close": "Kapat"
+	},
+	"form": {
+		"modified": "(değiştirildi)"
 	}
 }

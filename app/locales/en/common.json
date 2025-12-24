@@ -27,7 +27,10 @@
 		"login": "Login",
 		"register": "Register",
 		"save_changes": "Save Changes",
-		"back_to_dashboard": "Back to dashboard"
+		"back_to_dashboard": "Back to dashboard",
+		"reset": "Reset",
+		"stay": "Stay",
+		"leave": "Leave"
 	},
 	"empty_states": {
 		"no_results": "No results.",
@@ -41,7 +44,9 @@
 		"cannot_be_undone": "This action cannot be undone.",
 		"delete_item": "This will permanently delete this item.",
 		"delete_items": "This will permanently delete {{count}} selected items.",
-		"delete_menu": "This will permanently delete the menu and all its content."
+		"delete_menu": "This will permanently delete the menu and all its content.",
+		"unsaved_changes": "Unsaved Changes",
+		"unsaved_changes_description": "You have unsaved changes. Are you sure you want to leave? Your changes will be lost."
 	},
 	"labels": {
 		"menu_name": "Menu Name",

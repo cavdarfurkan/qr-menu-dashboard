@@ -1,6 +1,6 @@
-import { useParams, useNavigate, useRevalidator } from "react-router";
-import { useState, useEffect } from "react";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { useParams, useNavigate, useBlocker } from "react-router";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { ArrowLeft, Save, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
 	Card,
@@ -9,6 +9,16 @@ import {
 	CardHeader,
 	CardTitle,
 } from "~/components/ui/card";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 import Title from "~/components/Title";
 import api, { type ApiResponse } from "~/lib/api";
 import { isAxiosError } from "axios";
@@ -48,11 +58,77 @@ export default function MenuContentEdit() {
 	const [error, setError] = useState<string | null>(null);
 	const [menu, setMenu] = useState<MenuType | null>(null);
 	const [schemas, setSchemas] = useState<SchemasType | null>(null);
-	const [contentItem, setContentItem] = useState<any>(null);
+	const [initialContent, setInitialContent] = useState<any>(null);
+	const [initialFormData, setInitialFormData] = useState<any>(null);
 	const [formData, setFormData] = useState<any>(null);
 	const [relationContentLists, setRelationContentLists] = useState<
 		Record<string, any[]>
 	>({});
+
+	// Track if content has been successfully saved to allow navigation
+	const [isSaved, setIsSaved] = useState(false);
+	// Track if we should navigate after blocker check
+	const [shouldNavigate, setShouldNavigate] = useState(false);
+
+	// Deep compare two values for equality
+	const isEqual = useCallback((a: any, b: any): boolean => {
+		if (a === b) return true;
+		if (a == null || b == null) return a == b;
+		if (typeof a !== typeof b) return false;
+		if (typeof a !== "object") return a === b;
+		if (Array.isArray(a) !== Array.isArray(b)) return false;
+
+		if (Array.isArray(a)) {
+			if (a.length !== b.length) return false;
+			return a.every((item, index) => isEqual(item, b[index]));
+		}
+
+		const keysA = Object.keys(a);
+		const keysB = Object.keys(b);
+		if (keysA.length !== keysB.length) return false;
+
+		return keysA.every((key) => isEqual(a[key], b[key]));
+	}, []);
+
+	// Calculate modified fields
+	const modifiedFields = useMemo(() => {
+		if (!initialFormData || !formData) return new Set<string>();
+
+		const modified = new Set<string>();
+		const allKeys = new Set([
+			...Object.keys(initialFormData || {}),
+			...Object.keys(formData || {}),
+		]);
+
+		allKeys.forEach((key) => {
+			if (!isEqual(initialFormData[key], formData[key])) {
+				modified.add(key);
+			}
+		});
+
+		return modified;
+	}, [initialFormData, formData, isEqual]);
+
+	// Check if there are unsaved changes
+	const hasUnsavedChanges = modifiedFields.size > 0;
+
+	// Block navigation when there are unsaved changes (unless we just saved)
+	const blocker = useBlocker(hasUnsavedChanges && !isSaved);
+
+	// Handle proceeding through blocker after successful save
+	useEffect(() => {
+		if (blocker.state === "blocked" && shouldNavigate) {
+			blocker.proceed?.();
+			setShouldNavigate(false);
+		}
+	}, [blocker, shouldNavigate]);
+
+	// Reset form to initial values
+	const handleReset = useCallback(() => {
+		if (initialFormData) {
+			setFormData(JSON.parse(JSON.stringify(initialFormData)));
+		}
+	}, [initialFormData]);
 
 	useEffect(() => {
 		setMenuId(menuId);
@@ -104,7 +180,7 @@ export default function MenuContentEdit() {
 
 				if (contentResponse.data.success) {
 					const itemData = contentResponse.data.data;
-					setContentItem(itemData);
+					setInitialContent(itemData);
 
 					// Get uiSchema to determine relation fields
 					const currentUiSchema = schemasData.ui_schemas?.[contentName!] || {};
@@ -179,6 +255,8 @@ export default function MenuContentEdit() {
 						}
 					});
 
+					// Store both initial and current form data
+					setInitialFormData(JSON.parse(JSON.stringify(transformedData)));
 					setFormData(transformedData);
 				} else {
 					throw new Error(
@@ -218,6 +296,8 @@ export default function MenuContentEdit() {
 		// };
 		// console.log(data.formData);
 		setFormData(data.formData);
+		// Reset saved flag when user makes changes after a save
+		setIsSaved(false);
 	};
 
 	const handleSubmit = async (data: any) => {
@@ -266,6 +346,12 @@ export default function MenuContentEdit() {
 				relations,
 			});
 			toast.success(t("content:content_updated"));
+			// Update initialFormData to match current formData so blocker doesn't trigger
+			setInitialFormData(JSON.parse(JSON.stringify(data.formData)));
+			// Mark as saved to allow navigation without blocker
+			setIsSaved(true);
+			// Set flag to proceed through blocker if it triggers
+			setShouldNavigate(true);
 			navigate(`/menu/${menuId}/content/${contentName}`);
 		} catch (error) {
 			console.error("Error updating content:", error);
@@ -326,7 +412,7 @@ export default function MenuContentEdit() {
 		);
 	}
 
-	if (!menu || !schemas || !contentItem) {
+	if (!menu || !schemas || !initialContent) {
 		return (
 			<div className="flex flex-col gap-6">
 				<Title title={t("menu:edit_content")}>
@@ -362,10 +448,21 @@ export default function MenuContentEdit() {
 						<ArrowLeft className="h-4 w-4 mr-2" />
 						{t("common:buttons.back")}
 					</Button>
+					{hasUnsavedChanges && (
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={handleReset}
+							disabled={isSaving}
+						>
+							<RotateCcw className="h-4 w-4 mr-2" />
+							{t("common:buttons.reset")}
+						</Button>
+					)}
 					<Button
 						type="submit"
 						form="edit-content-form"
-						disabled={isSaving}
+						disabled={isSaving || !hasUnsavedChanges}
 						className="ml-auto"
 					>
 						{isSaving ? (
@@ -400,7 +497,7 @@ export default function MenuContentEdit() {
 						uiSchema={schemas.ui_schemas[contentName!]}
 						validator={validator}
 						formData={formData}
-						formContext={{ relationContentLists }}
+						formContext={{ relationContentLists, modifiedFields }}
 						onChange={handleChange}
 						onSubmit={handleSubmit}
 						templates={templates}
@@ -409,6 +506,34 @@ export default function MenuContentEdit() {
 					/>
 				</CardContent>
 			</Card>
+
+			{/* Unsaved Changes Warning Dialog */}
+			<AlertDialog
+				open={blocker.state === "blocked" && !shouldNavigate}
+				onOpenChange={(open) => {
+					if (!open) blocker.reset?.();
+				}}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>
+							{t("common:confirmations.unsaved_changes")}
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							{t("common:confirmations.unsaved_changes_description")}
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>{t("common:buttons.stay")}</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={() => blocker.proceed?.()}
+							className="bg-destructive hover:bg-destructive/90"
+						>
+							{t("common:buttons.leave")}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

@@ -4,13 +4,10 @@ import type {
 	RJSFSchema,
 	StrictRJSFSchema,
 	WidgetProps,
-	ArrayFieldTemplateProps,
-	ArrayFieldTemplateItemType,
 } from "@rjsf/utils";
 import { getTemplate, getUiOptions, titleId, descriptionId } from "@rjsf/utils";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { cn } from "~/lib/utils";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
@@ -21,7 +18,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "./ui/select";
-import { PlusCircle, Trash, ChevronUp, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 // Base Input Template
@@ -255,22 +251,45 @@ export function FieldTemplate<
 		registry,
 		uiSchema,
 	} = props;
+	const { t } = useTranslation("ui_components");
+	const formContext = registry.formContext;
 
 	if (hidden) {
 		return <div className="hidden">{children}</div>;
 	}
 
+	// Check if this field has been modified
+	// id format is "root_fieldName" so we extract fieldName
+	const fieldName = id?.replace("root_", "");
+	const modifiedFields = (formContext as any)?.modifiedFields as
+		| Set<string>
+		| undefined;
+	const isModified = fieldName && modifiedFields?.has(fieldName);
+
 	return (
-		<div className="mb-4">
+		<div
+			className={cn(
+				"mb-4 rounded-md transition-colors",
+				isModified &&
+					"bg-amber-50 dark:bg-amber-950/30 p-3 -mx-3 border-l-2 border-amber-500",
+			)}
+		>
 			{displayLabel && label && (
 				<label
 					htmlFor={id}
-					className={`capitalize block text-sm font-medium text-foreground ${
-						required ? "required" : ""
-					}`}
+					className={cn(
+						"capitalize block text-sm font-medium text-foreground",
+						required && "required",
+						isModified && "text-amber-700 dark:text-amber-400",
+					)}
 				>
 					{label}
 					{required ? "*" : null}
+					{isModified && (
+						<span className="ml-2 text-xs font-normal text-amber-600 dark:text-amber-500">
+							{t("form.modified")}
+						</span>
+					)}
 				</label>
 			)}
 			{description && (
