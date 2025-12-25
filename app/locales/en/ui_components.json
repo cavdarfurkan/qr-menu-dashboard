@@ -14,7 +14,7 @@
 		"previous_aria_label": "Go to previous page",
 		"next_aria_label": "Go to next page",
 		"more_pages_aria_label": "More pages",
-		"pagination": "pagination"
+		"pagination": "Page navigation"
 	},
 	"dialog": {
 		"close": "Close"

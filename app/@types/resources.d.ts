@@ -206,6 +206,7 @@ interface Resources {
 			theme_zip_file: "Theme ZIP File";
 			title: "Theme Register";
 		};
+		select_theme_description: "Select a theme from the list below";
 		title: "Themes";
 	};
 	ui_components: {
@@ -220,7 +221,7 @@ interface Resources {
 			more_pages_aria_label: "More pages";
 			next: "Next";
 			next_aria_label: "Go to next page";
-			pagination: "pagination";
+			pagination: "Page navigation";
 			previous: "Previous";
 			previous_aria_label: "Go to previous page";
 		};

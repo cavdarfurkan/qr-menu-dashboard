@@ -3,6 +3,7 @@
 	"new_theme": "+ New Theme",
 	"no_themes": "No themes found.",
 	"all_themes": "All Themes",
+	"select_theme_description": "Select a theme from the list below",
 	"register": {
 		"title": "Theme Register",
 		"theme_zip_file": "Theme ZIP File",

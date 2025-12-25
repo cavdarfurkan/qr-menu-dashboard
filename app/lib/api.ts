@@ -8,6 +8,7 @@ export type ApiResponse = {
 	timestamp: string;
 };
 
+// TODO: Make base URL environment variable
 const api = axios.create({
 	baseURL: "http://localhost:8080/api",
 	headers: {

@@ -3,6 +3,7 @@
 	"new_theme": "+ Nowy motyw",
 	"no_themes": "Nie znaleziono motywów.",
 	"all_themes": "Wszystkie motywy",
+	"select_theme_description": "Wybierz motyw z poniższej listy",
 	"register": {
 		"title": "Rejestracja motywu",
 		"theme_zip_file": "Plik ZIP motywu",

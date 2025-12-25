@@ -5,6 +5,9 @@
 /.react-router/
 /build/
 
+# Test coverage
+/coverage/
+
 # Environment variables
 .env
 .env.local

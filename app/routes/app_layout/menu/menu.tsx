@@ -32,7 +32,7 @@ export async function clientLoader(): Promise<ApiResponse> {
 
 		return {
 			success: false,
-			message: "An unexpected error occured",
+			message: "An unexpected error occurred",
 			data: null,
 			timestamp: Date.now().toString(),
 		};

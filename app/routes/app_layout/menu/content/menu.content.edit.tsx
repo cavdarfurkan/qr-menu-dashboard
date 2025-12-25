@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useBlocker } from "react-router";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { ArrowLeft, Save, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
@@ -67,8 +67,8 @@ export default function MenuContentEdit() {
 
 	// Track if content has been successfully saved to allow navigation
 	const [isSaved, setIsSaved] = useState(false);
-	// Track if we should navigate after blocker check
-	const [shouldNavigate, setShouldNavigate] = useState(false);
+	// Ref for synchronous access to saved state (to avoid race conditions with navigation)
+	const savedRef = useRef(false);
 
 	// Deep compare two values for equality
 	const isEqual = useCallback((a: any, b: any): boolean => {
@@ -113,15 +113,14 @@ export default function MenuContentEdit() {
 	const hasUnsavedChanges = modifiedFields.size > 0;
 
 	// Block navigation when there are unsaved changes (unless we just saved)
-	const blocker = useBlocker(hasUnsavedChanges && !isSaved);
+	const blocker = useBlocker(hasUnsavedChanges && !savedRef.current);
 
 	// Handle proceeding through blocker after successful save
 	useEffect(() => {
-		if (blocker.state === "blocked" && shouldNavigate) {
+		if (blocker.state === "blocked" && savedRef.current) {
 			blocker.proceed?.();
-			setShouldNavigate(false);
 		}
-	}, [blocker, shouldNavigate]);
+	}, [blocker.state, isSaved]);
 
 	// Reset form to initial values
 	const handleReset = useCallback(() => {
@@ -298,6 +297,7 @@ export default function MenuContentEdit() {
 		setFormData(data.formData);
 		// Reset saved flag when user makes changes after a save
 		setIsSaved(false);
+		savedRef.current = false;
 	};
 
 	const handleSubmit = async (data: any) => {
@@ -349,9 +349,9 @@ export default function MenuContentEdit() {
 			// Update initialFormData to match current formData so blocker doesn't trigger
 			setInitialFormData(JSON.parse(JSON.stringify(data.formData)));
 			// Mark as saved to allow navigation without blocker
+			// Use ref for synchronous update so blocker sees it immediately
+			savedRef.current = true;
 			setIsSaved(true);
-			// Set flag to proceed through blocker if it triggers
-			setShouldNavigate(true);
 			navigate(`/menu/${menuId}/content/${contentName}`);
 		} catch (error) {
 			console.error("Error updating content:", error);
@@ -509,7 +509,7 @@ export default function MenuContentEdit() {
 
 			{/* Unsaved Changes Warning Dialog */}
 			<AlertDialog
-				open={blocker.state === "blocked" && !shouldNavigate}
+				open={blocker.state === "blocked" && !savedRef.current}
 				onOpenChange={(open) => {
 					if (!open) blocker.reset?.();
 				}}

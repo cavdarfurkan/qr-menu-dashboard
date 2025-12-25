@@ -48,4 +48,8 @@ export default defineConfig({
 		input: ["app/locales/en/**/*.json"],
 		output: "app/@types/i18next.d.ts",
 	},
+	lint: {
+		/** Glob pattern(s) for files to ignore during lint (in addition to those defined during extract) */
+		ignore: ["app/**/*.test.{js,jsx,ts,tsx}", "app/**/*.spec.{js,jsx,ts,tsx}"],
+	},
 });

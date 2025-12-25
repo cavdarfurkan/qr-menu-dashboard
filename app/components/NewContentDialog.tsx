@@ -45,7 +45,14 @@ export default function NewContentDialog({
 	}, [formData]);
 
 	uiSchema = uiSchema || {};
-	contentName = contentName || "";
+
+	// Validate contentName - it must be defined and not empty, and schema must exist for it
+	if (!contentName || contentName.trim() === "") {
+		throw new Error("contentName is required and cannot be empty");
+	}
+	if (!schema[contentName]) {
+		throw new Error(`Schema not found for contentName: ${contentName}`);
+	}
 
 	const handleChange = (data: any, id?: string) => {
 		console.log(data.formData);

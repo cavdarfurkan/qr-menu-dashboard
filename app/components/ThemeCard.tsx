@@ -24,6 +24,7 @@ export default function ThemeCard({
 	return (
 		<Card
 			key={index}
+			data-testid={`theme-card-${themeName}`}
 			className="hover:shadow-lg transition-all duration-200 cursor-pointer"
 			onClick={() => onClick?.(index)}
 		>

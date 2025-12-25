@@ -2,6 +2,7 @@ import type React from "react";
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
@@ -112,6 +113,9 @@ const SelectThemeDialogContent: React.FC<SelectThemeDialogContentProps> = ({
 			<DialogHeader>
 				{/* TODO: Change title with prop */}
 				<DialogTitle>{t("theme:all_themes")}</DialogTitle>
+				<DialogDescription>
+					{t("theme:select_theme_description" as any)}
+				</DialogDescription>
 			</DialogHeader>
 			<div
 				id="scrollable-dialog-content"

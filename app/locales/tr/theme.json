@@ -3,6 +3,7 @@
 	"new_theme": "+ Yeni Tema",
 	"no_themes": "Tema bulunamadı.",
 	"all_themes": "Tüm Temalar",
+	"select_theme_description": "Aşağıdaki listeden bir tema seçin",
 	"register": {
 		"title": "Tema Kaydı",
 		"theme_zip_file": "Tema ZIP Dosyası",
