@@ -8,9 +8,28 @@ export type ApiResponse = {
 	timestamp: string;
 };
 
-// TODO: Make base URL environment variable
+/**
+ * Constructs the API base URL from environment variable or falls back to default.
+ * Set VITE_API_BASE_URL in your .env file for production deployments.
+ */
+function getBaseUrl(): string {
+	const envUrl = import.meta.env.VITE_API_BASE_URL;
+	const defaultUrl = "http://localhost:8080/api";
+
+	if (!envUrl) {
+		console.warn(
+			"[API] VITE_API_BASE_URL is not set. Using default:",
+			defaultUrl,
+			"Set this environment variable for production deployments.",
+		);
+		return defaultUrl;
+	}
+
+	return envUrl;
+}
+
 const api = axios.create({
-	baseURL: "http://localhost:8080/api",
+	baseURL: getBaseUrl(),
 	headers: {
 		"Content-Type": "application/json",
 	},
