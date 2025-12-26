@@ -3,7 +3,6 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"bun-dev": "bun run dev",
 		"build": "react-router build",
 		"dev": "react-router dev",
 		"dev-host": "react-router dev --host",
