@@ -328,7 +328,6 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 	};
 
 	// Function to confirm and execute deletion
-	// TODO: Fix api endpoints
 	const confirmDelete = async () => {
 		setIsDeleting(true);
 		try {
@@ -339,8 +338,8 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 				);
 
 				// Call API to delete multiple items
-				await api.delete(`/v1/menu/${menuId}/content/${contentName}/bulk`, {
-					data: { ids: selectedIds },
+				await api.delete(`/v1/menu/${menuId}/content/${contentName}`, {
+					data: { item_ids: selectedIds },
 				});
 
 				toast.success(
@@ -355,7 +354,6 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 				toast.success(t("content:item_deleted"));
 			}
 
-			// Refresh data (you might want to implement a better refresh strategy)
 			revalidator.revalidate();
 		} catch (error) {
 			let errorMessage = t("content:failed_to_delete");
