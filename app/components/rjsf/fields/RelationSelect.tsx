@@ -108,7 +108,7 @@ export default function RelationSelect(props: FieldProps) {
 
 	const handleChange = (selectedOption: any) => {
 		if (!selectedOption) {
-			onChange(isMultiple ? [] : null, idSchema.$id);
+			onChange(isMultiple ? [] : null, [name]);
 			return;
 		}
 
@@ -123,14 +123,14 @@ export default function RelationSelect(props: FieldProps) {
 				})
 				.filter(Boolean); // Remove any undefined values
 
-			onChange(selectedRelations, idSchema.$id);
+			onChange(selectedRelations, [name]);
 		} else {
 			// Handle single selection - match by data.id
 			const selectedRelation = relationOptions.find(
 				(option) => option.data[relationValue] === selectedOption.value,
 			);
 
-			onChange(selectedRelation || null, idSchema.$id);
+			onChange(selectedRelation || null, [name]);
 		}
 	};
 
