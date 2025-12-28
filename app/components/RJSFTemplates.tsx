@@ -46,6 +46,13 @@ export function BaseInputTemplate<
 		registry,
 		uiSchema,
 		hideError,
+		hideLabel,
+		name,
+		idPrefix,
+		idSeparator,
+		idSchema,
+		errorSchema,
+		htmlName,
 		...rest
 	} = props;
 
@@ -98,6 +105,19 @@ export function TextareaWidget<
 		autofocus,
 		options,
 		rawErrors = [],
+		hideError,
+		hideLabel,
+		name,
+		idPrefix,
+		idSeparator,
+		idSchema,
+		errorSchema,
+		label,
+		schema,
+		formContext,
+		registry,
+		uiSchema,
+		htmlName,
 		...rest
 	} = props;
 
@@ -144,6 +164,22 @@ export function CheckboxWidget<
 		onChange,
 		onBlur,
 		onFocus,
+		hideError,
+		hideLabel,
+		name,
+		idPrefix,
+		idSeparator,
+		idSchema,
+		errorSchema,
+		options,
+		rawErrors,
+		schema,
+		formContext,
+		registry,
+		uiSchema,
+		autofocus,
+		placeholder,
+		htmlName,
 		...rest
 	} = props;
 

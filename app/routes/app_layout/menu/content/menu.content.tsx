@@ -629,7 +629,10 @@ const renderCellValue = (
 				<div>
 					<ul className="ml-2 list-disc">
 						{Object.values(value).map((item: any, idx: number) => (
-							<pre className="max-w-xs overflow-x-auto whitespace-pre text-xs rounded bg-muted px-2 py-1 text-foreground border">
+							<pre
+								key={idx}
+								className="max-w-xs overflow-x-auto whitespace-pre text-xs rounded bg-muted px-2 py-1 text-foreground border"
+							>
 								{JSON.stringify(item, null, 2)}
 							</pre>
 						))}
