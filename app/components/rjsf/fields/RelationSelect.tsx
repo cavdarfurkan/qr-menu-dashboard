@@ -3,8 +3,10 @@ import { useState } from "react";
 import AsyncSelect from "react-select/async";
 import type { StylesConfig } from "react-select";
 import { useTheme } from "next-themes";
+import { useTranslation } from "react-i18next";
 import api, { type ApiResponse } from "~/lib/api";
 import { useMenuStore, useUiStore } from "~/stores";
+import { cn } from "~/lib/utils";
 
 export default function RelationSelect(props: FieldProps) {
 	const {
@@ -19,6 +21,12 @@ export default function RelationSelect(props: FieldProps) {
 		uiSchema,
 		registry,
 		name,
+		label,
+		rawErrors = [],
+		errorSchema,
+		help,
+		displayLabel = true,
+		hidden,
 	} = props;
 	const formContext = registry.formContext;
 
@@ -137,6 +145,14 @@ export default function RelationSelect(props: FieldProps) {
 	// const { textSize = "sm" } = (options ?? {}) as { textSize?: "sm" | "lg"; };
 	// const enumOptions = (options as any)?.enumOptions as | Array<{ value: any; label: string }> | undefined;
 	const isDisabled = disabled || readonly;
+	const { t } = useTranslation("ui_components");
+
+	// Check if this field has been modified
+	// modifiedFields Set contains field names (keys from formData), so use name prop directly
+	const modifiedFields = (formContext as any)?.modifiedFields as
+		| Set<string>
+		| undefined;
+	const isModified = name && modifiedFields?.has(name);
 
 	// Styles matching the Input component design
 	const customStyles: StylesConfig = {
@@ -259,7 +275,8 @@ export default function RelationSelect(props: FieldProps) {
 		}),
 	};
 
-	return (
+	// Prepare AsyncSelect element
+	const asyncSelectElement = (
 		<AsyncSelect
 			cacheOptions
 			loadOptions={promiseOptions}
@@ -292,5 +309,66 @@ export default function RelationSelect(props: FieldProps) {
 			}
 			styles={customStyles}
 		/>
+	);
+
+	// Format errors
+	const errorsText =
+		rawErrors && rawErrors.length > 0 ? rawErrors.join(", ") : undefined;
+
+	// Get the field label
+	const fieldLabel = label || name || "";
+
+	// Render with FieldTemplate-like structure
+	if (hidden) {
+		return <div className="hidden">{asyncSelectElement}</div>;
+	}
+
+	return (
+		<div
+			data-testid="field-template-wrapper"
+			className={cn(
+				"mb-4 rounded-md transition-colors",
+				isModified &&
+					"bg-amber-50 dark:bg-amber-950/30 p-3 -mx-3 border-l-2 border-amber-500",
+			)}
+		>
+			{displayLabel && fieldLabel && (
+				<label
+					data-testid="field-label"
+					htmlFor={id}
+					className={cn(
+						"capitalize block text-sm font-medium text-foreground",
+						required && "required",
+						isModified && "text-amber-700 dark:text-amber-400",
+					)}
+				>
+					{fieldLabel}
+					{required && <span data-testid="required-indicator">*</span>}
+					{isModified && (
+						<span className="ml-2 text-xs font-normal text-amber-600 dark:text-amber-500">
+							{t("form.modified")}
+						</span>
+					)}
+				</label>
+			)}
+			{schema.description && (
+				<div
+					data-testid="field-description"
+					className="text-sm text-muted-foreground mt-1"
+				>
+					{schema.description}
+				</div>
+			)}
+			<div className="mt-1">{asyncSelectElement}</div>
+			{errorsText && (
+				<div
+					data-testid="field-errors"
+					className="text-sm font-medium text-destructive mt-1"
+				>
+					{errorsText}
+				</div>
+			)}
+			{help && <div className="text-xs text-muted-foreground mt-1">{help}</div>}
+		</div>
 	);
 }

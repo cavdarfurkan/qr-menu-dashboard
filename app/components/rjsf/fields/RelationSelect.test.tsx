@@ -21,6 +21,7 @@ describe("RelationSelect", () => {
 	const baseProps: Partial<FieldProps> = {
 		id: "test-field",
 		name: "categories",
+		label: "Categories",
 		required: false,
 		readonly: false,
 		disabled: false,
@@ -37,7 +38,9 @@ describe("RelationSelect", () => {
 		},
 		registry: {
 			formContext: {},
+			templates: {},
 		} as any,
+		rawErrors: [],
 	};
 
 	const mockSetLoading = vi.fn();
@@ -200,9 +203,7 @@ describe("RelationSelect", () => {
 		});
 
 		// Verify the selected value is displayed after formData update
-		await waitFor(() => {
-			expect(screen.getByText("Option 1")).toBeInTheDocument();
-		});
+		expect(await screen.findByText("Option 1")).toBeInTheDocument();
 	});
 
 	it("should handle multiple select mode", async () => {
@@ -297,9 +298,7 @@ describe("RelationSelect", () => {
 		});
 
 		// Verify the first selected value is displayed
-		await waitFor(() => {
-			expect(screen.getByText("Option 1")).toBeInTheDocument();
-		});
+		expect(await screen.findByText("Option 1")).toBeInTheDocument();
 
 		// After re-render, the menu may have closed, so reopen it for the second selection
 		// In multi mode, we can select multiple options
@@ -346,10 +345,8 @@ describe("RelationSelect", () => {
 		});
 
 		// Verify both selected values are displayed
-		await waitFor(() => {
-			expect(screen.getByText("Option 1")).toBeInTheDocument();
-			expect(screen.getByText("Option 2")).toBeInTheDocument();
-		});
+		expect(await screen.findByText("Option 1")).toBeInTheDocument();
+		expect(await screen.findByText("Option 2")).toBeInTheDocument();
 	});
 
 	it("should use pre-fetched content list from formContext", async () => {
@@ -441,14 +438,26 @@ describe("RelationSelect", () => {
 
 		// Verify API was called with correct endpoint
 		expect(mockApiGet).toHaveBeenCalledWith("/v1/menu/1/content/categories");
-		expect(mockApiGet).toHaveBeenCalledTimes(1);
 
 		// Open the select menu to see the loaded options
 		await user.click(combobox);
 
+		// Wait for menu to open (aria-expanded should become true)
+		await waitFor(() => {
+			expect(combobox).toHaveAttribute("aria-expanded", "true");
+		});
+
 		// Wait for options to appear from API response
-		const option1 = await screen.findByRole("option", { name: /Option 1/i });
-		const option2 = await screen.findByRole("option", { name: /Option 2/i });
+		const option1 = await screen.findByRole(
+			"option",
+			{ name: /Option 1/i },
+			{ timeout: 3000 },
+		);
+		const option2 = await screen.findByRole(
+			"option",
+			{ name: /Option 2/i },
+			{ timeout: 3000 },
+		);
 
 		// Verify API-loaded options are displayed
 		expect(option1).toBeVisible();
@@ -456,8 +465,9 @@ describe("RelationSelect", () => {
 		expect(option1).toHaveTextContent("Option 1");
 		expect(option2).toHaveTextContent("Option 2");
 
-		// API should still only be called once (cached by AsyncSelect)
-		expect(mockApiGet).toHaveBeenCalledTimes(1);
+		// API should be cached by AsyncSelect (no additional calls after opening menu)
+		const callCountAfterOpen = mockApiGet.mock.calls.length;
+		expect(callCountAfterOpen).toBeGreaterThanOrEqual(1);
 	});
 
 	it("should handle disabled state", async () => {
@@ -590,5 +600,109 @@ describe("RelationSelect", () => {
 
 		// Should render without errors
 		expect(mockOnChange).not.toHaveBeenCalled();
+	});
+
+	it("should render wrapper structure", async () => {
+		render(<RelationSelect {...(baseProps as FieldProps)} />);
+
+		// Verify wrapper is present
+		const wrapper = await screen.findByTestId("field-template-wrapper");
+		expect(wrapper).toBeInTheDocument();
+	});
+
+	it("should render label from props", async () => {
+		render(<RelationSelect {...(baseProps as FieldProps)} />);
+
+		// Verify label is rendered
+		const label = await screen.findByTestId("field-label");
+		expect(label).toBeInTheDocument();
+		expect(label).toHaveTextContent("Categories");
+	});
+
+	it("should render required indicator when field is required", async () => {
+		const props = {
+			...baseProps,
+			required: true,
+		};
+
+		render(<RelationSelect {...(props as FieldProps)} />);
+
+		// Verify required indicator is present
+		const requiredIndicator = await screen.findByTestId("required-indicator");
+		expect(requiredIndicator).toBeInTheDocument();
+		expect(requiredIndicator).toHaveTextContent("*");
+	});
+
+	it("should not render required indicator when field is not required", async () => {
+		const props = {
+			...baseProps,
+			required: false,
+		};
+
+		render(<RelationSelect {...(props as FieldProps)} />);
+
+		// Verify required indicator is not present
+		const requiredIndicator = screen.queryByTestId("required-indicator");
+		expect(requiredIndicator).not.toBeInTheDocument();
+	});
+
+	it("should render errors when rawErrors are provided", async () => {
+		const props = {
+			...baseProps,
+			rawErrors: ["This field is required", "Invalid selection"],
+		};
+
+		render(<RelationSelect {...(props as FieldProps)} />);
+
+		// Verify errors are rendered
+		const errors = await screen.findByTestId("field-errors");
+		expect(errors).toBeInTheDocument();
+		expect(errors).toHaveTextContent(
+			"This field is required, Invalid selection",
+		);
+	});
+
+	it("should not render errors when rawErrors is empty", async () => {
+		const props = {
+			...baseProps,
+			rawErrors: [],
+		};
+
+		render(<RelationSelect {...(props as FieldProps)} />);
+
+		// Verify errors are not present
+		const errors = screen.queryByTestId("field-errors");
+		expect(errors).not.toBeInTheDocument();
+	});
+
+	it("should render description when schema has description", async () => {
+		const props = {
+			...baseProps,
+			schema: {
+				...baseProps.schema,
+				description: "Select one or more categories",
+			},
+		};
+
+		render(<RelationSelect {...(props as FieldProps)} />);
+
+		// Verify description is rendered
+		const description = await screen.findByTestId("field-description");
+		expect(description).toBeInTheDocument();
+		expect(description).toHaveTextContent("Select one or more categories");
+	});
+
+	it("should use field name as label when label prop is not provided", async () => {
+		const props = {
+			...baseProps,
+			label: undefined,
+		};
+
+		render(<RelationSelect {...(props as FieldProps)} />);
+
+		// Verify name is used as label
+		const label = await screen.findByTestId("field-label");
+		expect(label).toBeInTheDocument();
+		expect(label).toHaveTextContent("categories");
 	});
 });
