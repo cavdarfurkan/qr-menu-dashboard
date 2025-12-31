@@ -35,5 +35,16 @@
 
 	"notifications": {
 		"title": "Notifications"
+	},
+	"current_password": "Current Password",
+	"current_password_placeholder": "Enter your current password",
+	"new_password": "New Password",
+	"new_password_placeholder": "Enter your new password",
+	"confirm_password": "Confirm Password",
+	"confirm_password_placeholder": "Confirm your new password",
+	"change_password": {
+		"submit": "Change Password",
+		"success": "Password changed successfully",
+		"error": "Failed to change password"
 	}
 }

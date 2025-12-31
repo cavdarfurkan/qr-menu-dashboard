@@ -28,5 +28,16 @@
 	},
 	"notifications": {
 		"title": "Bildirimler"
+	},
+	"current_password": "Mevcut Şifre",
+	"current_password_placeholder": "Mevcut şifrenizi girin",
+	"new_password": "Yeni Şifre",
+	"new_password_placeholder": "Yeni şifrenizi girin",
+	"confirm_password": "Şifreyi Onayla",
+	"confirm_password_placeholder": "Yeni şifrenizi onaylayın",
+	"change_password": {
+		"submit": "Şifreyi Değiştir",
+		"success": "Şifre başarıyla değiştirildi",
+		"error": "Şifre değiştirilemedi"
 	}
 }

@@ -28,5 +28,16 @@
 	},
 	"notifications": {
 		"title": "Powiadomienia"
+	},
+	"current_password": "Obecne hasło",
+	"current_password_placeholder": "Wprowadź obecne hasło",
+	"new_password": "Nowe hasło",
+	"new_password_placeholder": "Wprowadź nowe hasło",
+	"confirm_password": "Potwierdź hasło",
+	"confirm_password_placeholder": "Potwierdź nowe hasło",
+	"change_password": {
+		"submit": "Zmień hasło",
+		"success": "Hasło zostało pomyślnie zmienione",
+		"error": "Nie udało się zmienić hasła"
 	}
 }

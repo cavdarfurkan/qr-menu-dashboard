@@ -16,6 +16,19 @@ import {
 	SelectItem,
 } from "~/components/ui/select";
 import { useTheme } from "next-themes";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "~/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useState } from "react";
+import api from "~/lib/api";
 
 import { languages } from "~/constants/languages";
 import { THEME_VALUES } from "~/constants/themes";
@@ -215,32 +228,152 @@ function OrganizationSection({ t }: { t: any }) {
 }
 
 function SecuritySection({ t }: { t: any }) {
+	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState(false);
+
+	const formSchema = (t: (key: string) => string) =>
+		z
+			.object({
+				currentPassword: z
+					.string()
+					.min(1, { message: t("validation:password_min") }),
+				newPassword: z
+					.string()
+					.min(8, { message: t("validation:password_min") }),
+				confirmPassword: z
+					.string()
+					.min(8, { message: t("validation:confirm_password_min") }),
+			})
+			.refine((data) => data.newPassword === data.confirmPassword, {
+				error: t("validation:passwords_dont_match"),
+				path: ["confirmPassword"],
+			});
+
+	const form = useForm<z.infer<ReturnType<typeof formSchema>>>({
+		resolver: zodResolver(formSchema(t as (key: string) => string)),
+		defaultValues: {
+			currentPassword: "",
+			newPassword: "",
+			confirmPassword: "",
+		},
+	});
+
+	const onSubmit = async (data: z.infer<ReturnType<typeof formSchema>>) => {
+		setError(null);
+		setSuccess(null);
+		setIsLoading(true);
+
+		try {
+			const response = await api.post("/v1/auth/change-password", {
+				old_password: data.currentPassword,
+				new_password: data.newPassword,
+			});
+
+			if (response.data.success) {
+				setSuccess(t("settings:change_password.success"));
+				form.reset();
+			} else {
+				setError(response.data.message || t("settings:change_password.error"));
+			}
+		} catch (error: any) {
+			console.error(error);
+			setError(
+				error.response?.data?.message || t("settings:change_password.error"),
+			);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	return (
 		<div className="space-y-4">
-			<div className="flex flex-col gap-2">
-				<Label>{t("settings:current_password")}</Label>
-				<Input
-					type="password"
-					placeholder={t("settings:current_password_placeholder")}
-					className="w-full md:max-w-md"
-				/>
-			</div>
-			<div className="flex flex-col gap-2">
-				<Label>{t("settings:new_password")}</Label>
-				<Input
-					type="password"
-					placeholder={t("settings:new_password_placeholder")}
-					className="w-full md:max-w-md"
-				/>
-			</div>
-			<div className="flex flex-col gap-2">
-				<Label>{t("settings:confirm_password")}</Label>
-				<Input
-					type="password"
-					placeholder={t("settings:confirm_password_placeholder")}
-					className="w-full md:max-w-md"
-				/>
-			</div>
+			{error && (
+				<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-md text-sm">
+					{error}
+				</div>
+			)}
+			{success && (
+				<div className="bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-md text-sm">
+					{success}
+				</div>
+			)}
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+					<FormField
+						control={form.control}
+						name="currentPassword"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex flex-col gap-2">
+									<FormLabel>{t("settings:current_password")}</FormLabel>
+									<FormControl>
+										<Input
+											type="password"
+											placeholder={t("settings:current_password_placeholder")}
+											className="w-full md:max-w-md"
+											disabled={isLoading}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="newPassword"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex flex-col gap-2">
+									<FormLabel>{t("settings:new_password")}</FormLabel>
+									<FormControl>
+										<Input
+											type="password"
+											placeholder={t("settings:new_password_placeholder")}
+											className="w-full md:max-w-md"
+											disabled={isLoading}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="confirmPassword"
+						render={({ field }) => (
+							<FormItem>
+								<div className="flex flex-col gap-2">
+									<FormLabel>{t("settings:confirm_password")}</FormLabel>
+									<FormControl>
+										<Input
+											type="password"
+											placeholder={t("settings:confirm_password_placeholder")}
+											className="w-full md:max-w-md"
+											disabled={isLoading}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</div>
+							</FormItem>
+						)}
+					/>
+					<Button
+						type="submit"
+						disabled={isLoading}
+						className="w-full md:w-auto"
+					>
+						{isLoading
+							? t("common:buttons.saving")
+							: t("settings:change_password.submit")}
+					</Button>
+				</form>
+			</Form>
 		</div>
 	);
 }

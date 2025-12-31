@@ -45,6 +45,8 @@ export default [
 		layout("routes/auth/layout.tsx", [
 			route("login", "routes/auth/login/index.tsx"),
 			route("register", "routes/auth/register/index.tsx"),
+			route("forgot-password", "routes/auth/forgot-password/index.tsx"),
+			route("reset-password", "routes/auth/reset-password/index.tsx"),
 		]),
 	]),
 ] satisfies RouteConfig;

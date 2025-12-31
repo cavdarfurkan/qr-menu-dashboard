@@ -52,6 +52,33 @@ export const handlers = [
 		});
 	}),
 
+	http.post(`${BASE_URL}/v1/auth/forgot-password`, () => {
+		return HttpResponse.json({
+			success: true,
+			message: "Password reset email sent",
+			data: null,
+			timestamp: new Date().toISOString(),
+		});
+	}),
+
+	http.post(`${BASE_URL}/v1/auth/reset-password`, () => {
+		return HttpResponse.json({
+			success: true,
+			message: "Password reset successfully",
+			data: null,
+			timestamp: new Date().toISOString(),
+		});
+	}),
+
+	http.post(`${BASE_URL}/v1/auth/change-password`, () => {
+		return HttpResponse.json({
+			success: true,
+			message: "Password changed successfully",
+			data: null,
+			timestamp: new Date().toISOString(),
+		});
+	}),
+
 	// Menu endpoints
 	http.get(`${BASE_URL}/v1/menu/all`, () => {
 		return HttpResponse.json({
