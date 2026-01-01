@@ -65,5 +65,14 @@
 		"alt": {
 			"auth_layout": "Kimlik Doğrulama Layout Görseli"
 		}
+	},
+	"time": {
+		"justNow": "Az önce",
+		"minutesAgo": "{{count}} dakika önce",
+		"minutesAgo_plural": "{{count}} dakika önce",
+		"hoursAgo": "{{count}} saat önce",
+		"hoursAgo_plural": "{{count}} saat önce",
+		"daysAgo": "{{count}} gün önce",
+		"daysAgo_plural": "{{count}} gün önce"
 	}
 }

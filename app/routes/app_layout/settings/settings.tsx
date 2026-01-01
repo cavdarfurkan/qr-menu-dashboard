@@ -27,8 +27,27 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "~/lib/api";
+import { toast } from "sonner";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "~/components/ui/table";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 
 import { languages } from "~/constants/languages";
 import { THEME_VALUES } from "~/constants/themes";
@@ -65,6 +84,11 @@ export default function Settings() {
 			label: t("settings:security.title"),
 			value: "security",
 			content: <SecuritySection t={t} />,
+		},
+		{
+			label: t("settings:sessions.title"),
+			value: "sessions",
+			content: <SessionsSection t={t} />,
 		},
 		{
 			label: t("settings:privacy.title"),
@@ -543,6 +567,328 @@ function NotificationsSection({ t }: { t: any }) {
 				</div>
 				<Checkbox className="self-start sm:self-center" />
 			</div>
+		</div>
+	);
+}
+
+interface SessionMetadata {
+	sessionId: string;
+	username: string;
+	refreshJti: string;
+	ipAddress: string;
+	userAgentString: string;
+	lastLoginTime: number;
+	createdAt: number;
+	expiresAt: number;
+}
+
+interface ActiveSessionsResponse {
+	sessionMetadataList: SessionMetadata[];
+}
+
+function SessionsSection({ t }: { t: any }) {
+	const [sessions, setSessions] = useState<SessionMetadata[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const [terminateSessionId, setTerminateSessionId] = useState<string | null>(
+		null,
+	);
+	const [showTerminateDialog, setShowTerminateDialog] = useState(false);
+	const [showTerminateAllDialog, setShowTerminateAllDialog] = useState(false);
+	const [isTerminating, setIsTerminating] = useState(false);
+
+	const fetchSessions = async () => {
+		setIsLoading(true);
+		setError(null);
+		try {
+			const response = await api.get<{
+				success: boolean;
+				data: ActiveSessionsResponse;
+			}>("/v1/session/active");
+
+			if (response.data.success && response.data.data) {
+				const sessionList = response.data.data.sessionMetadataList || [];
+				// Sort by most recent first (descending order by lastLoginTime)
+				sessionList.sort((a, b) => b.lastLoginTime - a.lastLoginTime);
+				setSessions(sessionList);
+			} else {
+				setError(t("settings:sessions.terminate_error"));
+			}
+		} catch (err: any) {
+			console.error("Error fetching sessions:", err);
+			setError(
+				err.response?.data?.message || t("settings:sessions.terminate_error"),
+			);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchSessions();
+	}, []);
+
+	const handleTerminateSession = async (sessionId: string) => {
+		setIsTerminating(true);
+		try {
+			const response = await api.post("/v1/session/terminate", {
+				sessionId,
+			});
+
+			if (response.data.success) {
+				toast.success(t("settings:sessions.terminate_success"));
+				await fetchSessions();
+			} else {
+				toast.error(
+					response.data.message || t("settings:sessions.terminate_error"),
+				);
+			}
+		} catch (err: any) {
+			console.error("Error terminating session:", err);
+			toast.error(
+				err.response?.data?.message || t("settings:sessions.terminate_error"),
+			);
+		} finally {
+			setIsTerminating(false);
+			setShowTerminateDialog(false);
+			setTerminateSessionId(null);
+		}
+	};
+
+	const handleTerminateAllOthers = async () => {
+		setIsTerminating(true);
+		try {
+			const response = await api.post("/v1/session/terminate-others");
+
+			if (response.data.success) {
+				toast.success(t("settings:sessions.terminate_success"));
+				await fetchSessions();
+			} else {
+				toast.error(
+					response.data.message || t("settings:sessions.terminate_error"),
+				);
+			}
+		} catch (err: any) {
+			console.error("Error terminating all other sessions:", err);
+			toast.error(
+				err.response?.data?.message || t("settings:sessions.terminate_error"),
+			);
+		} finally {
+			setIsTerminating(false);
+			setShowTerminateAllDialog(false);
+		}
+	};
+
+	const parseUserAgent = (userAgent: string): string => {
+		if (!userAgent) return "Unknown";
+
+		// Simple user agent parsing
+		if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) {
+			return "Chrome";
+		}
+		if (userAgent.includes("Firefox")) {
+			return "Firefox";
+		}
+		if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
+			return "Safari";
+		}
+		if (userAgent.includes("Edg")) {
+			return "Edge";
+		}
+		if (userAgent.includes("Opera") || userAgent.includes("OPR")) {
+			return "Opera";
+		}
+		if (userAgent.includes("Mobile")) {
+			return "Mobile Browser";
+		}
+
+		return userAgent.substring(0, 50) + (userAgent.length > 50 ? "..." : "");
+	};
+
+	const formatTimestamp = (timestamp: number): string => {
+		const date = new Date(timestamp);
+		const now = new Date();
+		const diffMs = now.getTime() - date.getTime();
+		const diffMins = Math.floor(diffMs / 60000);
+		const diffHours = Math.floor(diffMs / 3600000);
+		const diffDays = Math.floor(diffMs / 86400000);
+
+		if (diffMins < 1) {
+			return t("common:time.justNow");
+		}
+		if (diffMins < 60) {
+			return t("common:time.minutesAgo", { count: diffMins });
+		}
+		if (diffHours < 24) {
+			return t("common:time.hoursAgo", { count: diffHours });
+		}
+		if (diffDays < 7) {
+			return t("common:time.daysAgo", { count: diffDays });
+		}
+
+		// For dates older than 7 days, use locale-aware formatting
+		// Format: date and time without hardcoded English words
+		const dateStr = date.toLocaleDateString(undefined, {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		});
+		const timeStr = date.toLocaleTimeString(undefined, {
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+		return `${dateStr} ${timeStr}`;
+	};
+
+	return (
+		<div className="space-y-4">
+			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+				<div className="flex flex-col flex-1">
+					<Label className="text-sm md:text-base font-medium">
+						{t("settings:sessions.title")}
+					</Label>
+					<p className="text-xs md:text-sm text-muted-foreground">
+						{t("settings:sessions.description")}
+					</p>
+				</div>
+				{sessions.length > 1 && (
+					<Button
+						variant="outline"
+						onClick={() => setShowTerminateAllDialog(true)}
+						disabled={isTerminating}
+						className="w-full sm:w-auto"
+					>
+						{t("settings:sessions.terminate_all_others")}
+					</Button>
+				)}
+			</div>
+
+			{error && (
+				<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-md text-sm">
+					{error}
+				</div>
+			)}
+
+			{isLoading ? (
+				<div className="text-center py-8 text-muted-foreground">
+					{t("common:buttons.loading")}
+				</div>
+			) : sessions.length === 0 ? (
+				<div className="text-center py-8 text-muted-foreground">
+					{t("settings:sessions.no_sessions")}
+				</div>
+			) : (
+				<div className="border rounded-md overflow-hidden">
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>{t("settings:sessions.device")}</TableHead>
+								<TableHead>{t("settings:sessions.location")}</TableHead>
+								<TableHead>{t("settings:sessions.last_active")}</TableHead>
+								<TableHead className="text-right">Actions</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{sessions.map((session) => (
+								<TableRow key={session.sessionId}>
+									<TableCell>
+										<div className="flex flex-col">
+											<span className="font-medium">
+												{parseUserAgent(session.userAgentString)}
+											</span>
+											<span className="text-xs text-muted-foreground">
+												{session.userAgentString.substring(0, 60)}
+												{session.userAgentString.length > 60 ? "..." : ""}
+											</span>
+										</div>
+									</TableCell>
+									<TableCell>{session.ipAddress || "Unknown"}</TableCell>
+									<TableCell>
+										{formatTimestamp(session.lastLoginTime)}
+									</TableCell>
+									<TableCell className="text-right">
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => {
+												setTerminateSessionId(session.sessionId);
+												setShowTerminateDialog(true);
+											}}
+											disabled={isTerminating}
+										>
+											{t("settings:sessions.terminate")}
+										</Button>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</div>
+			)}
+
+			{/* Terminate Single Session Dialog */}
+			<AlertDialog
+				open={showTerminateDialog}
+				onOpenChange={setShowTerminateDialog}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>
+							{t("common:confirmations.are_you_sure")}
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							{t("settings:sessions.terminate_confirm")}
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel disabled={isTerminating}>
+							{t("common:buttons.cancel")}
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={() =>
+								terminateSessionId && handleTerminateSession(terminateSessionId)
+							}
+							disabled={isTerminating}
+							className="bg-destructive hover:bg-destructive/90"
+						>
+							{isTerminating
+								? t("common:buttons.loading")
+								: t("settings:sessions.terminate")}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+
+			{/* Terminate All Other Sessions Dialog */}
+			<AlertDialog
+				open={showTerminateAllDialog}
+				onOpenChange={setShowTerminateAllDialog}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>
+							{t("common:confirmations.are_you_sure")}
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							{t("settings:sessions.terminate_all_others_confirm")}
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel disabled={isTerminating}>
+							{t("common:buttons.cancel")}
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleTerminateAllOthers}
+							disabled={isTerminating}
+							className="bg-destructive hover:bg-destructive/90"
+						>
+							{isTerminating
+								? t("common:buttons.loading")
+								: t("settings:sessions.terminate_all_others")}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

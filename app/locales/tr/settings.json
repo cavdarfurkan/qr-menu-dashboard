@@ -39,5 +39,22 @@
 		"submit": "Şifreyi Değiştir",
 		"success": "Şifre başarıyla değiştirildi",
 		"error": "Şifre değiştirilemedi"
+	},
+	"sessions": {
+		"title": "Oturumlar",
+		"description": "Aktif oturumlarınızı yönetin ve diğer cihazlardan çıkış yapın",
+		"device": "Cihaz",
+		"location": "Konum",
+		"last_active": "Son Aktif",
+		"current_session": "Mevcut Oturum",
+		"terminate": "Sonlandır",
+		"terminate_other": "Oturumu Sonlandır",
+		"terminate_all_others": "Diğer Tüm Oturumları Sonlandır",
+		"no_sessions": "Aktif oturum bulunamadı",
+		"terminate_confirm": "Bu oturumu sonlandırmak istediğinizden emin misiniz?",
+		"terminate_all_others_confirm": "Diğer tüm oturumları sonlandırmak istediğinizden emin misiniz? Bu, diğer tüm cihazlardan çıkış yapmanıza neden olacaktır.",
+		"terminate_success": "Oturum başarıyla sonlandırıldı",
+		"terminate_error": "Oturum sonlandırılamadı",
+		"current": "Mevcut"
 	}
 }

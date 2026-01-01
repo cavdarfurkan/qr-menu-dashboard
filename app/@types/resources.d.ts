@@ -120,6 +120,15 @@ interface Resources {
 			properties: "{{count}} properties";
 			properties_defined: "{{count}} properties defined";
 		};
+		time: {
+			daysAgo: "{{count}} day ago";
+			daysAgo_plural: "{{count}} days ago";
+			hoursAgo: "{{count}} hour ago";
+			hoursAgo_plural: "{{count}} hours ago";
+			justNow: "Just now";
+			minutesAgo: "{{count}} minute ago";
+			minutesAgo_plural: "{{count}} minutes ago";
+		};
 	};
 	content: {
 		add_new_content: "Add New Content";
@@ -221,6 +230,23 @@ interface Resources {
 		};
 		security: {
 			title: "Security";
+		};
+		sessions: {
+			current: "Current";
+			current_session: "Current Session";
+			description: "Manage your active sessions and sign out from other devices";
+			device: "Device";
+			last_active: "Last Active";
+			location: "Location";
+			no_sessions: "No active sessions found";
+			terminate: "Terminate";
+			terminate_all_others: "Terminate All Other Sessions";
+			terminate_all_others_confirm: "Are you sure you want to terminate all other sessions? This will log you out from all other devices.";
+			terminate_confirm: "Are you sure you want to terminate this session?";
+			terminate_error: "Failed to terminate session";
+			terminate_other: "Terminate Session";
+			terminate_success: "Session terminated successfully";
+			title: "Sessions";
 		};
 	};
 	sidebar: {

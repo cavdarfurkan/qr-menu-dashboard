@@ -46,5 +46,22 @@
 		"submit": "Change Password",
 		"success": "Password changed successfully",
 		"error": "Failed to change password"
+	},
+	"sessions": {
+		"title": "Sessions",
+		"description": "Manage your active sessions and sign out from other devices",
+		"device": "Device",
+		"location": "Location",
+		"last_active": "Last Active",
+		"current_session": "Current Session",
+		"terminate": "Terminate",
+		"terminate_other": "Terminate Session",
+		"terminate_all_others": "Terminate All Other Sessions",
+		"no_sessions": "No active sessions found",
+		"terminate_confirm": "Are you sure you want to terminate this session?",
+		"terminate_all_others_confirm": "Are you sure you want to terminate all other sessions? This will log you out from all other devices.",
+		"terminate_success": "Session terminated successfully",
+		"terminate_error": "Failed to terminate session",
+		"current": "Current"
 	}
 }

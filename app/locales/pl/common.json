@@ -65,5 +65,14 @@
 		"alt": {
 			"auth_layout": "Obraz autoryzacji"
 		}
+	},
+	"time": {
+		"justNow": "Właśnie teraz",
+		"minutesAgo": "{{count}} minutę temu",
+		"minutesAgo_plural": "{{count}} minut temu",
+		"hoursAgo": "{{count}} godzinę temu",
+		"hoursAgo_plural": "{{count}} godzin temu",
+		"daysAgo": "{{count}} dzień temu",
+		"daysAgo_plural": "{{count}} dni temu"
 	}
 }

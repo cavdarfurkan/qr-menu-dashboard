@@ -39,5 +39,22 @@
 		"submit": "Zmień hasło",
 		"success": "Hasło zostało pomyślnie zmienione",
 		"error": "Nie udało się zmienić hasła"
+	},
+	"sessions": {
+		"title": "Sesje",
+		"description": "Zarządzaj aktywnymi sesjami i wyloguj się z innych urządzeń",
+		"device": "Urządzenie",
+		"location": "Lokalizacja",
+		"last_active": "Ostatnia aktywność",
+		"current_session": "Bieżąca sesja",
+		"terminate": "Zakończ",
+		"terminate_other": "Zakończ sesję",
+		"terminate_all_others": "Zakończ wszystkie inne sesje",
+		"no_sessions": "Nie znaleziono aktywnych sesji",
+		"terminate_confirm": "Czy na pewno chcesz zakończyć tę sesję?",
+		"terminate_all_others_confirm": "Czy na pewno chcesz zakończyć wszystkie inne sesje? Spowoduje to wylogowanie ze wszystkich innych urządzeń.",
+		"terminate_success": "Sesja została pomyślnie zakończona",
+		"terminate_error": "Nie udało się zakończyć sesji",
+		"current": "Bieżąca"
 	}
 }
