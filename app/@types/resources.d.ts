@@ -66,6 +66,7 @@ interface Resources {
 			back: "Back";
 			back_to_dashboard: "Back to dashboard";
 			cancel: "Cancel";
+			close: "Close";
 			create: "Create";
 			delete: "Delete";
 			deleting: "Deleting...";
@@ -174,20 +175,40 @@ interface Resources {
 	};
 	menu: {
 		build: "Build";
+		build_error: "Failed to build menu";
+		build_publish: "Build & Publish";
+		build_status_done: "Build completed successfully";
+		build_status_failed: "Build failed";
+		build_status_pending: "Preparing build...";
+		build_status_processing: "Building menu...";
+		build_success: "Menu built and published successfully";
+		building: "Building...";
 		change_theme: "Change Theme";
+		check_availability: "Check Availability";
+		checking_availability: "Checking...";
 		content_title: "{{contentName}} Content";
 		create_first_menu: "Create your first menu";
 		delete_selected: "Delete Selected ({{count}})";
+		domain_available: "Domain is available";
+		domain_name: "Domain Name";
+		domain_name_placeholder: "example.com";
+		domain_taken: "Domain is taken, try another";
 		edit_content: "Edit Content";
 		edit_content_description: "Update the content for {{contentName}} in {{menuName}}";
 		edit_content_title: "Edit {{contentName}} Content";
+		error_checking_availability: "Error checking domain availability";
+		generate_domain: "Generate Domain";
 		menu_content: "Menu Content";
 		menu_deleted_success: "Successfully deleted menu";
+		menu_updated_success: "Menu updated successfully";
 		new_menu: "+ New Menu";
 		no_menus: "No menus found.";
 		no_schemas: "No schemas found";
 		no_schemas_description: "This menu doesn't have any content schemas available.";
+		open_in_new_tab: "Open in new tab";
+		resuming_build: "Resuming build...";
 		title: "Your Menus";
+		view_published_site: "View Published Site";
 	};
 	settings: {
 		account_details: {

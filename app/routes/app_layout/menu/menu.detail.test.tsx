@@ -200,7 +200,7 @@ describe("MenuDetail Route", () => {
 
 			expect(result.success).toBe(true);
 			expect(vi.mocked(api.put)).toHaveBeenCalledWith("/v1/menu/1", {
-				menuName: "Updated Menu Name",
+				menu_name: "Updated Menu Name",
 			});
 		});
 
@@ -586,6 +586,8 @@ describe("MenuDetail Route", () => {
 
 		describe("Dropdown Menu", () => {
 			it("should render change theme link", async () => {
+				// Note: Change theme functionality has been moved to the form below
+				// The dropdown menu now only contains "Build & Publish" and "Delete" options
 				const user = userEvent.setup();
 
 				renderWithRouter(
@@ -598,7 +600,8 @@ describe("MenuDetail Route", () => {
 				await user.click(dropdownTrigger);
 
 				await waitFor(() => {
-					expect(screen.getByText(/menu:change_theme/i)).toBeInTheDocument();
+					// Verify Build & Publish button is in dropdown (change theme is now in form)
+					expect(screen.getByText(/menu:build_publish/i)).toBeInTheDocument();
 				});
 			});
 

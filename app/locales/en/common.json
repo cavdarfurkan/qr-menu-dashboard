@@ -12,6 +12,7 @@
 	"buttons": {
 		"create": "Create",
 		"cancel": "Cancel",
+		"close": "Close",
 		"submit": "Submit",
 		"save": "Save",
 		"delete": "Delete",

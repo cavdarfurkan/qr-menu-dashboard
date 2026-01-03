@@ -11,6 +11,7 @@
 	"buttons": {
 		"create": "Oluştur",
 		"cancel": "İptal",
+		"close": "Kapat",
 		"submit": "Gönder",
 		"save": "Kaydet",
 		"delete": "Sil",

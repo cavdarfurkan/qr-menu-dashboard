@@ -11,6 +11,7 @@
 	"buttons": {
 		"create": "Utwórz",
 		"cancel": "Anuluj",
+		"close": "Zamknij",
 		"submit": "Wyślij",
 		"save": "Zapisz",
 		"delete": "Usuń",

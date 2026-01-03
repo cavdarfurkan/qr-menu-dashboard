@@ -26,11 +26,51 @@ import api from "~/lib/api";
 import { isAxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
+import { toast } from "sonner";
+import { ExternalLink } from "lucide-react";
+
+// Utility function to extract subdomain from user input
+// Handles: protocol stripping, returns clean domain/subdomain
+const extractSubdomain = (input: string): string => {
+	if (!input) return "";
+
+	// Trim whitespace
+	let domain = input.trim();
+
+	// Strip protocol (http:// or https://)
+	domain = domain.replace(/^https?:\/\//i, "");
+
+	// Remove trailing slash
+	domain = domain.replace(/\/$/, "");
+
+	// Return the clean domain/subdomain
+	return domain.trim();
+};
+
+// Utility function to generate subdomain from menu name
+const generateSubdomain = (menuName: string): string => {
+	// Slugify menu name: lowercase, replace spaces with hyphens, remove special chars
+	const slug = menuName
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "")
+		.substring(0, 30); // Limit length
+
+	// Generate random 6-character suffix
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+	let randomSuffix = "";
+	for (let i = 0; i < 6; i++) {
+		randomSuffix += chars.charAt(Math.floor(Math.random() * chars.length));
+	}
+
+	return `${slug}-${randomSuffix}`;
+};
 
 const formSchema = (t: (key: string) => string) =>
 	z.object({
 		name: z.string().min(3, { error: t("validation:name_required") }),
 		selectedThemeId: z.number({ error: t("validation:theme_required") }),
+		customDomain: z.string().optional(),
 	});
 
 type FormData = z.infer<ReturnType<typeof formSchema>>;
@@ -39,13 +79,26 @@ export async function clientAction({
 	request,
 }: Route.ClientActionArgs): Promise<ApiResponse> {
 	let formData = await request.formData();
-	const data = Object.fromEntries(formData) as unknown as FormData;
+	const data = Object.fromEntries(formData) as unknown as FormData & {
+		customDomain?: string;
+	};
 
 	try {
-		const response = await api.post("/v1/menu/create", {
+		const payload: {
+			menu_name: string;
+			selected_theme_id: number;
+			custom_domain?: string;
+		} = {
 			menu_name: data.name,
 			selected_theme_id: data.selectedThemeId,
-		});
+		};
+
+		if (data.customDomain?.trim()) {
+			// Data already formatted with suffix from form submission
+			payload.custom_domain = data.customDomain.trim();
+		}
+
+		const response = await api.post("/v1/menu/create", payload);
 
 		return {
 			success: response.data.success,
@@ -82,14 +135,79 @@ export default function MenuCreate() {
 
 	const [error, setError] = useState<string | null>(null);
 	const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
+	const [customDomain, setCustomDomain] = useState<string>("");
+	const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
+	const [availabilityStatus, setAvailabilityStatus] = useState<
+		"available" | "taken" | null
+	>(null);
 	const isLoading = fetcher.state !== "idle";
 
 	const form = useForm<z.infer<ReturnType<typeof formSchema>>>({
 		resolver: zodResolver(formSchema(t as (key: string) => string)),
 		defaultValues: {
 			name: "",
+			customDomain: "",
 		},
 	});
+
+	// Auto-generate domain when menu name changes
+	useEffect(() => {
+		const menuName = form.watch("name");
+		if (menuName && menuName.length >= 3 && !customDomain) {
+			const generated = generateSubdomain(menuName);
+			setCustomDomain(generated);
+			form.setValue("customDomain", generated);
+		}
+	}, [form.watch("name")]);
+
+	const handleGenerateDomain = () => {
+		const menuName = form.getValues("name");
+		if (menuName && menuName.length >= 3) {
+			const generated = generateSubdomain(menuName);
+			setCustomDomain(generated);
+			form.setValue("customDomain", generated);
+			setAvailabilityStatus(null);
+		}
+	};
+
+	const handleCheckAvailability = async () => {
+		const subdomain = extractSubdomain(customDomain);
+		if (!subdomain) {
+			return;
+		}
+
+		setIsCheckingAvailability(true);
+		setAvailabilityStatus(null);
+		try {
+			const response = await api.get("/v1/menu/domain/available", {
+				params: { domain: subdomain },
+			});
+
+			if (response.data.success) {
+				const isAvailable = response.data.data.available;
+				setAvailabilityStatus(isAvailable ? "available" : "taken");
+			} else {
+				// Backend returned success: false with an error message
+				const errorMessage =
+					response.data.message || t("menu:error_checking_availability");
+				setAvailabilityStatus("taken");
+				toast.error(errorMessage);
+			}
+		} catch (error) {
+			setAvailabilityStatus("taken");
+			if (isAxiosError(error)) {
+				const errorMessage =
+					error.response?.data?.message ||
+					error.message ||
+					t("menu:error_checking_availability");
+				toast.error(errorMessage);
+			} else {
+				toast.error(t("menu:error_checking_availability"));
+			}
+		} finally {
+			setIsCheckingAvailability(false);
+		}
+	};
 
 	useEffect(() => {
 		const data = fetcher.data;
@@ -106,7 +224,17 @@ export default function MenuCreate() {
 
 	const onSubmit = (data: z.infer<ReturnType<typeof formSchema>>) => {
 		setError(null);
-		fetcher.submit(data, { method: "post" });
+		const formData = new FormData();
+		formData.append("name", data.name);
+		formData.append("selectedThemeId", data.selectedThemeId.toString());
+		if (data.customDomain?.trim()) {
+			const subdomain = extractSubdomain(data.customDomain);
+			if (subdomain) {
+				// Send only subdomain to backend (no suffix)
+				formData.append("customDomain", subdomain);
+			}
+		}
+		fetcher.submit(formData, { method: "post" });
 	};
 
 	const handleThemeSelect = (id: number) => {
@@ -193,6 +321,77 @@ export default function MenuCreate() {
 															: t("common:labels.select_theme")}
 													</Button>
 												</SelectThemeDialog>
+											</div>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="customDomain"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>{t("menu:domain_name")}</FormLabel>
+										<FormControl>
+											<div className="space-y-2">
+												<div className="flex gap-2">
+													<Input
+														{...field}
+														value={customDomain}
+														onChange={(e) => {
+															// Extract subdomain from user input (strip protocol)
+															const subdomain = extractSubdomain(
+																e.target.value,
+															);
+															setCustomDomain(subdomain);
+															field.onChange(subdomain);
+															setAvailabilityStatus(null);
+														}}
+														placeholder="new-menu-test"
+														disabled={isLoading}
+														className="flex-1"
+													/>
+													<Button
+														type="button"
+														variant="outline"
+														onClick={handleGenerateDomain}
+														disabled={isLoading}
+													>
+														{t("menu:generate_domain")}
+													</Button>
+												</div>
+												<div className="flex gap-2">
+													<Button
+														type="button"
+														variant="outline"
+														onClick={handleCheckAvailability}
+														disabled={
+															isLoading ||
+															isCheckingAvailability ||
+															!customDomain.trim()
+														}
+														className="flex-1"
+													>
+														{isCheckingAvailability
+															? t("menu:checking_availability")
+															: t("menu:check_availability")}
+													</Button>
+												</div>
+												{availabilityStatus && (
+													<div
+														className={`text-sm ${
+															availabilityStatus === "available"
+																? "text-green-600"
+																: "text-red-600"
+														}`}
+													>
+														{availabilityStatus === "available"
+															? t("menu:domain_available")
+															: t("menu:domain_taken")}
+													</div>
+												)}
 											</div>
 										</FormControl>
 										<FormMessage />

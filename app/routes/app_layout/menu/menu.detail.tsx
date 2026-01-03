@@ -2,8 +2,14 @@ import type { Route } from "./+types/menu.detail";
 import api, { type ApiResponse } from "~/lib/api";
 import { isAxiosError } from "axios";
 import { Button } from "~/components/ui/button";
-import { useState } from "react";
-import { Form, Link, useFetcher, useNavigate } from "react-router";
+import { useState, useEffect, useRef } from "react";
+import {
+	Form,
+	Link,
+	useFetcher,
+	useNavigate,
+	useRevalidator,
+} from "react-router";
 import Title from "~/components/Title";
 import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "~/components/ui/input";
@@ -31,11 +37,16 @@ import {
 } from "~/components/ui/dropdown-menu";
 import {
 	ArrowRight,
+	Check,
+	Clock,
 	FileText,
 	FileX,
+	Loader2,
 	MoreHorizontal,
 	RefreshCw,
 	Trash,
+	X,
+	ExternalLink,
 } from "lucide-react";
 import {
 	AlertDialog,
@@ -47,6 +58,14 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "~/components/ui/dialog";
 import {
 	Card,
 	CardContent,
@@ -64,6 +83,16 @@ type MenuType = {
 	menuName: string;
 	ownerUsername: string;
 	selectedThemeId: number;
+	customDomain?: string;
+};
+
+type BuildStatus = "PENDING" | "PROCESSING" | "DONE" | "FAILED";
+
+type BuildState = {
+	jobId: string;
+	status: BuildStatus;
+	startedAt: number;
+	menuId: number;
 };
 
 type SchemasType = {
@@ -123,12 +152,30 @@ export async function clientAction({
 	params,
 }: Route.ClientActionArgs): Promise<ApiResponse> {
 	let formData = await request.formData();
-	const data = Object.fromEntries(formData) as unknown as { menuName: string };
+	const data = Object.fromEntries(formData) as unknown as {
+		menuName: string;
+		selectedThemeId: string;
+		customDomain?: string;
+	};
 
 	try {
-		const response = await api.put(`/v1/menu/${params.id}`, {
-			menuName: data.menuName,
-		});
+		const payload: {
+			menu_name: string;
+			selected_theme_id?: number;
+			custom_domain?: string;
+		} = {
+			menu_name: data.menuName,
+		};
+
+		if (data.selectedThemeId) {
+			payload.selected_theme_id = parseInt(data.selectedThemeId, 10);
+		}
+
+		if (data.customDomain) {
+			payload.custom_domain = data.customDomain;
+		}
+
+		const response = await api.put(`/v1/menu/${params.id}`, payload);
 
 		return { ...response.data };
 	} catch (error) {
@@ -169,14 +216,47 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 	}
 
 	const navigate = useNavigate();
+	const revalidator = useRevalidator();
 
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
+	const [isBuilding, setIsBuilding] = useState(false);
+	const [buildStatus, setBuildStatus] = useState<BuildStatus | null>(null);
+	const [showBuildDialog, setShowBuildDialog] = useState(false);
+	const [buildJobId, setBuildJobId] = useState<string | null>(null);
+
+	const BUILD_STORAGE_KEY = `menu_build_${menu.menuId}`;
 
 	const schemas: SchemasType = {
 		schemas_count: response.schemas_count,
 		theme_schemas: response.theme_schemas,
 	};
+
+	// Check localStorage for in-progress builds on mount
+	useEffect(() => {
+		const stored = localStorage.getItem(BUILD_STORAGE_KEY);
+		if (stored) {
+			try {
+				const buildState: BuildState = JSON.parse(stored);
+				if (
+					buildState.status === "PENDING" ||
+					buildState.status === "PROCESSING"
+				) {
+					setBuildStatus(buildState.status);
+					setBuildJobId(buildState.jobId);
+					setShowBuildDialog(true);
+					// Resume polling
+					pollJobStatus(buildState.jobId, true);
+				} else {
+					// Clean up completed builds
+					localStorage.removeItem(BUILD_STORAGE_KEY);
+				}
+			} catch (e) {
+				// Invalid storage, clean up
+				localStorage.removeItem(BUILD_STORAGE_KEY);
+			}
+		}
+	}, []);
 
 	const handleDeleteMenu = () => {
 		setShowDeleteDialog(true);
@@ -200,6 +280,79 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 		}
 	};
 
+	const saveBuildState = (state: BuildState) => {
+		localStorage.setItem(BUILD_STORAGE_KEY, JSON.stringify(state));
+	};
+
+	const clearBuildState = () => {
+		localStorage.removeItem(BUILD_STORAGE_KEY);
+	};
+
+	const pollJobStatus = async (jobId: string, isResuming = false) => {
+		const maxAttempts = 60; // 2 minutes max (60 * 2 seconds)
+		let attempts = 0;
+
+		if (isResuming) {
+			toast.info(t("menu:resuming_build"));
+		}
+
+		const poll = async (): Promise<void> => {
+			if (attempts >= maxAttempts) {
+				setBuildStatus("FAILED");
+				saveBuildState({
+					jobId,
+					status: "FAILED",
+					startedAt: Date.now(),
+					menuId: menu.menuId,
+				});
+				toast.error(t("menu:build_error"));
+				return;
+			}
+
+			try {
+				const statusResponse = await api.get(`/v1/menu/job/${jobId}`);
+				if (statusResponse.data.success) {
+					const status = statusResponse.data.data
+						.menu_job_status as BuildStatus;
+
+					setBuildStatus(status);
+					saveBuildState({
+						jobId,
+						status,
+						startedAt: Date.now(),
+						menuId: menu.menuId,
+					});
+
+					if (status === "DONE") {
+						clearBuildState();
+						toast.success(t("menu:build_success"));
+						return;
+					} else if (status === "FAILED") {
+						clearBuildState();
+						toast.error(t("menu:build_error"));
+						return;
+					} else {
+						// PENDING or PROCESSING - continue polling
+						attempts++;
+						setTimeout(() => {
+							poll();
+						}, 2000); // Poll every 2 seconds
+					}
+				} else {
+					setBuildStatus("FAILED");
+					clearBuildState();
+					toast.error(t("menu:build_error"));
+				}
+			} catch (error) {
+				setBuildStatus("FAILED");
+				clearBuildState();
+				toast.error(t("menu:build_error"));
+			}
+		};
+
+		await poll();
+	};
+
 	// TODO: Add icons to menu actions
 	return (
 		<div className="flex flex-col gap-6">
@@ -212,18 +365,61 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						{/* <DropdownMenuLabel className="font-semibold">Menu</DropdownMenuLabel> */}
+						<DropdownMenuItem
+							onClick={async () => {
+								setIsBuilding(true);
+								setShowBuildDialog(true);
+								setBuildStatus("PENDING");
+								try {
+									const buildResponse = await api.post("/v1/menu/build", {
+										menu_id: menu.menuId,
+									});
 
-						<DropdownMenuItem asChild>
-							{/* TODO: Change link */}
-							<Link to={`/menu/change-theme/${menu.menuId}`}>
-								{t("menu:change_theme")}
-							</Link>
-						</DropdownMenuItem>
-
-						<DropdownMenuItem asChild>
-							{/* TODO: Change link */}
-							<Link to={`/menu/build/${menu.menuId}`}>{t("menu:build")}</Link>
+									if (buildResponse.data.success) {
+										const statusUrl = buildResponse.data.data.status_url;
+										// Extract jobId from status_url (format: /api/v1/menu/job/{jobId})
+										const jobIdMatch = statusUrl.match(/\/job\/([^/]+)$/);
+										if (jobIdMatch) {
+											const jobId = jobIdMatch[1];
+											setBuildJobId(jobId);
+											saveBuildState({
+												jobId,
+												status: "PENDING",
+												startedAt: Date.now(),
+												menuId: menu.menuId,
+											});
+											await pollJobStatus(jobId);
+										} else {
+											setBuildStatus("FAILED");
+											clearBuildState();
+											toast.error(t("menu:build_error"));
+										}
+									} else {
+										setBuildStatus("FAILED");
+										clearBuildState();
+										toast.error(
+											buildResponse.data.message || t("menu:build_error"),
+										);
+									}
+								} catch (error) {
+									setBuildStatus("FAILED");
+									clearBuildState();
+									let errorMessage = t("menu:build_error");
+									if (isAxiosError(error) && error.response?.data?.message) {
+										errorMessage = error.response.data.message;
+									}
+									toast.error(errorMessage);
+								} finally {
+									setIsBuilding(false);
+								}
+							}}
+							disabled={
+								isBuilding ||
+								buildStatus === "PENDING" ||
+								buildStatus === "PROCESSING"
+							}
+						>
+							{isBuilding ? t("menu:building") : t("menu:build_publish")}
 						</DropdownMenuItem>
 
 						<DropdownMenuSeparator />
@@ -241,6 +437,63 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 
 			<MenuDetails menu={menu} />
 			<MenuContent schemas={schemas} menuId={menu.menuId.toString()} />
+
+			<Dialog
+				open={showBuildDialog}
+				onOpenChange={(open) => {
+					// Only allow closing if build is done or failed
+					if (!open && (buildStatus === "DONE" || buildStatus === "FAILED")) {
+						setShowBuildDialog(false);
+					} else if (
+						!open &&
+						buildStatus !== "DONE" &&
+						buildStatus !== "FAILED"
+					) {
+						// Prevent closing during build
+						setShowBuildDialog(true);
+					}
+				}}
+			>
+				<DialogContent
+					showCloseButton={buildStatus === "DONE" || buildStatus === "FAILED"}
+				>
+					<DialogHeader>
+						<DialogTitle>{t("menu:build_publish")}</DialogTitle>
+						<DialogDescription>
+							{buildStatus === "PENDING" && t("menu:build_status_pending")}
+							{buildStatus === "PROCESSING" &&
+								t("menu:build_status_processing")}
+							{buildStatus === "DONE" && t("menu:build_status_done")}
+							{buildStatus === "FAILED" && t("menu:build_status_failed")}
+						</DialogDescription>
+					</DialogHeader>
+					<div className="flex items-center justify-center py-4">
+						{buildStatus === "PENDING" && (
+							<Clock className="h-8 w-8 text-muted-foreground animate-pulse" />
+						)}
+						{buildStatus === "PROCESSING" && (
+							<Loader2 className="h-8 w-8 text-primary animate-spin" />
+						)}
+						{buildStatus === "DONE" && (
+							<Check className="h-8 w-8 text-green-500" />
+						)}
+						{buildStatus === "FAILED" && <X className="h-8 w-8 text-red-500" />}
+					</div>
+					<DialogFooter>
+						<Button
+							variant="outline"
+							onClick={() => {
+								if (buildStatus === "DONE" || buildStatus === "FAILED") {
+									setShowBuildDialog(false);
+								}
+							}}
+							disabled={buildStatus !== "DONE" && buildStatus !== "FAILED"}
+						>
+							{t("common:buttons.cancel")}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 
 			<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
 				<AlertDialogContent>
@@ -273,36 +526,255 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 	);
 }
 
+// Utility function to extract subdomain from user input
+// Handles: protocol stripping, returns clean domain/subdomain
+const extractSubdomain = (input: string): string => {
+	if (!input) return "";
+
+	// Trim whitespace
+	let domain = input.trim();
+
+	// Strip protocol (http:// or https://)
+	domain = domain.replace(/^https?:\/\//i, "");
+
+	// Remove trailing slash
+	domain = domain.replace(/\/$/, "");
+
+	// Return the clean domain/subdomain
+	return domain.trim();
+};
+
+// Utility function to format domain for display (with https://)
+const formatDomainForDisplay = (domain: string): string => {
+	if (!domain?.trim()) return "";
+	return `https://${domain.trim()}`;
+};
+
+// Utility function to extract subdomain from full domain
+// If backend returns "subdomain.example.com", extract "subdomain"
+const extractSubdomainFromFullDomain = (fullDomain: string): string => {
+	if (!fullDomain) return "";
+
+	// Strip protocol if present
+	let domain = fullDomain.replace(/^https?:\/\//i, "").trim();
+
+	// Extract subdomain (everything before the first dot)
+	const parts = domain.split(".");
+	if (parts.length > 1) {
+		// Return the first part (subdomain)
+		return parts[0];
+	}
+
+	// If no dots, return as-is (might already be just subdomain)
+	return domain;
+};
+
+// Utility function to generate subdomain from menu name
+const generateSubdomain = (menuName: string): string => {
+	// Slugify menu name: lowercase, replace spaces with hyphens, remove special chars
+	const slug = menuName
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "")
+		.substring(0, 30); // Limit length
+
+	// Generate random 6-character suffix
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+	let randomSuffix = "";
+	for (let i = 0; i < 6; i++) {
+		randomSuffix += chars.charAt(Math.floor(Math.random() * chars.length));
+	}
+
+	return `${slug}-${randomSuffix}`;
+};
+
 const menuDetailsFormSchema = (t: (key: string) => string) =>
 	z.object({
 		menuName: z.string().min(3, { error: t("validation:name_required") }),
 		selectedThemeId: z.number({ error: t("validation:theme_required") }),
+		customDomain: z.string().optional(),
 	});
 
 type MenuDetailsFormData = z.infer<ReturnType<typeof menuDetailsFormSchema>>;
 
 // TODO: Rename: MenuDetails to MenuDetailsForm
 function MenuDetails({ menu }: { menu: MenuType }) {
-	const { t } = useTranslation(["common", "validation"]);
+	const { t } = useTranslation(["common", "validation", "menu"]);
 	const fetcher = useFetcher();
+	const revalidator = useRevalidator();
+	const revalidateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const isRevalidatingRef = useRef(false);
 
 	const [error, setError] = useState<string | null>(null);
 	const isLoading = fetcher.state !== "idle";
-	const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
+	const [selectedThemeId, setSelectedThemeId] = useState<number | null>(
+		menu.selectedThemeId,
+	);
+	const [selectedThemeName, setSelectedThemeName] = useState<string | null>(
+		null,
+	);
+	// Extract subdomain from backend domain (if exists)
+	// Backend returns full domain (e.g., "subdomain.example.com"), extract just subdomain
+	const getSubdomainFromBackend = (domain: string | undefined): string => {
+		if (!domain) return "";
+		return extractSubdomainFromFullDomain(domain);
+	};
+
+	const [customDomain, setCustomDomain] = useState<string>(
+		getSubdomainFromBackend(menu.customDomain) ||
+			generateSubdomain(menu.menuName),
+	);
+	const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
+	const [availabilityStatus, setAvailabilityStatus] = useState<
+		"available" | "taken" | null
+	>(null);
+
+	// Fetch theme name when component mounts or theme changes
+	useEffect(() => {
+		if (menu.selectedThemeId) {
+			api
+				.get(`/v1/theme/${menu.selectedThemeId}`)
+				.then((response) => {
+					if (response.data.success) {
+						setSelectedThemeName(response.data.data?.name || null);
+					}
+				})
+				.catch(() => {
+					// Silently fail - theme name is optional
+				});
+		}
+	}, [menu.selectedThemeId]);
+
+	// Update theme name when selectedThemeId changes
+	useEffect(() => {
+		if (selectedThemeId && selectedThemeId !== menu.selectedThemeId) {
+			api
+				.get(`/v1/theme/${selectedThemeId}`)
+				.then((response) => {
+					if (response.data.success) {
+						setSelectedThemeName(response.data.data?.name || null);
+					}
+				})
+				.catch(() => {
+					// Silently fail - theme name is optional
+				});
+		}
+	}, [selectedThemeId, menu.selectedThemeId]);
+
+	// Handle fetcher response
+	useEffect(() => {
+		if (fetcher.data) {
+			if (fetcher.data.success) {
+				toast.success(t("menu:menu_updated_success"));
+				// Prevent multiple rapid revalidations
+				if (revalidateTimeoutRef.current) {
+					clearTimeout(revalidateTimeoutRef.current);
+				}
+				if (!isRevalidatingRef.current) {
+					isRevalidatingRef.current = true;
+					revalidateTimeoutRef.current = setTimeout(() => {
+						revalidator.revalidate();
+						isRevalidatingRef.current = false;
+					}, 300);
+				}
+			} else {
+				setError(
+					fetcher.data.message || String(t("error:error_updating_menu" as any)),
+				);
+			}
+		}
+	}, [fetcher.data, t, revalidator]);
+
+	// Cleanup timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (revalidateTimeoutRef.current) {
+				clearTimeout(revalidateTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	const form = useForm<MenuDetailsFormData>({
 		resolver: zodResolver(menuDetailsFormSchema(t as (key: string) => string)),
 		defaultValues: {
 			menuName: menu.menuName,
 			selectedThemeId: menu.selectedThemeId,
+			customDomain:
+				getSubdomainFromBackend(menu.customDomain) ||
+				generateSubdomain(menu.menuName),
 		},
 	});
 
-	// TODO: Add update endpoint to backend, then continue here
+	// Auto-generate domain if not set
+	useEffect(() => {
+		if (!menu.customDomain && !customDomain) {
+			const generated = generateSubdomain(menu.menuName);
+			setCustomDomain(generated);
+			form.setValue("customDomain", generated);
+		}
+	}, [menu.customDomain, menu.menuName]);
+
+	const handleGenerateDomain = () => {
+		const generated = generateSubdomain(menu.menuName);
+		setCustomDomain(generated);
+		form.setValue("customDomain", generated);
+		setAvailabilityStatus(null);
+	};
+
+	const handleCheckAvailability = async () => {
+		const subdomain = extractSubdomain(customDomain);
+		if (!subdomain) {
+			return;
+		}
+
+		setIsCheckingAvailability(true);
+		setAvailabilityStatus(null);
+		try {
+			const response = await api.get("/v1/menu/domain/available", {
+				params: { domain: subdomain },
+			});
+
+			if (response.data.success) {
+				const isAvailable = response.data.data.available;
+				setAvailabilityStatus(isAvailable ? "available" : "taken");
+			} else {
+				// Backend returned success: false with an error message
+				const errorMessage =
+					response.data.message || t("menu:error_checking_availability");
+				setAvailabilityStatus("taken");
+				toast.error(errorMessage);
+			}
+		} catch (error) {
+			setAvailabilityStatus("taken");
+			if (isAxiosError(error)) {
+				const errorMessage =
+					error.response?.data?.message ||
+					error.message ||
+					t("menu:error_checking_availability");
+				toast.error(errorMessage);
+			} else {
+				toast.error(t("menu:error_checking_availability"));
+			}
+		} finally {
+			setIsCheckingAvailability(false);
+		}
+	};
+
 	const onSubmit = (data: MenuDetailsFormData) => {
 		setError(null);
-		console.log(data);
-		// fetcher.submit(data, { method: "PUT", action: `/menu/${menu.menuId}` });
+		const formData = new FormData();
+		formData.append("menuName", data.menuName);
+		if (data.selectedThemeId) {
+			formData.append("selectedThemeId", data.selectedThemeId.toString());
+		}
+		if (data.customDomain?.trim()) {
+			const subdomain = extractSubdomain(data.customDomain);
+			if (subdomain) {
+				// Send only subdomain to backend (no suffix)
+				formData.append("customDomain", subdomain);
+			}
+		}
+		fetcher.submit(formData, { method: "post" });
 	};
 
 	const handleThemeSelect = (id: number) => {
@@ -370,11 +842,13 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 										}}
 									>
 										<Button type="button" variant="outline" className="w-full">
-											{selectedThemeId
-												? t("common:labels.theme_selected", {
-														id: selectedThemeId,
-													})
-												: t("common:labels.select_theme")}
+											{selectedThemeName
+												? selectedThemeName
+												: selectedThemeId
+													? t("common:labels.theme_selected", {
+															id: selectedThemeId,
+														})
+													: t("common:labels.select_theme")}
 										</Button>
 									</SelectThemeDialog>
 								</div>
@@ -383,6 +857,92 @@ function MenuDetails({ menu }: { menu: MenuType }) {
 						</FormItem>
 					)}
 				/>
+
+				<FormField
+					control={form.control}
+					name="customDomain"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>{t("menu:domain_name")}</FormLabel>
+							<FormControl>
+								<div className="space-y-2">
+									<div className="flex gap-2">
+										<Input
+											{...field}
+											value={customDomain}
+											onChange={(e) => {
+												// Extract subdomain from user input (strip protocol)
+												const subdomain = extractSubdomain(e.target.value);
+												setCustomDomain(subdomain);
+												field.onChange(subdomain);
+												setAvailabilityStatus(null);
+											}}
+											placeholder="new-menu-test"
+											disabled={isLoading}
+											className="flex-1"
+										/>
+										<Button
+											type="button"
+											variant="outline"
+											onClick={handleGenerateDomain}
+											disabled={isLoading}
+										>
+											{t("menu:generate_domain")}
+										</Button>
+									</div>
+									<div className="flex gap-2">
+										<Button
+											type="button"
+											variant="outline"
+											onClick={handleCheckAvailability}
+											disabled={
+												isLoading ||
+												isCheckingAvailability ||
+												!customDomain.trim()
+											}
+											className="flex-1"
+										>
+											{isCheckingAvailability
+												? t("menu:checking_availability")
+												: t("menu:check_availability")}
+										</Button>
+									</div>
+									{availabilityStatus && (
+										<div
+											className={`text-sm ${
+												availabilityStatus === "available"
+													? "text-green-600"
+													: "text-red-600"
+											}`}
+										>
+											{availabilityStatus === "available"
+												? t("menu:domain_available")
+												: t("menu:domain_taken")}
+										</div>
+									)}
+								</div>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				{menu.customDomain && (
+					<div className="flex items-center gap-2 p-3 bg-muted rounded-md">
+						<ExternalLink className="h-4 w-4 text-muted-foreground" />
+						<a
+							href={formatDomainForDisplay(menu.customDomain)}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-primary hover:underline flex-1"
+						>
+							{t("menu:view_published_site")}
+						</a>
+						<span className="text-xs text-muted-foreground">
+							({t("menu:open_in_new_tab")})
+						</span>
+					</div>
+				)}
 
 				<div className="flex justify-end gap-2">
 					<Button type="submit" className="wfull" disabled={isLoading}>
