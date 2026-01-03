@@ -2,5 +2,20 @@
 	"title": "Dashboard Home",
 	"logged_in_success": "You are successfully logged in!",
 	"manage_menus": "Manage Menus",
-	"settings": "Settings"
+	"settings": "Settings",
+	"published": "Published",
+	"unpublished": "Unpublished",
+	"stats_widget_title": "Statistics",
+	"recent_activity_title": "Recent Activity",
+	"quick_actions_title": "Quick Actions",
+	"menu_preview_title": "Published Menus",
+	"total_menus": "Total Menus",
+	"published_menus": "Published Menus",
+	"unpublished_menus": "Unpublished Menus",
+	"manage_themes": "Manage Themes",
+	"view_all_menus": "View All Menus",
+	"no_published_menus": "No published menus yet",
+	"no_recent_activity": "No recent activity",
+	"published_status": "Published",
+	"unpublished_status": "Unpublished"
 }

@@ -170,8 +170,23 @@ interface Resources {
 	home: {
 		logged_in_success: "You are successfully logged in!";
 		manage_menus: "Manage Menus";
+		manage_themes: "Manage Themes";
+		menu_preview_title: "Published Menus";
+		no_published_menus: "No published menus yet";
+		no_recent_activity: "No recent activity";
+		published: "Published";
+		published_menus: "Published Menus";
+		published_status: "Published";
+		quick_actions_title: "Quick Actions";
+		recent_activity_title: "Recent Activity";
 		settings: "Settings";
+		stats_widget_title: "Statistics";
 		title: "Dashboard Home";
+		total_menus: "Total Menus";
+		unpublished: "Unpublished";
+		unpublished_menus: "Unpublished Menus";
+		unpublished_status: "Unpublished";
+		view_all_menus: "View All Menus";
 	};
 	menu: {
 		build: "Build";
@@ -208,6 +223,9 @@ interface Resources {
 		open_in_new_tab: "Open in new tab";
 		resuming_build: "Resuming build...";
 		title: "Your Menus";
+		unpublish: "Unpublish";
+		unpublish_error: "Failed to unpublish menu";
+		unpublish_success: "Menu unpublished successfully";
 		view_published_site: "View Published Site";
 	};
 	settings: {

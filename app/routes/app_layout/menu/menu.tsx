@@ -5,12 +5,14 @@ import api, { type ApiResponse } from "~/lib/api";
 import { isAxiosError } from "axios";
 import Title from "~/components/Title";
 import { Button } from "~/components/ui/button";
+import { Badge } from "~/components/ui/badge";
 import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
 
 type MenuType = {
 	menuId: number;
 	menuName: string;
+	published?: boolean;
 };
 
 export async function clientLoader(): Promise<ApiResponse> {
@@ -40,7 +42,7 @@ export async function clientLoader(): Promise<ApiResponse> {
 }
 
 export default function Menu({ loaderData }: Route.ComponentProps) {
-	const { t } = useTranslation(["menu", "common"]);
+	const { t } = useTranslation(["menu", "common", "home"]);
 	const response = loaderData;
 	if (!response.success) {
 		return <p> {response.message} </p>;
@@ -83,7 +85,14 @@ export default function Menu({ loaderData }: Route.ComponentProps) {
 								className="hover:shadow-lg transition-all duration-200 cursor-pointer"
 							>
 								<CardHeader>
-									<CardTitle>{menu.menuName}</CardTitle>
+									<div className="flex items-center justify-between gap-2">
+										<CardTitle>{menu.menuName}</CardTitle>
+										{menu.published ? (
+											<Badge variant="secondary">{t("home:published")}</Badge>
+										) : (
+											<Badge variant="outline">{t("home:unpublished")}</Badge>
+										)}
+									</div>
 								</CardHeader>
 								{/* <CardContent>
 									<p className="text-gray-600">

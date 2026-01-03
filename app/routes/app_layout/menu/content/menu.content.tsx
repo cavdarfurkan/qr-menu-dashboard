@@ -1,5 +1,12 @@
-import { Link, useParams, useRevalidator } from "react-router";
-import { FileX, MoreHorizontal, Pencil, PlusCircle, Trash } from "lucide-react";
+import { Link, useParams, useNavigate, useRevalidator } from "react-router";
+import {
+	ArrowLeft,
+	FileX,
+	MoreHorizontal,
+	Pencil,
+	PlusCircle,
+	Trash,
+} from "lucide-react";
 import { Button } from "~/components/ui/button";
 import Title from "~/components/Title";
 import api, { type ApiResponse } from "~/lib/api";
@@ -209,6 +216,11 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 	}, [loaderData.data]);
 
 	const revalidator = useRevalidator();
+	const navigate = useNavigate();
+
+	const handleBack = () => {
+		navigate(`/menu/${menuId}`);
+	};
 
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -422,6 +434,10 @@ export default function MenuContent({ loaderData }: Route.ComponentProps) {
 				title={t("menu:content_title", { contentName: contentName || "" })}
 			>
 				<div className="flex items-center gap-2">
+					<Button variant="outline" size="sm" onClick={handleBack}>
+						<ArrowLeft className="h-4 w-4 mr-2" />
+						{t("common:buttons.back")}
+					</Button>
 					{Object.keys(rowSelection).length > 0 && (
 						<Button
 							variant="destructive"

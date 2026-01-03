@@ -33,5 +33,8 @@
 	"no_schemas_description": "Bu menüde kullanılabilir içerik şeması yok.",
 	"content_title": "{{contentName}} İçeriği",
 	"delete_selected": "Seçilenleri Sil ({{count}})",
-	"menu_deleted_success": "Menü başarıyla silindi"
+	"menu_deleted_success": "Menü başarıyla silindi",
+	"unpublish": "Yayından Kaldır",
+	"unpublish_success": "Menü başarıyla yayından kaldırıldı",
+	"unpublish_error": "Menü yayından kaldırılamadı"
 }

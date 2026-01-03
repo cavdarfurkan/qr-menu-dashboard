@@ -33,5 +33,8 @@
 	"no_schemas_description": "This menu doesn't have any content schemas available.",
 	"content_title": "{{contentName}} Content",
 	"delete_selected": "Delete Selected ({{count}})",
-	"menu_deleted_success": "Successfully deleted menu"
+	"menu_deleted_success": "Successfully deleted menu",
+	"unpublish": "Unpublish",
+	"unpublish_success": "Menu unpublished successfully",
+	"unpublish_error": "Failed to unpublish menu"
 }

@@ -546,12 +546,10 @@ describe("MenuContent Route", () => {
 					<MenuContent {...createMenuContentProps(defaultLoaderData)} />,
 				);
 
-				const actionButtons = screen.getAllByRole("button");
-				const dropdownTriggers = actionButtons.filter(
-					(btn) =>
-						btn.querySelector("svg") &&
-						btn.getAttribute("class")?.includes("h-8"),
-				);
+				// Use aria-label to find only the dropdown action buttons
+				const dropdownTriggers = screen.getAllByRole("button", {
+					name: /common:actions.open_menu/i,
+				});
 
 				expect(dropdownTriggers.length).toBe(2); // One per row
 			});

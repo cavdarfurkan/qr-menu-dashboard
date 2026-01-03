@@ -2,5 +2,20 @@
 	"title": "Kontrol Paneli Ana Sayfa",
 	"logged_in_success": "Başarıyla giriş yaptınız!",
 	"manage_menus": "Menüleri Yönet",
-	"settings": "Ayarlar"
+	"settings": "Ayarlar",
+	"published": "Yayınlandı",
+	"unpublished": "Yayınlanmadı",
+	"stats_widget_title": "İstatistikler",
+	"recent_activity_title": "Son Aktiviteler",
+	"quick_actions_title": "Hızlı İşlemler",
+	"menu_preview_title": "Yayınlanan Menüler",
+	"total_menus": "Toplam Menü",
+	"published_menus": "Yayınlanan Menüler",
+	"unpublished_menus": "Yayınlanmayan Menüler",
+	"manage_themes": "Temaları Yönet",
+	"view_all_menus": "Tüm Menüleri Görüntüle",
+	"no_published_menus": "Henüz yayınlanmış menü yok",
+	"no_recent_activity": "Son aktivite yok",
+	"published_status": "Yayınlandı",
+	"unpublished_status": "Yayınlanmadı"
 }

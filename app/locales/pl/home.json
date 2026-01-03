@@ -2,5 +2,20 @@
 	"title": "Panel główny",
 	"logged_in_success": "Zostałeś pomyślnie zalogowany!",
 	"manage_menus": "Zarządzaj menu",
-	"settings": "Ustawienia"
+	"settings": "Ustawienia",
+	"published": "Opublikowane",
+	"unpublished": "Nieopublikowane",
+	"stats_widget_title": "Statystyki",
+	"recent_activity_title": "Ostatnia aktywność",
+	"quick_actions_title": "Szybkie akcje",
+	"menu_preview_title": "Opublikowane menu",
+	"total_menus": "Wszystkie menu",
+	"published_menus": "Opublikowane menu",
+	"unpublished_menus": "Nieopublikowane menu",
+	"manage_themes": "Zarządzaj motywami",
+	"view_all_menus": "Zobacz wszystkie menu",
+	"no_published_menus": "Brak opublikowanych menu",
+	"no_recent_activity": "Brak ostatniej aktywności",
+	"published_status": "Opublikowane",
+	"unpublished_status": "Nieopublikowane"
 }

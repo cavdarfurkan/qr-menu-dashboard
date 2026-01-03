@@ -36,6 +36,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import {
+	ArrowLeft,
 	ArrowRight,
 	Check,
 	Clock,
@@ -77,6 +78,7 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
+import { Badge } from "~/components/ui/badge";
 
 type MenuType = {
 	menuId: number;
@@ -84,6 +86,7 @@ type MenuType = {
 	ownerUsername: string;
 	selectedThemeId: number;
 	customDomain?: string;
+	published?: boolean;
 };
 
 type BuildStatus = "PENDING" | "PROCESSING" | "DONE" | "FAILED";
@@ -204,7 +207,7 @@ export async function clientAction({
 // TODO: Add content
 // TODO: Build theme
 export default function MenuDetail({ loaderData }: Route.ComponentProps) {
-	const { t } = useTranslation(["menu", "common", "error"]);
+	const { t } = useTranslation(["menu", "common", "error", "home"]);
 	const response = loaderData as MenuDetailResponse;
 	if (!response.success) {
 		return <p> {response.message} </p>;
@@ -326,6 +329,8 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 					if (status === "DONE") {
 						clearBuildState();
 						toast.success(t("menu:build_success"));
+						// Revalidate to get updated menu data with published status
+						revalidator.revalidate();
 						return;
 					} else if (status === "FAILED") {
 						clearBuildState();
@@ -353,87 +358,149 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 		await poll();
 	};
 
+	const handleBack = () => {
+		navigate("/menu");
+	};
+
 	// TODO: Add icons to menu actions
 	return (
 		<div className="flex flex-col gap-6">
-			<Title title={menu.menuName.toUpperCase()}>
-				<DropdownMenu>
-					<DropdownMenuTrigger className="ml-auto" asChild>
-						<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-							<span className="sr-only">{t("common:actions.open_menu")}</span>
-							<MoreHorizontal className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuItem
-							onClick={async () => {
-								setIsBuilding(true);
-								setShowBuildDialog(true);
-								setBuildStatus("PENDING");
-								try {
-									const buildResponse = await api.post("/v1/menu/build", {
-										menu_id: menu.menuId,
-									});
-
-									if (buildResponse.data.success) {
-										const statusUrl = buildResponse.data.data.status_url;
-										// Extract jobId from status_url (format: /api/v1/menu/job/{jobId})
-										const jobIdMatch = statusUrl.match(/\/job\/([^/]+)$/);
-										if (jobIdMatch) {
-											const jobId = jobIdMatch[1];
-											setBuildJobId(jobId);
-											saveBuildState({
-												jobId,
-												status: "PENDING",
-												startedAt: Date.now(),
-												menuId: menu.menuId,
+			<div className="flex flex-col gap-2">
+				<div className="flex items-center gap-3">
+					<Button variant="outline" size="sm" onClick={handleBack}>
+						<ArrowLeft className="h-4 w-4 mr-2" />
+						{t("common:buttons.back")}
+					</Button>
+					<h2 className="text-xl font-semibold">
+						{menu.menuName.toUpperCase()}
+					</h2>
+					{menu.published !== undefined && (
+						<>
+							{menu.published ? (
+								<Badge variant="secondary">{t("home:published")}</Badge>
+							) : (
+								<Badge variant="outline">{t("home:unpublished")}</Badge>
+							)}
+						</>
+					)}
+					<div className="ml-auto">
+						<DropdownMenu>
+							<DropdownMenuTrigger className="ml-auto" asChild>
+								<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+									<span className="sr-only">
+										{t("common:actions.open_menu")}
+									</span>
+									<MoreHorizontal className="h-4 w-4" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuItem
+									onClick={async () => {
+										setIsBuilding(true);
+										setShowBuildDialog(true);
+										setBuildStatus("PENDING");
+										try {
+											const buildResponse = await api.post("/v1/menu/build", {
+												menu_id: menu.menuId,
 											});
-											await pollJobStatus(jobId);
-										} else {
+
+											if (buildResponse.data.success) {
+												const statusUrl = buildResponse.data.data.status_url;
+												// Extract jobId from status_url (format: /api/v1/menu/job/{jobId})
+												const jobIdMatch = statusUrl.match(/\/job\/([^/]+)$/);
+												if (jobIdMatch) {
+													const jobId = jobIdMatch[1];
+													setBuildJobId(jobId);
+													saveBuildState({
+														jobId,
+														status: "PENDING",
+														startedAt: Date.now(),
+														menuId: menu.menuId,
+													});
+													await pollJobStatus(jobId);
+												} else {
+													setBuildStatus("FAILED");
+													clearBuildState();
+													toast.error(t("menu:build_error"));
+												}
+											} else {
+												setBuildStatus("FAILED");
+												clearBuildState();
+												toast.error(
+													buildResponse.data.message || t("menu:build_error"),
+												);
+											}
+										} catch (error) {
 											setBuildStatus("FAILED");
 											clearBuildState();
-											toast.error(t("menu:build_error"));
+											let errorMessage = t("menu:build_error");
+											if (
+												isAxiosError(error) &&
+												error.response?.data?.message
+											) {
+												errorMessage = error.response.data.message;
+											}
+											toast.error(errorMessage);
+										} finally {
+											setIsBuilding(false);
 										}
-									} else {
-										setBuildStatus("FAILED");
-										clearBuildState();
-										toast.error(
-											buildResponse.data.message || t("menu:build_error"),
-										);
+									}}
+									disabled={
+										isBuilding ||
+										buildStatus === "PENDING" ||
+										buildStatus === "PROCESSING"
 									}
-								} catch (error) {
-									setBuildStatus("FAILED");
-									clearBuildState();
-									let errorMessage = t("menu:build_error");
-									if (isAxiosError(error) && error.response?.data?.message) {
-										errorMessage = error.response.data.message;
-									}
-									toast.error(errorMessage);
-								} finally {
-									setIsBuilding(false);
-								}
-							}}
-							disabled={
-								isBuilding ||
-								buildStatus === "PENDING" ||
-								buildStatus === "PROCESSING"
-							}
-						>
-							{isBuilding ? t("menu:building") : t("menu:build_publish")}
-						</DropdownMenuItem>
+								>
+									{isBuilding ? t("menu:building") : t("menu:build_publish")}
+								</DropdownMenuItem>
 
-						<DropdownMenuSeparator />
+								<DropdownMenuItem
+									onClick={async () => {
+										try {
+											const unpublishResponse = await api.post(
+												`/v1/menu/${menu.menuId}/unpublish`,
+											);
 
-						<DropdownMenuItem
-							variant="destructive"
-							onClick={() => handleDeleteMenu()}
-						>
-							<Trash className="h-4 w-4" />
-							{t("common:buttons.delete")}
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</Title>
+											if (unpublishResponse.data.success) {
+												toast.success(t("menu:unpublish_success"));
+												revalidator.revalidate();
+											} else {
+												toast.error(
+													unpublishResponse.data.message ||
+														t("menu:unpublish_error"),
+												);
+											}
+										} catch (error) {
+											let errorMessage = t("menu:unpublish_error");
+											if (
+												isAxiosError(error) &&
+												error.response?.data?.message
+											) {
+												errorMessage = error.response.data.message;
+											}
+											toast.error(errorMessage);
+										}
+									}}
+									disabled={!menu.published}
+								>
+									{t("menu:unpublish")}
+								</DropdownMenuItem>
+
+								<DropdownMenuSeparator />
+
+								<DropdownMenuItem
+									variant="destructive"
+									onClick={() => handleDeleteMenu()}
+								>
+									<Trash className="h-4 w-4" />
+									{t("common:buttons.delete")}
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
+				</div>
+				<div className="h-px w-full bg-border" />
+			</div>
 
 			<MenuDetails menu={menu} />
 			<MenuContent schemas={schemas} menuId={menu.menuId.toString()} />

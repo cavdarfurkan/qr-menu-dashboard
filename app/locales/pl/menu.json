@@ -33,5 +33,8 @@
 	"no_schemas_description": "To menu nie ma dostępnych schematów zawartości.",
 	"content_title": "Zawartość {{contentName}}",
 	"delete_selected": "Usuń zaznaczone ({{count}})",
-	"menu_deleted_success": "Menu zostało pomyślnie usunięte"
+	"menu_deleted_success": "Menu zostało pomyślnie usunięte",
+	"unpublish": "Cofnij publikację",
+	"unpublish_success": "Menu zostało pomyślnie cofnięte z publikacji",
+	"unpublish_error": "Nie udało się cofnąć publikacji menu"
 }
