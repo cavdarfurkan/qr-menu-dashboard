@@ -53,6 +53,10 @@ api.interceptors.request.use((config) => {
 		config.headers["X-XSRF-TOKEN"] = csrfToken;
 	}
 
+	if (config.data instanceof FormData && config.headers) {
+		delete config.headers["Content-Type"];
+	}
+
 	return config;
 });
 
