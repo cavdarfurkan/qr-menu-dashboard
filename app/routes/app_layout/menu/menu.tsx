@@ -8,11 +8,13 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
+import { AlertTriangle } from "lucide-react";
 
 type MenuType = {
 	menuId: number;
 	menuName: string;
 	published?: boolean;
+	isLatest: boolean;
 };
 
 export async function clientLoader(): Promise<ApiResponse> {
@@ -82,11 +84,29 @@ export default function Menu({ loaderData }: Route.ComponentProps) {
 						>
 							<Card
 								key={menu.menuId}
-								className="hover:shadow-lg transition-all duration-200 cursor-pointer"
+								className={`hover:shadow-lg transition-all duration-200 cursor-pointer ${
+									!menu.isLatest
+										? "border-yellow-500 dark:border-yellow-600"
+										: ""
+								}`}
 							>
 								<CardHeader>
 									<div className="flex items-center justify-between gap-2">
-										<CardTitle>{menu.menuName}</CardTitle>
+										<div className="flex items-center gap-2 flex-1 min-w-0">
+											<CardTitle className="truncate">
+												{menu.menuName}
+											</CardTitle>
+											{!menu.isLatest && (
+												<Badge
+													variant="outline"
+													className="border-yellow-500 text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950"
+													aria-label={t("menu:needs_rebuild")}
+												>
+													<AlertTriangle className="h-3 w-3 mr-1" />
+													{t("menu:needs_rebuild")}
+												</Badge>
+											)}
+										</div>
 										{menu.published ? (
 											<Badge variant="secondary">{t("home:published")}</Badge>
 										) : (

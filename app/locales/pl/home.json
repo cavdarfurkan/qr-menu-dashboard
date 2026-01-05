@@ -17,5 +17,9 @@
 	"no_published_menus": "Brak opublikowanych menu",
 	"no_recent_activity": "Brak ostatniej aktywności",
 	"published_status": "Opublikowane",
-	"unpublished_status": "Nieopublikowane"
+	"unpublished_status": "Nieopublikowane",
+	"menus_needing_rebuild": "Menu wymagające przebudowy",
+	"menus_needing_rebuild_count": "{{count}} menu wymaga przebudowy",
+	"all_menus_up_to_date": "Wszystkie menu są aktualne",
+	"all_menus_synchronized": "Wszystkie Twoje menu są zsynchronizowane z najnowszą wersją."
 }

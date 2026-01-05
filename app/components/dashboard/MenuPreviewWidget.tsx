@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
+import { AlertTriangle } from "lucide-react";
 import type { MenuType } from "~/routes/app_layout/dashboard/dashboard";
 
 type MenuPreviewWidgetProps = {
@@ -46,10 +47,26 @@ export default function MenuPreviewWidget({
 							viewTransition
 							className="w-full h-full"
 						>
-							<Card className="hover:shadow-lg transition-all duration-200 cursor-pointer h-full">
+							<Card
+								className={`hover:shadow-lg transition-all duration-200 cursor-pointer h-full ${
+									!menu.isLatest
+										? "border-yellow-500 dark:border-yellow-600"
+										: ""
+								}`}
+							>
 								<CardHeader>
 									<div className="flex items-center justify-between gap-2">
-										<CardTitle className="text-base">{menu.menuName}</CardTitle>
+										<div className="flex items-center gap-2 flex-1 min-w-0">
+											<CardTitle className="text-base truncate">
+												{menu.menuName}
+											</CardTitle>
+											{!menu.isLatest && (
+												<AlertTriangle
+													className="h-4 w-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0"
+													aria-label={t("menu:needs_rebuild")}
+												/>
+											)}
+										</div>
 										<Badge variant="secondary">{t("home:published")}</Badge>
 									</div>
 								</CardHeader>

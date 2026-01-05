@@ -36,5 +36,9 @@
 	"menu_deleted_success": "Successfully deleted menu",
 	"unpublish": "Unpublish",
 	"unpublish_success": "Menu unpublished successfully",
-	"unpublish_error": "Failed to unpublish menu"
+	"unpublish_error": "Failed to unpublish menu",
+	"needs_rebuild": "Needs Rebuild",
+	"menu_not_latest": "This menu has been modified since the last build. Please rebuild to publish the latest changes.",
+	"rebuild_menu": "Rebuild Menu",
+	"menu_up_to_date": "Menu is up-to-date"
 }

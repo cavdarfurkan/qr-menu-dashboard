@@ -85,6 +85,7 @@ interface Resources {
 			saving: "Saving...";
 			stay: "Stay";
 			submit: "Submit";
+			view: "View";
 		};
 		confirmations: {
 			are_you_sure: "Are you sure?";
@@ -168,10 +169,14 @@ interface Resources {
 		upload_failed: "Upload failed";
 	};
 	home: {
+		all_menus_synchronized: "All your menus are synchronized with the latest build.";
+		all_menus_up_to_date: "All Menus Up to Date";
 		logged_in_success: "You are successfully logged in!";
 		manage_menus: "Manage Menus";
 		manage_themes: "Manage Themes";
 		menu_preview_title: "Published Menus";
+		menus_needing_rebuild: "Menus Needing Rebuild";
+		menus_needing_rebuild_count: "{{count}} menu(s) need to be rebuilt";
 		no_published_menus: "No published menus yet";
 		no_recent_activity: "No recent activity";
 		published: "Published";
@@ -215,12 +220,16 @@ interface Resources {
 		generate_domain: "Generate Domain";
 		menu_content: "Menu Content";
 		menu_deleted_success: "Successfully deleted menu";
+		menu_not_latest: "This menu has been modified since the last build. Please rebuild to publish the latest changes.";
+		menu_up_to_date: "Menu is up-to-date";
 		menu_updated_success: "Menu updated successfully";
+		needs_rebuild: "Needs Rebuild";
 		new_menu: "+ New Menu";
 		no_menus: "No menus found.";
 		no_schemas: "No schemas found";
 		no_schemas_description: "This menu doesn't have any content schemas available.";
 		open_in_new_tab: "Open in new tab";
+		rebuild_menu: "Rebuild Menu";
 		resuming_build: "Resuming build...";
 		title: "Your Menus";
 		unpublish: "Unpublish";

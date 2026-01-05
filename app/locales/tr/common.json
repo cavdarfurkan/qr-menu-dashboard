@@ -30,7 +30,8 @@
 		"back_to_dashboard": "Kontrol paneline dön",
 		"reset": "Sıfırla",
 		"stay": "Kal",
-		"leave": "Ayrıl"
+		"leave": "Ayrıl",
+		"view": "Görüntüle"
 	},
 	"empty_states": {
 		"no_results": "Sonuç bulunamadı.",

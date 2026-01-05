@@ -8,12 +8,14 @@ import {
 	StatsWidget,
 	QuickActionsWidget,
 	MenuPreviewWidget,
+	OutOfDateMenusWidget,
 } from "~/components/dashboard";
 
 export type MenuType = {
 	menuId: number;
 	menuName: string;
 	published?: boolean;
+	isLatest: boolean;
 };
 
 export async function clientLoader() {
@@ -117,6 +119,11 @@ export default function Home({
 						publishedMenus={publishedMenus.length}
 						unpublishedMenus={unpublishedMenus.length}
 					/>
+				</div>
+
+				{/* Out of Date Menus Widget - Full Width */}
+				<div className="lg:col-span-12">
+					<OutOfDateMenusWidget menus={allMenus} />
 				</div>
 
 				{/* Quick Actions */}

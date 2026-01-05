@@ -31,7 +31,8 @@
 		"back_to_dashboard": "Back to dashboard",
 		"reset": "Reset",
 		"stay": "Stay",
-		"leave": "Leave"
+		"leave": "Leave",
+		"view": "View"
 	},
 	"empty_states": {
 		"no_results": "No results.",

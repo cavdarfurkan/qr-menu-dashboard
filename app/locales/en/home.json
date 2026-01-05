@@ -17,5 +17,9 @@
 	"no_published_menus": "No published menus yet",
 	"no_recent_activity": "No recent activity",
 	"published_status": "Published",
-	"unpublished_status": "Unpublished"
+	"unpublished_status": "Unpublished",
+	"menus_needing_rebuild": "Menus Needing Rebuild",
+	"menus_needing_rebuild_count": "{{count}} menu(s) need to be rebuilt",
+	"all_menus_up_to_date": "All Menus Up to Date",
+	"all_menus_synchronized": "All your menus are synchronized with the latest build."
 }

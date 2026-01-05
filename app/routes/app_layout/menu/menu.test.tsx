@@ -18,8 +18,8 @@ describe("Menu Route", () => {
 	describe("clientLoader", () => {
 		it("should load menus successfully", async () => {
 			const mockMenus = [
-				{ menuId: 1, menuName: "Menu 1" },
-				{ menuId: 2, menuName: "Menu 2" },
+				{ menuId: 1, menuName: "Menu 1", isLatest: true },
+				{ menuId: 2, menuName: "Menu 2", isLatest: true },
 			];
 
 			vi.mocked(api.get).mockResolvedValue({
@@ -71,8 +71,8 @@ describe("Menu Route", () => {
 				success: true,
 				message: "Success",
 				data: [
-					{ menuId: 1, menuName: "Test Menu 1" },
-					{ menuId: 2, menuName: "Test Menu 2" },
+					{ menuId: 1, menuName: "Test Menu 1", isLatest: true },
+					{ menuId: 2, menuName: "Test Menu 2", isLatest: true },
 				],
 				timestamp: new Date().toISOString(),
 			};
@@ -114,7 +114,7 @@ describe("Menu Route", () => {
 			const loaderData = {
 				success: true,
 				message: "Success",
-				data: [{ menuId: 1, menuName: "Test Menu" }],
+				data: [{ menuId: 1, menuName: "Test Menu", isLatest: true }],
 				timestamp: new Date().toISOString(),
 			};
 
@@ -131,8 +131,8 @@ describe("Menu Route", () => {
 				success: true,
 				message: "Success",
 				data: [
-					{ menuId: 1, menuName: "Test Menu 1" },
-					{ menuId: 2, menuName: "Test Menu 2" },
+					{ menuId: 1, menuName: "Test Menu 1", isLatest: true },
+					{ menuId: 2, menuName: "Test Menu 2", isLatest: true },
 				],
 				timestamp: new Date().toISOString(),
 			};

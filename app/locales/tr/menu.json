@@ -36,5 +36,9 @@
 	"menu_deleted_success": "Menü başarıyla silindi",
 	"unpublish": "Yayından Kaldır",
 	"unpublish_success": "Menü başarıyla yayından kaldırıldı",
-	"unpublish_error": "Menü yayından kaldırılamadı"
+	"unpublish_error": "Menü yayından kaldırılamadı",
+	"needs_rebuild": "Yeniden Oluşturma Gerekiyor",
+	"menu_not_latest": "Bu menü son oluşturmadan bu yana değiştirildi. Lütfen en son değişiklikleri yayınlamak için yeniden oluşturun.",
+	"rebuild_menu": "Menüyü Yeniden Oluştur",
+	"menu_up_to_date": "Menü güncel"
 }

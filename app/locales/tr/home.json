@@ -17,5 +17,9 @@
 	"no_published_menus": "Henüz yayınlanmış menü yok",
 	"no_recent_activity": "Son aktivite yok",
 	"published_status": "Yayınlandı",
-	"unpublished_status": "Yayınlanmadı"
+	"unpublished_status": "Yayınlanmadı",
+	"menus_needing_rebuild": "Yeniden Oluşturma Gereken Menüler",
+	"menus_needing_rebuild_count": "{{count}} menü yeniden oluşturulması gerekiyor",
+	"all_menus_up_to_date": "Tüm Menüler Güncel",
+	"all_menus_synchronized": "Tüm menüleriniz en son sürümle senkronize edildi."
 }

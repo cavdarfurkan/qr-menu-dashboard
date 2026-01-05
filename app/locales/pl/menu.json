@@ -36,5 +36,9 @@
 	"menu_deleted_success": "Menu zostało pomyślnie usunięte",
 	"unpublish": "Cofnij publikację",
 	"unpublish_success": "Menu zostało pomyślnie cofnięte z publikacji",
-	"unpublish_error": "Nie udało się cofnąć publikacji menu"
+	"unpublish_error": "Nie udało się cofnąć publikacji menu",
+	"needs_rebuild": "Wymaga przebudowy",
+	"menu_not_latest": "To menu zostało zmodyfikowane od ostatniej budowy. Proszę przebudować, aby opublikować najnowsze zmiany.",
+	"rebuild_menu": "Przebuduj menu",
+	"menu_up_to_date": "Menu jest aktualne"
 }

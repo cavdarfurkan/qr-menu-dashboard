@@ -3,6 +3,7 @@ import api, { type ApiResponse } from "~/lib/api";
 import { isAxiosError } from "axios";
 import { Button } from "~/components/ui/button";
 import { useState, useEffect, useRef } from "react";
+import { useBuildPolling } from "~/hooks/use-build-polling";
 import {
 	Form,
 	Link,
@@ -48,6 +49,7 @@ import {
 	Trash,
 	X,
 	ExternalLink,
+	AlertTriangle,
 } from "lucide-react";
 import {
 	AlertDialog,
@@ -87,16 +89,10 @@ type MenuType = {
 	selectedThemeId: number;
 	customDomain?: string;
 	published?: boolean;
+	isLatest: boolean;
 };
 
-type BuildStatus = "PENDING" | "PROCESSING" | "DONE" | "FAILED";
-
-type BuildState = {
-	jobId: string;
-	status: BuildStatus;
-	startedAt: number;
-	menuId: number;
-};
+import type { BuildStatus, BuildState } from "~/hooks/use-build-polling";
 
 type SchemasType = {
 	schemas_count: number;
@@ -220,46 +216,43 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 
 	const navigate = useNavigate();
 	const revalidator = useRevalidator();
+	const { buildState, initiateBuild } = useBuildPolling(menu.menuId);
 
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [isBuilding, setIsBuilding] = useState(false);
-	const [buildStatus, setBuildStatus] = useState<BuildStatus | null>(null);
 	const [showBuildDialog, setShowBuildDialog] = useState(false);
-	const [buildJobId, setBuildJobId] = useState<string | null>(null);
-
-	const BUILD_STORAGE_KEY = `menu_build_${menu.menuId}`;
 
 	const schemas: SchemasType = {
 		schemas_count: response.schemas_count,
 		theme_schemas: response.theme_schemas,
 	};
 
-	// Check localStorage for in-progress builds on mount
+	// Show dialog when build is active
 	useEffect(() => {
-		const stored = localStorage.getItem(BUILD_STORAGE_KEY);
-		if (stored) {
-			try {
-				const buildState: BuildState = JSON.parse(stored);
-				if (
-					buildState.status === "PENDING" ||
-					buildState.status === "PROCESSING"
-				) {
-					setBuildStatus(buildState.status);
-					setBuildJobId(buildState.jobId);
-					setShowBuildDialog(true);
-					// Resume polling
-					pollJobStatus(buildState.jobId, true);
-				} else {
-					// Clean up completed builds
-					localStorage.removeItem(BUILD_STORAGE_KEY);
-				}
-			} catch (e) {
-				// Invalid storage, clean up
-				localStorage.removeItem(BUILD_STORAGE_KEY);
+		if (buildState) {
+			if (
+				buildState.status === "PENDING" ||
+				buildState.status === "PROCESSING"
+			) {
+				setShowBuildDialog(true);
+			} else if (
+				buildState.status === "DONE" ||
+				buildState.status === "FAILED"
+			) {
+				// Show dialog for completion status
+				setShowBuildDialog(true);
+				// Auto-close after showing completion status
+				const timer = setTimeout(() => {
+					setShowBuildDialog(false);
+				}, 3000);
+				return () => clearTimeout(timer);
 			}
+		} else {
+			// Build state cleared, close dialog
+			setShowBuildDialog(false);
 		}
-	}, []);
+	}, [buildState]);
 
 	const handleDeleteMenu = () => {
 		setShowDeleteDialog(true);
@@ -283,83 +276,40 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 		}
 	};
 
-	const saveBuildState = (state: BuildState) => {
-		localStorage.setItem(BUILD_STORAGE_KEY, JSON.stringify(state));
-	};
-
-	const clearBuildState = () => {
-		localStorage.removeItem(BUILD_STORAGE_KEY);
-	};
-
-	const pollJobStatus = async (jobId: string, isResuming = false) => {
-		const maxAttempts = 60; // 2 minutes max (60 * 2 seconds)
-		let attempts = 0;
-
-		if (isResuming) {
-			toast.info(t("menu:resuming_build"));
-		}
-
-		const poll = async (): Promise<void> => {
-			if (attempts >= maxAttempts) {
-				setBuildStatus("FAILED");
-				saveBuildState({
-					jobId,
-					status: "FAILED",
-					startedAt: Date.now(),
-					menuId: menu.menuId,
-				});
-				toast.error(t("menu:build_error"));
-				return;
-			}
-
-			try {
-				const statusResponse = await api.get(`/v1/menu/job/${jobId}`);
-				if (statusResponse.data.success) {
-					const status = statusResponse.data.data
-						.menu_job_status as BuildStatus;
-
-					setBuildStatus(status);
-					saveBuildState({
-						jobId,
-						status,
-						startedAt: Date.now(),
-						menuId: menu.menuId,
-					});
-
-					if (status === "DONE") {
-						clearBuildState();
-						toast.success(t("menu:build_success"));
-						// Revalidate to get updated menu data with published status
-						revalidator.revalidate();
-						return;
-					} else if (status === "FAILED") {
-						clearBuildState();
-						toast.error(t("menu:build_error"));
-						return;
-					} else {
-						// PENDING or PROCESSING - continue polling
-						attempts++;
-						setTimeout(() => {
-							poll();
-						}, 2000); // Poll every 2 seconds
-					}
-				} else {
-					setBuildStatus("FAILED");
-					clearBuildState();
-					toast.error(t("menu:build_error"));
-				}
-			} catch (error) {
-				setBuildStatus("FAILED");
-				clearBuildState();
-				toast.error(t("menu:build_error"));
-			}
-		};
-
-		await poll();
-	};
-
 	const handleBack = () => {
 		navigate("/menu");
+	};
+
+	const handleRebuildMenu = async () => {
+		setIsBuilding(true);
+		try {
+			const buildResponse = await api.post("/v1/menu/build", {
+				menu_id: menu.menuId,
+			});
+
+			if (buildResponse.data.success) {
+				const statusUrl = buildResponse.data.data.status_url;
+				// Extract jobId from status_url (format: /api/v1/menu/job/{jobId})
+				const jobIdMatch = statusUrl.match(/\/job\/([^/]+)$/);
+				if (jobIdMatch) {
+					const jobId = jobIdMatch[1];
+					initiateBuild(menu.menuId, jobId);
+					revalidator.revalidate();
+				} else {
+					toast.error(t("menu:build_error"));
+				}
+			} else {
+				toast.error(buildResponse.data.message || t("menu:build_error"));
+			}
+		} catch (error) {
+			let errorMessage = t("menu:build_error");
+			if (isAxiosError(error) && error.response?.data?.message) {
+				errorMessage = error.response.data.message;
+			}
+			toast.error(errorMessage);
+		} finally {
+			setIsBuilding(false);
+		}
 	};
 
 	// TODO: Add icons to menu actions
@@ -395,63 +345,18 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align="end">
 								<DropdownMenuItem
-									onClick={async () => {
-										setIsBuilding(true);
-										setShowBuildDialog(true);
-										setBuildStatus("PENDING");
-										try {
-											const buildResponse = await api.post("/v1/menu/build", {
-												menu_id: menu.menuId,
-											});
-
-											if (buildResponse.data.success) {
-												const statusUrl = buildResponse.data.data.status_url;
-												// Extract jobId from status_url (format: /api/v1/menu/job/{jobId})
-												const jobIdMatch = statusUrl.match(/\/job\/([^/]+)$/);
-												if (jobIdMatch) {
-													const jobId = jobIdMatch[1];
-													setBuildJobId(jobId);
-													saveBuildState({
-														jobId,
-														status: "PENDING",
-														startedAt: Date.now(),
-														menuId: menu.menuId,
-													});
-													await pollJobStatus(jobId);
-												} else {
-													setBuildStatus("FAILED");
-													clearBuildState();
-													toast.error(t("menu:build_error"));
-												}
-											} else {
-												setBuildStatus("FAILED");
-												clearBuildState();
-												toast.error(
-													buildResponse.data.message || t("menu:build_error"),
-												);
-											}
-										} catch (error) {
-											setBuildStatus("FAILED");
-											clearBuildState();
-											let errorMessage = t("menu:build_error");
-											if (
-												isAxiosError(error) &&
-												error.response?.data?.message
-											) {
-												errorMessage = error.response.data.message;
-											}
-											toast.error(errorMessage);
-										} finally {
-											setIsBuilding(false);
-										}
-									}}
+									onClick={handleRebuildMenu}
 									disabled={
 										isBuilding ||
-										buildStatus === "PENDING" ||
-										buildStatus === "PROCESSING"
+										buildState?.status === "PENDING" ||
+										buildState?.status === "PROCESSING"
 									}
 								>
-									{isBuilding ? t("menu:building") : t("menu:build_publish")}
+									{isBuilding ||
+									buildState?.status === "PENDING" ||
+									buildState?.status === "PROCESSING"
+										? t("menu:building")
+										: t("menu:build_publish")}
 								</DropdownMenuItem>
 
 								<DropdownMenuItem
@@ -502,6 +407,44 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 				<div className="h-px w-full bg-border" />
 			</div>
 
+			{!menu.isLatest && (
+				<Card className="border-yellow-500 dark:border-yellow-600 bg-yellow-50 dark:bg-yellow-950">
+					<CardHeader>
+						<div className="flex items-start gap-3">
+							<AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+							<div className="flex-1">
+								<CardTitle className="text-yellow-800 dark:text-yellow-200 text-base">
+									{t("menu:needs_rebuild")}
+								</CardTitle>
+								<p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+									{t("menu:menu_not_latest")}
+								</p>
+							</div>
+							<Button
+								onClick={handleRebuildMenu}
+								disabled={
+									isBuilding ||
+									buildState?.status === "PENDING" ||
+									buildState?.status === "PROCESSING"
+								}
+								className="bg-yellow-600 hover:bg-yellow-700 text-white"
+							>
+								{isBuilding ||
+								buildState?.status === "PENDING" ||
+								buildState?.status === "PROCESSING" ? (
+									<>
+										<Loader2 className="h-4 w-4 mr-2 animate-spin" />
+										{t("menu:building")}
+									</>
+								) : (
+									t("menu:rebuild_menu")
+								)}
+							</Button>
+						</div>
+					</CardHeader>
+				</Card>
+			)}
+
 			<MenuDetails menu={menu} />
 			<MenuContent schemas={schemas} menuId={menu.menuId.toString()} />
 
@@ -509,12 +452,15 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 				open={showBuildDialog}
 				onOpenChange={(open) => {
 					// Only allow closing if build is done or failed
-					if (!open && (buildStatus === "DONE" || buildStatus === "FAILED")) {
+					if (
+						!open &&
+						(buildState?.status === "DONE" || buildState?.status === "FAILED")
+					) {
 						setShowBuildDialog(false);
 					} else if (
 						!open &&
-						buildStatus !== "DONE" &&
-						buildStatus !== "FAILED"
+						buildState?.status !== "DONE" &&
+						buildState?.status !== "FAILED"
 					) {
 						// Prevent closing during build
 						setShowBuildDialog(true);
@@ -522,39 +468,51 @@ export default function MenuDetail({ loaderData }: Route.ComponentProps) {
 				}}
 			>
 				<DialogContent
-					showCloseButton={buildStatus === "DONE" || buildStatus === "FAILED"}
+					showCloseButton={
+						buildState?.status === "DONE" || buildState?.status === "FAILED"
+					}
 				>
 					<DialogHeader>
 						<DialogTitle>{t("menu:build_publish")}</DialogTitle>
 						<DialogDescription>
-							{buildStatus === "PENDING" && t("menu:build_status_pending")}
-							{buildStatus === "PROCESSING" &&
+							{buildState?.status === "PENDING" &&
+								t("menu:build_status_pending")}
+							{buildState?.status === "PROCESSING" &&
 								t("menu:build_status_processing")}
-							{buildStatus === "DONE" && t("menu:build_status_done")}
-							{buildStatus === "FAILED" && t("menu:build_status_failed")}
+							{buildState?.status === "DONE" && t("menu:build_status_done")}
+							{buildState?.status === "FAILED" && t("menu:build_status_failed")}
+							{!buildState && t("menu:build_status_done")}
 						</DialogDescription>
 					</DialogHeader>
 					<div className="flex items-center justify-center py-4">
-						{buildStatus === "PENDING" && (
+						{buildState?.status === "PENDING" && (
 							<Clock className="h-8 w-8 text-muted-foreground animate-pulse" />
 						)}
-						{buildStatus === "PROCESSING" && (
+						{buildState?.status === "PROCESSING" && (
 							<Loader2 className="h-8 w-8 text-primary animate-spin" />
 						)}
-						{buildStatus === "DONE" && (
+						{(buildState?.status === "DONE" ||
+							(!buildState && showBuildDialog)) && (
 							<Check className="h-8 w-8 text-green-500" />
 						)}
-						{buildStatus === "FAILED" && <X className="h-8 w-8 text-red-500" />}
+						{buildState?.status === "FAILED" && (
+							<X className="h-8 w-8 text-red-500" />
+						)}
 					</div>
 					<DialogFooter>
 						<Button
 							variant="outline"
 							onClick={() => {
-								if (buildStatus === "DONE" || buildStatus === "FAILED") {
+								if (
+									buildState?.status === "DONE" ||
+									buildState?.status === "FAILED"
+								) {
 									setShowBuildDialog(false);
 								}
 							}}
-							disabled={buildStatus !== "DONE" && buildStatus !== "FAILED"}
+							disabled={
+								buildState?.status !== "DONE" && buildState?.status !== "FAILED"
+							}
 						>
 							{t("common:buttons.cancel")}
 						</Button>

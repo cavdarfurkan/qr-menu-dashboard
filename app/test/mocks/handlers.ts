@@ -85,8 +85,13 @@ export const handlers = [
 			success: true,
 			message: "Menus retrieved",
 			data: [
-				{ menuId: 1, menuName: "Test Menu 1", published: true },
-				{ menuId: 2, menuName: "Test Menu 2", published: false },
+				{ menuId: 1, menuName: "Test Menu 1", published: true, isLatest: true },
+				{
+					menuId: 2,
+					menuName: "Test Menu 2",
+					published: false,
+					isLatest: false,
+				},
 			],
 			timestamp: new Date().toISOString(),
 		});
@@ -101,6 +106,7 @@ export const handlers = [
 				menuName: "Test Menu",
 				ownerUsername: "testuser",
 				selectedThemeId: 1,
+				isLatest: true,
 			},
 			timestamp: new Date().toISOString(),
 		});

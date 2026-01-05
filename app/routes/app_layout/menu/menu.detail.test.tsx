@@ -78,6 +78,7 @@ describe("MenuDetail Route", () => {
 				menuName: "Test Menu",
 				ownerUsername: "testuser",
 				selectedThemeId: 1,
+				isLatest: true,
 			};
 
 			const mockSchemas = {
@@ -156,6 +157,7 @@ describe("MenuDetail Route", () => {
 				menuName: "Test Menu",
 				ownerUsername: "testuser",
 				selectedThemeId: 1,
+				isLatest: true,
 			};
 
 			vi.mocked(api.get)
@@ -256,6 +258,7 @@ describe("MenuDetail Route", () => {
 				menuName: "Test Menu",
 				ownerUsername: "testuser",
 				selectedThemeId: 1,
+				isLatest: true,
 			},
 			timestamp: new Date().toISOString(),
 			schemas_count: 2,
