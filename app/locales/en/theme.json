@@ -4,10 +4,34 @@
 	"no_themes": "No themes found.",
 	"all_themes": "All Themes",
 	"select_theme_description": "Select a theme from the list below",
+	"categories": {
+		"all": "All Categories",
+		"restaurant": "Restaurant",
+		"cafe": "Cafe",
+		"bar": "Bar",
+		"bakery": "Bakery",
+		"food_truck": "Food Truck",
+		"other": "Other"
+	},
+	"filters": {
+		"category": "Category",
+		"select_category": "Select category",
+		"my_themes": "My Themes Only"
+	},
+	"detail": {
+		"preview": "Preview",
+		"information": "Information",
+		"name": "Name",
+		"description": "Description",
+		"author": "Author",
+		"version": "Version",
+		"created_at": "Created At"
+	},
 	"register": {
 		"title": "Theme Register",
 		"theme_zip_file": "Theme ZIP File",
 		"preview_image": "Theme Preview Image (optional)",
+		"category": "Category",
 		"success": "Theme registered successfully",
 		"permission_required_title": "Developer or admin role required",
 		"permission_required_description": "You need the DEVELOPER or ADMIN role to register themes. Enable developer mode in your settings or contact an administrator."

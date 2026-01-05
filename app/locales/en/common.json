@@ -54,7 +54,8 @@
 		"menu_name": "Menu Name",
 		"select_theme": "Select a theme",
 		"theme_selected": "Theme Selected: {{id}}",
-		"is_free": "Free"
+		"is_free": "Free",
+		"no_image": "No image"
 	},
 	"messages": {
 		"or_continue_with": "Or continue with",

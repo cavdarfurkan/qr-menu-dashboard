@@ -14,6 +14,13 @@ import {
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "~/components/ui/select";
 import api from "~/lib/api";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -53,6 +60,14 @@ const formSchema = (t: (key: string) => string) =>
 			),
 		data: z.object({
 			is_free: z.boolean().nullish(),
+			category: z.enum([
+				"RESTAURANT",
+				"CAFE",
+				"BAR",
+				"BAKERY",
+				"FOOD_TRUCK",
+				"OTHER",
+			]),
 		}),
 	});
 
@@ -71,6 +86,7 @@ export default function ThemeRegister() {
 		defaultValues: {
 			data: {
 				is_free: false,
+				category: "RESTAURANT",
 			},
 		},
 	});
@@ -89,9 +105,17 @@ export default function ThemeRegister() {
 		// JSON Data
 		formData.append(
 			"data",
-			new Blob([JSON.stringify({ is_free: data.data.is_free })], {
-				type: "application/json",
-			}),
+			new Blob(
+				[
+					JSON.stringify({
+						is_free: data.data.is_free,
+						category: data.data.category,
+					}),
+				],
+				{
+					type: "application/json",
+				},
+			),
 		);
 
 		setError(null);
@@ -203,6 +227,68 @@ export default function ThemeRegister() {
 												onChange={(e) => field.onChange(e.target.files)}
 											/>
 										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="data.category"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>
+											{t("theme:register.category", {
+												defaultValue: "Category",
+											})}
+										</FormLabel>
+										<Select
+											onValueChange={field.onChange}
+											defaultValue={field.value}
+											disabled={isLoading}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue
+														placeholder={t("theme:filters.select_category", {
+															defaultValue: "Select category",
+														})}
+													/>
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												<SelectItem value="RESTAURANT">
+													{t("theme:categories.restaurant", {
+														defaultValue: "Restaurant",
+													})}
+												</SelectItem>
+												<SelectItem value="CAFE">
+													{t("theme:categories.cafe", {
+														defaultValue: "Cafe",
+													})}
+												</SelectItem>
+												<SelectItem value="BAR">
+													{t("theme:categories.bar", {
+														defaultValue: "Bar",
+													})}
+												</SelectItem>
+												<SelectItem value="BAKERY">
+													{t("theme:categories.bakery", {
+														defaultValue: "Bakery",
+													})}
+												</SelectItem>
+												<SelectItem value="FOOD_TRUCK">
+													{t("theme:categories.food_truck", {
+														defaultValue: "Food Truck",
+													})}
+												</SelectItem>
+												<SelectItem value="OTHER">
+													{t("theme:categories.other", {
+														defaultValue: "Other",
+													})}
+												</SelectItem>
+											</SelectContent>
+										</Select>
 										<FormMessage />
 									</FormItem>
 								)}

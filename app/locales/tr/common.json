@@ -53,7 +53,8 @@
 		"menu_name": "Menü Adı",
 		"select_theme": "Bir tema seçin",
 		"theme_selected": "Seçilen Tema: {{id}}",
-		"is_free": "Ücretsiz"
+		"is_free": "Ücretsiz",
+		"no_image": "Resim yok"
 	},
 	"messages": {
 		"or_continue_with": "Veya devam et",

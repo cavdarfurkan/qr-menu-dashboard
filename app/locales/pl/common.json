@@ -53,7 +53,8 @@
 		"menu_name": "Nazwa menu",
 		"select_theme": "Wybierz motyw",
 		"theme_selected": "Wybrany motyw: {{id}}",
-		"is_free": "Darmowy"
+		"is_free": "Darmowy",
+		"no_image": "Brak obrazu"
 	},
 	"messages": {
 		"or_continue_with": "Lub kontynuuj z",

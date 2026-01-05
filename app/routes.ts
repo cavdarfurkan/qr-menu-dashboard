@@ -32,6 +32,7 @@ export default [
 			...prefix("theme", [
 				index("routes/app_layout/theme/themes.tsx"),
 				route("register", "routes/app_layout/theme/theme.register.tsx"),
+				route(":id", "routes/app_layout/theme/theme.detail.tsx"),
 			]),
 
 			// Settings routes

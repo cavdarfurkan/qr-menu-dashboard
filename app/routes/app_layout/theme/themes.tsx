@@ -1,7 +1,12 @@
 import api, { type ApiResponse } from "~/lib/api";
 import type { Route } from "./+types/themes";
 import { isAxiosError } from "axios";
-import { Link, useNavigate, useRevalidator } from "react-router";
+import {
+	Link,
+	useNavigate,
+	useRevalidator,
+	useSearchParams,
+} from "react-router";
 import {
 	Pagination,
 	PaginationContent,
@@ -11,7 +16,7 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "~/components/ui/pagination";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import Title from "~/components/Title";
 import { Button } from "~/components/ui/button";
@@ -21,10 +26,22 @@ import ThemeCard from "~/components/ThemeCard";
 import { useUserStore } from "~/stores";
 import { unregisterTheme } from "~/lib/auth-api";
 import { toast } from "sonner";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "~/components/ui/select";
+import { Checkbox } from "~/components/ui/checkbox";
+import { Label } from "~/components/ui/label";
 
 export type ThemeType = {
 	id: number;
 	isFree: boolean;
+	category?: string;
+	thumbnailUrl?: string;
+	ownerUsername?: string;
 	themeManifest: {
 		name: string;
 		version: string;
@@ -58,6 +75,8 @@ export async function clientLoader({
 		const url = new URL(request.url);
 		const pageParam = url.searchParams.get("page") || "0";
 		const sizeParam = url.searchParams.get("size");
+		const categoryParam = url.searchParams.get("category");
+		const myThemesParam = url.searchParams.get("myThemes") === "true";
 
 		const params: Record<string, string> = {
 			page: pageParam,
@@ -68,7 +87,14 @@ export async function clientLoader({
 			params.size = sizeParam;
 		}
 
-		const response = await api.get("/v1/theme", { params });
+		// Add category filter if provided
+		if (categoryParam) {
+			params.category = categoryParam;
+		}
+
+		// Use my-themes endpoint if filter is active
+		const endpoint = myThemesParam ? "/v1/theme/my-themes" : "/v1/theme";
+		const response = await api.get(endpoint, { params });
 		return { ...response.data };
 	} catch (error) {
 		if (isAxiosError(error)) {
@@ -97,6 +123,57 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 	const navigate = useNavigate();
 	const revalidator = useRevalidator();
 	const { canRegisterThemes, canUnregisterThemes } = useUserStore();
+	const [searchParams] = useSearchParams();
+
+	// Get filter values from URL
+	const categoryParam = searchParams.get("category") || "ALL";
+	const myThemesParam = searchParams.get("myThemes") === "true";
+
+	const [selectedCategory, setSelectedCategory] = useState(categoryParam);
+	const [myThemesOnly, setMyThemesOnly] = useState(myThemesParam);
+
+	// Sync state with URL params when they change (e.g., browser back/forward)
+	useEffect(() => {
+		setSelectedCategory(categoryParam);
+		setMyThemesOnly(myThemesParam);
+	}, [categoryParam, myThemesParam]);
+
+	// Update URL when filters change
+	const updateFilters = useCallback(
+		(category: string, myThemes: boolean) => {
+			const url = new URL(window.location.href);
+
+			// Reset to page 0 when filters change
+			url.searchParams.set("page", "0");
+
+			if (category && category !== "ALL") {
+				url.searchParams.set("category", category);
+			} else {
+				url.searchParams.delete("category");
+			}
+
+			if (myThemes) {
+				url.searchParams.set("myThemes", "true");
+			} else {
+				url.searchParams.delete("myThemes");
+			}
+
+			navigate(url.pathname + url.search, { replace: true });
+		},
+		[navigate],
+	);
+
+	// Handle category change
+	const handleCategoryChange = (value: string) => {
+		setSelectedCategory(value);
+		updateFilters(value, myThemesOnly);
+	};
+
+	// Handle my themes toggle
+	const handleMyThemesChange = (checked: boolean) => {
+		setMyThemesOnly(checked);
+		updateFilters(selectedCategory, checked);
+	};
 
 	if (!loaderData.success) {
 		return <p> {loaderData.message} </p>;
@@ -116,6 +193,34 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 
 	const currentPage = pagination.number;
 	const totalPages = pagination.totalPages;
+
+	const categoryOptions = [
+		{
+			value: "ALL",
+			label: t("theme:categories.all", { defaultValue: "All Categories" }),
+		},
+		{
+			value: "RESTAURANT",
+			label: t("theme:categories.restaurant", { defaultValue: "Restaurant" }),
+		},
+		{
+			value: "CAFE",
+			label: t("theme:categories.cafe", { defaultValue: "Cafe" }),
+		},
+		{ value: "BAR", label: t("theme:categories.bar", { defaultValue: "Bar" }) },
+		{
+			value: "BAKERY",
+			label: t("theme:categories.bakery", { defaultValue: "Bakery" }),
+		},
+		{
+			value: "FOOD_TRUCK",
+			label: t("theme:categories.food_truck", { defaultValue: "Food Truck" }),
+		},
+		{
+			value: "OTHER",
+			label: t("theme:categories.other", { defaultValue: "Other" }),
+		},
+	];
 
 	const handleUnregister = async (themeId: number, ownerUsername?: string) => {
 		if (!canUnregisterThemes(ownerUsername)) {
@@ -229,6 +334,46 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 					</Button>
 				)}
 			</Title>
+
+			{/* Filters */}
+			<div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+				<div className="flex items-center gap-2">
+					<Label htmlFor="category-filter" className="text-sm font-medium">
+						{t("theme:filters.category", { defaultValue: "Category" })}:
+					</Label>
+					<Select value={selectedCategory} onValueChange={handleCategoryChange}>
+						<SelectTrigger id="category-filter" className="w-[180px]">
+							<SelectValue
+								placeholder={t("theme:filters.select_category", {
+									defaultValue: "Select category",
+								})}
+							/>
+						</SelectTrigger>
+						<SelectContent>
+							{categoryOptions.map((option) => (
+								<SelectItem key={option.value} value={option.value}>
+									{option.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
+
+				<div className="flex items-center gap-2">
+					<Checkbox
+						id="my-themes-filter"
+						checked={myThemesOnly}
+						onCheckedChange={handleMyThemesChange}
+					/>
+					<Label
+						htmlFor="my-themes-filter"
+						className="text-sm font-medium cursor-pointer"
+					>
+						{t("theme:filters.my_themes", { defaultValue: "My Themes Only" })}
+					</Label>
+				</div>
+			</div>
+
 			{themes.length === 0 ? (
 				<div className="text-gray-500 text-center py-8">
 					{t("theme:no_themes")} <br />
@@ -247,6 +392,7 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 									themeDescription={theme.themeManifest.description}
 									themeAuthor={theme.themeManifest.author}
 									isFree={theme.isFree}
+									thumbnailUrl={theme.thumbnailUrl}
 								/>
 								{canUnregister && (
 									<Button

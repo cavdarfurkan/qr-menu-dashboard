@@ -4,10 +4,34 @@
 	"no_themes": "Tema bulunamadı.",
 	"all_themes": "Tüm Temalar",
 	"select_theme_description": "Aşağıdaki listeden bir tema seçin",
+	"categories": {
+		"all": "Tüm Kategoriler",
+		"restaurant": "Restoran",
+		"cafe": "Kafe",
+		"bar": "Bar",
+		"bakery": "Fırın",
+		"food_truck": "Yemek Kamyonu",
+		"other": "Diğer"
+	},
+	"filters": {
+		"category": "Kategori",
+		"select_category": "Kategori seçin",
+		"my_themes": "Sadece Temalarım"
+	},
+	"detail": {
+		"preview": "Önizleme",
+		"information": "Bilgiler",
+		"name": "Ad",
+		"description": "Açıklama",
+		"author": "Yazar",
+		"version": "Sürüm",
+		"created_at": "Oluşturulma Tarihi"
+	},
 	"register": {
 		"title": "Tema Kaydı",
 		"theme_zip_file": "Tema ZIP Dosyası",
 		"preview_image": "Tema Önizleme Resmi (isteğe bağlı)",
+		"category": "Kategori",
 		"success": "Tema başarıyla kaydedildi",
 		"permission_required_title": "Geliştirici veya yönetici rolü gerekli",
 		"permission_required_description": "Tema kaydetmek için GELİŞTİRİCİ veya ADMİN rolüne sahip olmanız gerekir. Ayarlarınızdan geliştirici modunu etkinleştirin veya bir yöneticiyle iletişime geçin."

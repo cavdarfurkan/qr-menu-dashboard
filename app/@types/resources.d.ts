@@ -111,6 +111,7 @@ interface Resources {
 		labels: {
 			is_free: "Free";
 			menu_name: "Menu Name";
+			no_image: "No image";
 			select_theme: "Select a theme";
 			theme_selected: "Theme Selected: {{id}}";
 		};
@@ -319,9 +320,33 @@ interface Resources {
 	};
 	theme: {
 		all_themes: "All Themes";
+		categories: {
+			all: "All Categories";
+			bakery: "Bakery";
+			bar: "Bar";
+			cafe: "Cafe";
+			food_truck: "Food Truck";
+			other: "Other";
+			restaurant: "Restaurant";
+		};
+		detail: {
+			author: "Author";
+			created_at: "Created At";
+			description: "Description";
+			information: "Information";
+			name: "Name";
+			preview: "Preview";
+			version: "Version";
+		};
+		filters: {
+			category: "Category";
+			my_themes: "My Themes Only";
+			select_category: "Select category";
+		};
 		new_theme: "+ New Theme";
 		no_themes: "No themes found.";
 		register: {
+			category: "Category";
 			permission_required_description: "You need the DEVELOPER or ADMIN role to register themes. Enable developer mode in your settings or contact an administrator.";
 			permission_required_title: "Developer or admin role required";
 			preview_image: "Theme Preview Image (optional)";

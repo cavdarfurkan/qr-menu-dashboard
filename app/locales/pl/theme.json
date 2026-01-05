@@ -4,10 +4,34 @@
 	"no_themes": "Nie znaleziono motywów.",
 	"all_themes": "Wszystkie motywy",
 	"select_theme_description": "Wybierz motyw z poniższej listy",
+	"categories": {
+		"all": "Wszystkie kategorie",
+		"restaurant": "Restauracja",
+		"cafe": "Kawiarnia",
+		"bar": "Bar",
+		"bakery": "Piekarnia",
+		"food_truck": "Food Truck",
+		"other": "Inne"
+	},
+	"filters": {
+		"category": "Kategoria",
+		"select_category": "Wybierz kategorię",
+		"my_themes": "Tylko moje motywy"
+	},
+	"detail": {
+		"preview": "Podgląd",
+		"information": "Informacje",
+		"name": "Nazwa",
+		"description": "Opis",
+		"author": "Autor",
+		"version": "Wersja",
+		"created_at": "Data utworzenia"
+	},
 	"register": {
 		"title": "Rejestracja motywu",
 		"theme_zip_file": "Plik ZIP motywu",
 		"preview_image": "Obraz podglądu motywu (opcjonalnie)",
+		"category": "Kategoria",
 		"success": "Motyw został pomyślnie zarejestrowany",
 		"permission_required_title": "Wymagane uprawnienia",
 		"permission_required_description": "Aby zarejestrować motyw, potrzebujesz uprawnień administratora lub dewelopera."
