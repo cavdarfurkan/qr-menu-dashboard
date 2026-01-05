@@ -17,6 +17,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import api from "~/lib/api";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useUserStore } from "~/stores";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const formSchema = (t: (key: string) => string) =>
@@ -63,6 +64,7 @@ export default function ThemeRegister() {
 
 	const [error, setError] = useState<string | null>(null);
 	const isLoading = fetcher.state !== "idle";
+	const { canRegisterThemes } = useUserStore();
 
 	const form = useForm<MyFormData>({
 		resolver: zodResolver(formSchema(t as (key: string) => string)),
@@ -107,6 +109,33 @@ export default function ThemeRegister() {
 				setError(err.response?.data?.message || t("error:upload_failed"));
 			});
 	};
+
+	const canRegister = canRegisterThemes();
+
+	if (!canRegister) {
+		return (
+			<div>
+				<div className="mb-5">
+					<BackButton />
+				</div>
+				<div className="flex flex-col w-full max-w-xl gap-5 mx-auto">
+					<div className="p-5 border rounded-md bg-yellow-50 text-sm text-yellow-900">
+						<p className="font-semibold mb-1">
+							{t("theme:register.permission_required_title", {
+								defaultValue: "Developer or admin role required",
+							})}
+						</p>
+						<p>
+							{t("theme:register.permission_required_description", {
+								defaultValue:
+									"You need the DEVELOPER or ADMIN role to register themes. Enable developer mode in your settings or contact an administrator.",
+							})}
+						</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div>

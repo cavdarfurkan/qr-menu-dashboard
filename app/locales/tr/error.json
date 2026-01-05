@@ -15,5 +15,6 @@
 	"upload_failed": "Yükleme başarısız",
 	"login_failed": "Giriş başarısız",
 	"requested_content_not_found": "İstenen içerik bulunamadı.",
-	"error_getting_themes": "Temalar alınırken hata oluştu"
+	"error_getting_themes": "Temalar alınırken hata oluştu",
+	"unauthorized_theme_unregistration": "Bu temayı kaldıramazsınız. Geliştirici, yönetici veya sahibi rolü gereklidir."
 }

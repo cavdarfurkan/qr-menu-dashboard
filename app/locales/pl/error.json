@@ -15,5 +15,6 @@
 	"upload_failed": "Przesyłanie nie powiodło się",
 	"login_failed": "Logowanie nie powiodło się",
 	"requested_content_not_found": "Nie można znaleźć żądanej zawartości.",
-	"error_getting_themes": "Błąd pobierania motywów"
+	"error_getting_themes": "Błąd pobierania motywów",
+	"unauthorized_theme_unregistration": "Nie jesteś uprawniony do usuwania tego motywu. Wymagane są role dewelopera, administratora lub właściciela."
 }

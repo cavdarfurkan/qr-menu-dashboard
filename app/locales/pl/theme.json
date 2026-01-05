@@ -8,6 +8,13 @@
 		"title": "Rejestracja motywu",
 		"theme_zip_file": "Plik ZIP motywu",
 		"preview_image": "Obraz podglądu motywu (opcjonalnie)",
-		"success": "Motyw został pomyślnie zarejestrowany"
+		"success": "Motyw został pomyślnie zarejestrowany",
+		"permission_required_title": "Wymagane uprawnienia",
+		"permission_required_description": "Aby zarejestrować motyw, potrzebujesz uprawnień administratora lub dewelopera."
+	},
+	"unregister": {
+		"action": "Usuń motyw",
+		"success": "Motyw został pomyślnie usunięty",
+		"error": "Nie udało się usunąć motywu"
 	}
 }

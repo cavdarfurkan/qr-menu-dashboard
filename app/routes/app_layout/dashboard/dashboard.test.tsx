@@ -3,12 +3,19 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import Home, { clientLoader } from "./dashboard";
 import api from "~/lib/api";
+import { fetchCurrentUser } from "~/lib/auth-api";
 
 const renderWithRouter = (component: React.ReactElement) => {
 	return render(<MemoryRouter>{component}</MemoryRouter>);
 };
 
 vi.mock("~/lib/api");
+vi.mock("~/lib/auth-api");
+vi.mock("~/stores", () => ({
+	useUserStore: () => ({
+		setUser: vi.fn(),
+	}),
+}));
 
 describe("Dashboard Route", () => {
 	beforeEach(() => {
@@ -17,8 +24,16 @@ describe("Dashboard Route", () => {
 
 	describe("clientLoader", () => {
 		it("should load user data successfully", async () => {
-			const mockWhoamiResponse = {
-				message: "User: username=testuser, email=test@example.com",
+			const mockUserResponse = {
+				success: true,
+				message: "User retrieved",
+				data: {
+					id: 1,
+					username: "testuser",
+					email: "test@example.com",
+					roles: ["USER"],
+				},
+				timestamp: new Date().toISOString(),
 			};
 
 			const mockMenusResponse = {
@@ -41,56 +56,55 @@ describe("Dashboard Route", () => {
 				timestamp: new Date().toISOString(),
 			};
 
-			vi.mocked(api.get)
-				.mockResolvedValueOnce({
-					data: mockWhoamiResponse,
-				})
-				.mockResolvedValueOnce({
-					data: mockMenusResponse,
-				});
+			vi.mocked(fetchCurrentUser).mockResolvedValueOnce(mockUserResponse);
+			vi.mocked(api.get).mockResolvedValueOnce({
+				data: mockMenusResponse,
+			});
 
 			const result = await clientLoader();
 
 			expect(result).toEqual({
-				whoami: mockWhoamiResponse,
+				user: mockUserResponse,
 				menus: mockMenusResponse,
 			});
-			expect(api.get).toHaveBeenCalledWith("/test/whoami");
+			expect(fetchCurrentUser).toHaveBeenCalled();
 			expect(api.get).toHaveBeenCalledWith("/v1/menu/all");
 		});
 
 		it("should handle API errors", async () => {
-			vi.mocked(api.get)
-				.mockRejectedValueOnce(new Error("Network error"))
-				.mockRejectedValueOnce(new Error("Network error"));
+			vi.mocked(fetchCurrentUser).mockRejectedValueOnce(
+				new Error("Network error"),
+			);
+			vi.mocked(api.get).mockRejectedValueOnce(new Error("Network error"));
 
 			const result = await clientLoader();
 
-			expect(result.whoami.message).toBe("Error loading user data");
+			expect(result.user.success).toBe(false);
+			expect(result.user.message).toBe("Error loading user data");
 			expect(result.menus.success).toBe(false);
 			expect(result.menus.data).toEqual([]);
 		});
 
 		it("should return error message on failure", async () => {
-			vi.mocked(api.get)
-				.mockRejectedValueOnce({
-					response: {
-						data: {
-							message: "Unauthorized",
-						},
+			vi.mocked(fetchCurrentUser).mockRejectedValueOnce({
+				response: {
+					data: {
+						message: "Unauthorized",
 					},
-				})
-				.mockRejectedValueOnce({
-					response: {
-						data: {
-							message: "Unauthorized",
-						},
+				},
+			});
+			vi.mocked(api.get).mockRejectedValueOnce({
+				response: {
+					data: {
+						message: "Unauthorized",
 					},
-				});
+				},
+			});
 
 			const result = await clientLoader();
 
-			expect(result.whoami.message).toBe("Error loading user data");
+			expect(result.user.success).toBe(false);
+			expect(result.user.message).toBe("Error loading user data");
 			expect(result.menus.success).toBe(false);
 		});
 	});
@@ -98,8 +112,16 @@ describe("Dashboard Route", () => {
 	describe("Home Component", () => {
 		const createLoaderData = (overrides = {}) => ({
 			loaderData: {
-				whoami: {
-					message: "User: username=testuser, email=test@example.com",
+				user: {
+					success: true,
+					message: "User retrieved",
+					data: {
+						id: 1,
+						username: "testuser",
+						email: "test@example.com",
+						roles: ["USER"],
+					},
+					timestamp: new Date().toISOString(),
 				},
 				menus: {
 					success: true,
@@ -149,8 +171,14 @@ describe("Dashboard Route", () => {
 
 		it("should show unknown for missing username", () => {
 			const loaderData = createLoaderData({
-				whoami: {
-					message: "User: email=test@example.com",
+				user: {
+					success: true,
+					data: {
+						id: 1,
+						username: undefined,
+						email: "test@example.com",
+						roles: ["USER"],
+					},
 				},
 			});
 
@@ -163,8 +191,14 @@ describe("Dashboard Route", () => {
 
 		it("should show unknown for missing email", () => {
 			const loaderData = createLoaderData({
-				whoami: {
-					message: "User: username=testuser",
+				user: {
+					success: true,
+					data: {
+						id: 1,
+						username: "testuser",
+						email: undefined,
+						roles: ["USER"],
+					},
 				},
 			});
 
@@ -175,10 +209,11 @@ describe("Dashboard Route", () => {
 			).toBeInTheDocument();
 		});
 
-		it("should show unknown when message is empty", () => {
+		it("should show unknown when user data is missing", () => {
 			const loaderData = createLoaderData({
-				whoami: {
-					message: "",
+				user: {
+					success: true,
+					data: undefined,
 				},
 			});
 
@@ -306,10 +341,13 @@ describe("Dashboard Route", () => {
 			expect(screen.getByText("home:no_published_menus")).toBeInTheDocument();
 		});
 
-		it("should handle loaderData without message", () => {
+		it("should handle loaderData without user data", () => {
 			const loaderData = {
 				loaderData: {
-					whoami: {},
+					user: {
+						success: false,
+						data: undefined,
+					},
 					menus: { success: false, data: [] },
 				},
 			};

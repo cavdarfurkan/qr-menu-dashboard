@@ -1,7 +1,7 @@
 import api, { type ApiResponse } from "~/lib/api";
 import type { Route } from "./+types/themes";
 import { isAxiosError } from "axios";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useRevalidator } from "react-router";
 import {
 	Pagination,
 	PaginationContent,
@@ -18,6 +18,9 @@ import { Button } from "~/components/ui/button";
 import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
 import ThemeCard from "~/components/ThemeCard";
+import { useUserStore } from "~/stores";
+import { unregisterTheme } from "~/lib/auth-api";
+import { toast } from "sonner";
 
 export type ThemeType = {
 	id: number;
@@ -92,6 +95,8 @@ export async function clientLoader({
 export default function Themes({ loaderData }: Route.ComponentProps) {
 	const { t } = useTranslation(["theme", "common", "error"]);
 	const navigate = useNavigate();
+	const revalidator = useRevalidator();
+	const { canRegisterThemes, canUnregisterThemes } = useUserStore();
 
 	if (!loaderData.success) {
 		return <p> {loaderData.message} </p>;
@@ -111,6 +116,47 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 
 	const currentPage = pagination.number;
 	const totalPages = pagination.totalPages;
+
+	const handleUnregister = async (themeId: number, ownerUsername?: string) => {
+		if (!canUnregisterThemes(ownerUsername)) {
+			toast.error(
+				t("error:unauthorized_theme_unregistration", {
+					defaultValue:
+						"You are not allowed to unregister this theme. Developer, admin, or owner role is required.",
+				}),
+			);
+			return;
+		}
+
+		try {
+			const result = await unregisterTheme(themeId);
+
+			if (result.success) {
+				toast.success(
+					result.message ||
+						t("theme:unregister.success", {
+							defaultValue: "Theme unregistered successfully",
+						}),
+				);
+				// Revalidate route data without full page refresh
+				revalidator.revalidate();
+			} else {
+				toast.error(
+					result.message ||
+						t("theme:unregister.error", {
+							defaultValue: "Failed to unregister theme",
+						}),
+				);
+			}
+		} catch (err: any) {
+			const message =
+				err?.response?.data?.message ||
+				t("theme:unregister.error", {
+					defaultValue: "Failed to unregister theme",
+				});
+			toast.error(message);
+		}
+	};
 
 	// Handle page change with proper navigation
 	const handlePageChange = useCallback(
@@ -170,14 +216,18 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 		return pageNumbers;
 	};
 
+	const allowThemeRegistration = canRegisterThemes();
+
 	return (
 		<div className="flex flex-col gap-6">
 			<Title title={t("theme:title")}>
-				<Button asChild>
-					<Link to="/theme/register" viewTransition>
-						{t("theme:new_theme")}
-					</Link>
-				</Button>
+				{allowThemeRegistration && (
+					<Button asChild>
+						<Link to="/theme/register" viewTransition>
+							{t("theme:new_theme")}
+						</Link>
+					</Button>
+				)}
 			</Title>
 			{themes.length === 0 ? (
 				<div className="text-gray-500 text-center py-8">
@@ -185,16 +235,34 @@ export default function Themes({ loaderData }: Route.ComponentProps) {
 				</div>
 			) : (
 				<ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mxauto">
-					{themes.map((theme: ThemeType) => (
-						<ThemeCard
-							key={theme.id}
-							index={theme.id}
-							themeName={theme.themeManifest.name}
-							themeDescription={theme.themeManifest.description}
-							themeAuthor={theme.themeManifest.author}
-							isFree={theme.isFree}
-						/>
-					))}
+					{themes.map((theme: ThemeType) => {
+						const ownerUsername = theme.themeManifest.author;
+						const canUnregister = canUnregisterThemes(ownerUsername);
+
+						return (
+							<li key={theme.id} className="flex flex-col gap-2">
+								<ThemeCard
+									index={theme.id}
+									themeName={theme.themeManifest.name}
+									themeDescription={theme.themeManifest.description}
+									themeAuthor={theme.themeManifest.author}
+									isFree={theme.isFree}
+								/>
+								{canUnregister && (
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() => handleUnregister(theme.id, ownerUsername)}
+										className="w-full"
+									>
+										{t("theme:unregister.action", {
+											defaultValue: "Unregister theme",
+										})}
+									</Button>
+								)}
+							</li>
+						);
+					})}
 				</ul>
 			)}
 			{totalPages > 1 && (

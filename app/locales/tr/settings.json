@@ -29,6 +29,18 @@
 	"notifications": {
 		"title": "Bildirimler"
 	},
+	"developer_role": {
+		"title": "Geliştirici rolü",
+		"description": "Temaları kaydetmek ve kaldırmak için geliştirici modunu etkinleştirin.",
+		"active": "Aktif",
+		"inactive": "Pasif",
+		"active_label": "Geliştirici modu etkin",
+		"inactive_label": "Geliştirici modu devre dışı",
+		"activate_success": "Geliştirici rolü başarıyla etkinleştirildi",
+		"deactivate_success": "Geliştirici rolü başarıyla devre dışı bırakıldı",
+		"error": "Geliştirici rolü güncellenemedi",
+		"unauthorized": "Oturumunuzun süresi doldu. Lütfen tekrar giriş yapın."
+	},
 	"current_password": "Mevcut Şifre",
 	"current_password_placeholder": "Mevcut şifrenizi girin",
 	"new_password": "Yeni Şifre",

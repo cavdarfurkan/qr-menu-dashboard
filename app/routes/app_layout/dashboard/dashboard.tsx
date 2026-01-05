@@ -10,6 +10,9 @@ import {
 	MenuPreviewWidget,
 	OutOfDateMenusWidget,
 } from "~/components/dashboard";
+import { fetchCurrentUser } from "~/lib/auth-api";
+import { useUserStore } from "~/stores";
+import { useEffect } from "react";
 
 export type MenuType = {
 	menuId: number;
@@ -20,14 +23,16 @@ export type MenuType = {
 
 export async function clientLoader() {
 	try {
-		const [whoamiResponse, menusResponse] = await Promise.all([
-			api
-				.get("/test/whoami")
-				.then((res) => res.data)
-				.catch((err) => {
-					console.error("Error loading whoami:", err);
-					return { message: "Error loading user data" };
-				}),
+		const [userResponse, menusResponse] = await Promise.all([
+			fetchCurrentUser().catch((err) => {
+				console.error("Error loading user data:", err);
+				return {
+					success: false,
+					message: "Error loading user data",
+					data: undefined,
+					timestamp: new Date().toISOString(),
+				};
+			}),
 			api
 				.get("/v1/menu/all")
 				.then((res) => res.data)
@@ -53,13 +58,18 @@ export async function clientLoader() {
 		]);
 
 		return {
-			whoami: whoamiResponse,
+			user: userResponse,
 			menus: menusResponse,
 		};
 	} catch (error) {
 		console.error("Error loading dashboard data:", error);
 		return {
-			whoami: { message: "Error loading user data" },
+			user: {
+				success: false,
+				message: "Error loading user data",
+				data: undefined,
+				timestamp: new Date().toISOString(),
+			},
 			menus: { success: false, data: [], message: "Error loading menus" },
 		};
 	}
@@ -71,6 +81,7 @@ export default function Home({
 	loaderData: Route.ComponentProps;
 }) {
 	const { t } = useTranslation(["home", "common", "menu"]);
+	const { setUser } = useUserStore();
 
 	// In React Router v7, loader data is accessed via loaderData.loaderData
 	// But if that's empty, try accessing loaderData directly
@@ -79,17 +90,18 @@ export default function Home({
 			? loaderData.loaderData
 			: (loaderData as any);
 
-	const whoamiData = dashboardData.whoami || {};
+	const userData = dashboardData.user || {};
 	const menusData = dashboardData.menus || { success: false, data: [] };
 
-	const message = whoamiData.message || "";
-	const usernameMatch = message.match(/username=([^,]+)/);
-	const emailMatch = message.match(/email=([^,]+)/);
+	// Populate user store when user data is loaded
+	useEffect(() => {
+		if (userData.success && userData.data) {
+			setUser(userData.data);
+		}
+	}, [userData, setUser]);
 
-	const username = usernameMatch
-		? usernameMatch[1]
-		: t("common:empty_states.unknown");
-	const email = emailMatch ? emailMatch[1] : t("common:empty_states.unknown");
+	const username = userData.data?.username || t("common:empty_states.unknown");
+	const email = userData.data?.email || t("common:empty_states.unknown");
 
 	// Handle both array and null/undefined cases
 	// Filter to only show published menus

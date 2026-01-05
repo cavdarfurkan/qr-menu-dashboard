@@ -29,6 +29,18 @@
 	"notifications": {
 		"title": "Powiadomienia"
 	},
+	"developer_role": {
+		"title": "Rola dewelopera",
+		"description": "Włącz tryb dewelopera, aby rejestrować i usuwać motywy.",
+		"active": "Aktywny",
+		"inactive": "Nieaktywny",
+		"active_label": "Tryb dewelopera włączony",
+		"inactive_label": "Tryb dewelopera wyłączony",
+		"activate_success": "Rola dewelopera została pomyślnie włączona",
+		"deactivate_success": "Rola dewelopera została pomyślnie wyłączona",
+		"error": "Nie udało się zaktualizować roli dewelopera",
+		"unauthorized": "Twoja sesja wygasła. Zaloguj się ponownie."
+	},
 	"current_password": "Obecne hasło",
 	"current_password_placeholder": "Wprowadź obecne hasło",
 	"new_password": "Nowe hasło",

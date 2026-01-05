@@ -15,5 +15,6 @@
 	"upload_failed": "Upload failed",
 	"login_failed": "Login failed",
 	"requested_content_not_found": "The requested content could not be found.",
-	"error_getting_themes": "Error getting themes"
+	"error_getting_themes": "Error getting themes",
+	"unauthorized_theme_unregistration": "You are not allowed to unregister this theme. Developer, admin, or owner role is required."
 }

@@ -165,6 +165,7 @@ interface Resources {
 		failed_to_load_menu_data: "Failed to load menu data";
 		login_failed: "Login failed";
 		requested_content_not_found: "The requested content could not be found.";
+		unauthorized_theme_unregistration: "You are not allowed to unregister this theme. Developer, admin, or owner role is required.";
 		unexpected_error: "An unexpected error occurred.";
 		upload_failed: "Upload failed";
 	};
@@ -260,6 +261,18 @@ interface Resources {
 		confirm_password_placeholder: "Confirm your new password";
 		current_password: "Current Password";
 		current_password_placeholder: "Enter your current password";
+		developer_role: {
+			activate_success: "Developer role activated successfully";
+			active: "Active";
+			active_label: "Developer mode enabled";
+			deactivate_success: "Developer role deactivated successfully";
+			description: "Enable developer mode to register and unregister themes.";
+			error: "Failed to update developer role";
+			inactive: "Inactive";
+			inactive_label: "Developer mode disabled";
+			title: "Developer role";
+			unauthorized: "Your session has expired. Please log in again.";
+		};
 		language: {
 			description: "Select the language for your account";
 			select_language: "Select a language";
@@ -309,6 +322,8 @@ interface Resources {
 		new_theme: "+ New Theme";
 		no_themes: "No themes found.";
 		register: {
+			permission_required_description: "You need the DEVELOPER or ADMIN role to register themes. Enable developer mode in your settings or contact an administrator.";
+			permission_required_title: "Developer or admin role required";
 			preview_image: "Theme Preview Image (optional)";
 			success: "Theme registered successfully";
 			theme_zip_file: "Theme ZIP File";
@@ -316,6 +331,11 @@ interface Resources {
 		};
 		select_theme_description: "Select a theme from the list below";
 		title: "Themes";
+		unregister: {
+			action: "Unregister theme";
+			error: "Failed to unregister theme";
+			success: "Theme unregistered successfully";
+		};
 	};
 	ui_components: {
 		dialog: {

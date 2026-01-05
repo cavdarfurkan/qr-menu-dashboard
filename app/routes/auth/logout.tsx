@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Navigate } from "react-router";
 import { useAuth } from "~/auth_context";
 import api from "~/lib/api";
+import { useUserStore } from "~/stores";
 
 export async function clientAction() {
 	try {
@@ -13,14 +14,16 @@ export async function clientAction() {
 
 export default function Logout() {
 	const { logout } = useAuth();
+	const { clearUser } = useUserStore();
 
 	useEffect(() => {
 		const performLogout = async () => {
 			await clientAction();
 			await logout();
+			clearUser();
 		};
 		performLogout();
-	}, [logout]);
+	}, [logout, clearUser]);
 
 	return <Navigate to="/login" replace />;
 }

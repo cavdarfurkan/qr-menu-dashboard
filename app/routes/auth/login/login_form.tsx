@@ -26,6 +26,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginActionResult } from "./index";
 import { fetchCsrfToken } from "~/lib/csrf";
 import { useTranslation } from "react-i18next";
+import { fetchCurrentUser } from "~/lib/auth-api";
+import { useUserStore } from "~/stores";
 
 export const formSchema = (t: (key: string) => string) =>
 	z.object({
@@ -50,6 +52,7 @@ export default function LoginForm() {
 	const navigate = useNavigate();
 	const fetcher = useFetcher();
 	const isLoading = fetcher.state !== "idle";
+	const { setUser } = useUserStore();
 
 	const form = useForm<z.infer<ReturnType<typeof formSchema>>>({
 		resolver: zodResolver(formSchema(t as (key: string) => string)),
@@ -76,7 +79,19 @@ export default function LoginForm() {
 		setAccessToken(data.accessToken || "");
 
 		try {
+			// Fetch CSRF token and current user data after successful login
 			await fetchCsrfToken();
+			try {
+				const userResponse = await fetchCurrentUser();
+				if (userResponse.success && userResponse.data) {
+					setUser(userResponse.data);
+				} else {
+					setUser(null);
+				}
+			} catch (userError) {
+				// If fetching user fails, keep going but clear user store
+				setUser(null);
+			}
 			navigate("/");
 		} catch (error) {
 			setError(data.message || t("error:login_failed"));

@@ -2,23 +2,18 @@
 	"account_details": {
 		"title": "Account Details"
 	},
-
 	"organization": {
 		"title": "Organization"
 	},
-
 	"security": {
 		"title": "Security"
 	},
-
 	"privacy": {
 		"title": "Privacy"
 	},
-
 	"billing_and_subscription": {
 		"title": "Billing & Subscription"
 	},
-
 	"appearance": {
 		"title": "Appearance",
 		"description": "Select the appearance for your account",
@@ -26,15 +21,25 @@
 		"dark": "Dark",
 		"system": "System"
 	},
-
 	"language": {
 		"title": "Language",
 		"description": "Select the language for your account",
 		"select_language": "Select a language"
 	},
-
 	"notifications": {
 		"title": "Notifications"
+	},
+	"developer_role": {
+		"title": "Developer role",
+		"description": "Enable developer mode to register and unregister themes.",
+		"active": "Active",
+		"inactive": "Inactive",
+		"active_label": "Developer mode enabled",
+		"inactive_label": "Developer mode disabled",
+		"activate_success": "Developer role activated successfully",
+		"deactivate_success": "Developer role deactivated successfully",
+		"error": "Failed to update developer role",
+		"unauthorized": "Your session has expired. Please log in again."
 	},
 	"current_password": "Current Password",
 	"current_password_placeholder": "Enter your current password",

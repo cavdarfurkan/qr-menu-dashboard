@@ -51,6 +51,7 @@ import {
 
 import { languages } from "~/constants/languages";
 import { THEME_VALUES } from "~/constants/themes";
+import { DeveloperRoleToggle } from "~/components/DeveloperRoleToggle";
 
 export default function Settings() {
 	const { t } = useTranslation(["home", "common", "settings"]);
@@ -74,6 +75,13 @@ export default function Settings() {
 			label: t("settings:account_details.title"),
 			value: "account_details",
 			content: <AccountDetailsSection t={t} />,
+		},
+		{
+			label: t("settings:developer_role.title", {
+				defaultValue: "Developer role",
+			}),
+			value: "developer_role",
+			content: <DeveloperRoleSection t={t} />,
 		},
 		{
 			label: t("settings:organization.title"),
@@ -247,6 +255,14 @@ function OrganizationSection({ t }: { t: any }) {
 					className="w-full md:max-w-md"
 				/>
 			</div>
+		</div>
+	);
+}
+
+function DeveloperRoleSection({ t }: { t: any }) {
+	return (
+		<div className="space-y-4">
+			<DeveloperRoleToggle />
 		</div>
 	);
 }
